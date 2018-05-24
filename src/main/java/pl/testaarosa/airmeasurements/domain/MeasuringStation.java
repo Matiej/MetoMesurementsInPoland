@@ -132,7 +132,8 @@ public class MeasuringStation {
 
     @Override
     public String toString() {
-        return "MeasuringStation id: " + id + ", foreign id: " + stationId + ", station name: " + stationName + "\n" + ", latitude=: " + latitude + ", longitude: " + longitude + ", street: " + street + ", city: " + city;
+        return "MeasuringStation id: " + id + ", foreign id: " + stationId + ", station name: " + stationName + "\n" + ", latitude=: " + latitude + ", longitude: " + longitude + ", street: " + street + ", city: "
+                + city + "\n" + stationDetails +  "\n" + airMeasurementsList + "\n" + synopticMeasurements;
     }
 }
 

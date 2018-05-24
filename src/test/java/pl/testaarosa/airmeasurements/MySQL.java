@@ -1,4 +1,4 @@
-package pl.testaarosa;
+package pl.testaarosa.airmeasurements;
 
 import org.junit.Test;
 

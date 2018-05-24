@@ -9,8 +9,8 @@ public class CityDtoTestSuit {
 
     @Test
     public void testCityDto(){
-        CityDto cityDto1 = cityDtoRepository.cityDto1();
-        CityDto cityDto2 = cityDtoRepository.cityDto2();
+        CityDto cityDto1 = cityDtoRepository.cityDtos().get(0);
+        CityDto cityDto2 = cityDtoRepository.cityDtos().get(1);
         new EqualsTester().addEqualityGroup(cityDto1,cityDto2).testEquals();
     }
 }

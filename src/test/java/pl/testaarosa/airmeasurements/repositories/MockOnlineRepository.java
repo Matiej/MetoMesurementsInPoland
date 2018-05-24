@@ -118,33 +118,61 @@ public class MockOnlineRepository {
         return measuringStationOnLines;
     }
 
-    public MeasuringStationOnLine measuringStationOnLine1() {
-        return  new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
-                .id(2)
-                .gegrLatitude(0.0)
-                .gegrLongitude(0.0)
-                .stationName("Test station")
-                .stationStreet("test")
-                .stationCity("te")
+    public List<MeasuringStationOnLine> measuringStationOnLineList(){
+        List<MeasuringStationOnLine> measuringStationOnLineList = new ArrayList<>();
+        MeasuringStationOnLine msOnline1 = new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(11)
+                .gegrLatitude(11)
+                .gegrLongitude(123)
+                .stationName("Poznan-Stoleczna")
+                .stationStreet("Stoleczna")
+                .stationCity("Poznan")
                 .stationDistrict("di")
                 .stationVoivodeship("vo")
-                .air(mockAirDtoRepository.airMeasurementsDto())
-                .synoptics(mockSynopticDtoRepository.synoptic1())
+                .air(mockAirDtoRepository.airMeasurementsDtos().get(1))
+                .synoptics(mockSynopticDtoRepository.mockSynopticDtoRepositories().get(2))
                 .build();
-    }
+        MeasuringStationOnLine msOnline2 = new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(2)
+                .gegrLatitude(23)
+                .gegrLongitude(221)
+                .stationName("Krakow-Starowka")
+                .stationStreet("Starowka")
+                .stationCity("Krakow")
+                .stationDistrict("di")
+                .stationVoivodeship("vo")
+                .air(mockAirDtoRepository.airMeasurementsDtos().get(0))
+                .synoptics(mockSynopticDtoRepository.mockSynopticDtoRepositories().get(3))
+                .build();
+        MeasuringStationOnLine msOnline3 = new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(1)
+                .gegrLatitude(15)
+                .gegrLongitude(15)
+                .stationName("Wawrszawa-Centrum")
+                .stationStreet("Piekna")
+                .stationCity("Warszawa")
+                .stationDistrict("Dictrict1")
+                .stationVoivodeship("voivodeship1")
+                .air(mockAirDtoRepository.airMeasurementsDtos().get(0))
+                .synoptics(mockSynopticDtoRepository.mockSynopticDtoRepositories().get(1))
+                .build();
 
-    public MeasuringStationOnLine measuringStationOnLine2() {
-        return  new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
-                .id(2)
-                .gegrLatitude(0.0)
-                .gegrLongitude(0.0)
-                .stationName("Test station")
-                .stationStreet("test")
-                .stationCity("te")
-                .stationDistrict("di")
-                .stationVoivodeship("vo")
-                .air(mockAirDtoRepository.airMeasurementsDto())
-                .synoptics(mockSynopticDtoRepository.synoptic1())
+        MeasuringStationOnLine msOnline4 = new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(1)
+                .gegrLatitude(15)
+                .gegrLongitude(15)
+                .stationName("Wawrszawa-Centrum")
+                .stationStreet("Piekna")
+                .stationCity("Warszawa")
+                .stationDistrict("Dictrict1")
+                .stationVoivodeship("voivodeship1")
+                .air(mockAirDtoRepository.airMeasurementsDtos().get(0))
+                .synoptics(mockSynopticDtoRepository.mockSynopticDtoRepositories().get(1))
                 .build();
+        measuringStationOnLineList.add(msOnline1);
+        measuringStationOnLineList.add(msOnline2);
+        measuringStationOnLineList.add(msOnline3);
+        measuringStationOnLineList.add(msOnline4);
+        return measuringStationOnLineList;
     }
 }

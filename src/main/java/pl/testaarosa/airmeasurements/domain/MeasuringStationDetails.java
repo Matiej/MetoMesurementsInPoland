@@ -28,12 +28,12 @@ public class MeasuringStationDetails {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MeasuringStationDetails)) return false;
-        MeasuringStationDetails that = (MeasuringStationDetails) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getCommune(), that.getCommune()) &&
-                Objects.equals(getDistrict(), that.getDistrict()) &&
-                Objects.equals(getVoivodeship(), that.getVoivodeship());
+        MeasuringStationDetails details = (MeasuringStationDetails) o;
+        return Objects.equals(getId(), details.getId()) &&
+                Objects.equals(getCity(), details.getCity()) &&
+                Objects.equals(getCommune(), details.getCommune()) &&
+                Objects.equals(getDistrict(), details.getDistrict()) &&
+                Objects.equals(getVoivodeship(), details.getVoivodeship());
     }
 
     @Override

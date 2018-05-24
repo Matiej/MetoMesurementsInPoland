@@ -9,8 +9,8 @@ private final MockSynopticRepository mockSynopticRepository = new MockSynopticRe
 
     @Test
     public void testAirmeasurementsDto(){
-        SynopticMeasurements synopticMeasurements1 = mockSynopticRepository.measurements1();
-        SynopticMeasurements synopticMeasurements2 = mockSynopticRepository.measurements2();
+        SynopticMeasurements synopticMeasurements1 = mockSynopticRepository.synopticMeasurements2().get(3);
+        SynopticMeasurements synopticMeasurements2 = mockSynopticRepository.synopticMeasurements2().get(2);
         new EqualsTester().addEqualityGroup(synopticMeasurements1, synopticMeasurements2).testEquals();
     }
 }

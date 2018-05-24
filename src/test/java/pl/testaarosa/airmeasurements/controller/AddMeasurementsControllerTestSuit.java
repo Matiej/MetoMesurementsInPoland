@@ -15,7 +15,7 @@ import pl.testaarosa.airmeasurements.controller.AddMeasurementsController;
 import pl.testaarosa.airmeasurements.services.AddMeasurementsService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddMeasurementsControllerTest {
+public class AddMeasurementsControllerTestSuit {
 
     private MockMvc mockMvc;
     private final static String RESULT = "Test result";

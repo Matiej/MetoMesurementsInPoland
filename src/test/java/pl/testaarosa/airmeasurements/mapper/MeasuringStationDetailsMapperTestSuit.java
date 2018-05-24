@@ -1,8 +1,8 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.junit.Test;
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationDetailsRepository;
 import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationDtoRepository;
 
@@ -15,8 +15,9 @@ public class MeasuringStationDetailsMapperTestSuit {
 
     @Test
     public void testMapToAirMeasurements(){
-        MeasuringStationDetails expect = mockDetails.details1();
-        MeasuringStationDetails result = mapper.mapToStationDetails(mockMStationDtoRepo.measuringStationDto1());
+        MeasuringStationDetails expect = mockDetails.detailsList().get(0);
+        MeasuringStationDto stationDto = mockMStationDtoRepo.measuringStationDtoList().get(0);
+        MeasuringStationDetails result = mapper.mapToStationDetails(stationDto);
         assertEquals(expect,result);
     }
 }

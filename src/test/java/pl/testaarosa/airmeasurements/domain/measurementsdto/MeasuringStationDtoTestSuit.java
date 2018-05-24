@@ -10,8 +10,8 @@ public class MeasuringStationDtoTestSuit {
 
     @Test
     public void testCityRegionDto(){
-        MeasuringStationDto measuringStationDto1 = mockMStDtoRepository.measuringStationDto1();
-        MeasuringStationDto measuringStationDto2 = mockMStDtoRepository.measuringStationDto2();
+        MeasuringStationDto measuringStationDto1 = mockMStDtoRepository.measuringStationDtoList().get(0);
+        MeasuringStationDto measuringStationDto2 = mockMStDtoRepository.measuringStationDtoList().get(1);
         new EqualsTester().addEqualityGroup(measuringStationDto1,measuringStationDto2).testEquals();
     }
 }

@@ -9,8 +9,8 @@ public class MeasuringStationOnLineTestSuit {
 
     @Test
     public void testAirmeasurementsDto(){
-        MeasuringStationOnLine measuringStationOnLine1 = mockOnlineRepository.measuringStationOnLine1();
-        MeasuringStationOnLine measuringStationOnLine2 = mockOnlineRepository.measuringStationOnLine2();
+        MeasuringStationOnLine measuringStationOnLine1 = mockOnlineRepository.measuringStationOnLineList().get(3);
+        MeasuringStationOnLine measuringStationOnLine2 = mockOnlineRepository.measuringStationOnLineList().get(2);
         new EqualsTester().addEqualityGroup(measuringStationOnLine1,  measuringStationOnLine2).testEquals();
     }
 }

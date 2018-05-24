@@ -10,8 +10,8 @@ public class CityRegionDtoTestSuit {
 
     @Test
     public void testCityRegionDto(){
-        CityRegionDto cityRegionDto1 = mockCityRegionDtoRepository.cityRegionDto2();
-        CityRegionDto cityRegionDto2 = mockCityRegionDtoRepository.cityRegionDto1();
+        CityRegionDto cityRegionDto1 = mockCityRegionDtoRepository.cityRegionDtos().get(0);
+        CityRegionDto cityRegionDto2 = mockCityRegionDtoRepository.cityRegionDtos().get(1);
         new EqualsTester().addEqualityGroup(cityRegionDto2,cityRegionDto1).testEquals();
     }
 }

@@ -18,7 +18,8 @@ public class AirMeasurementMapperTestSuit {
     @Test
     public void testMapToAirMeasurements(){
         AirMeasurements expect = mockAirRepository.airMeasurement();
-        AirMeasurements result = airMeasurementMapper.mapToAirMeasurements(mockAirDtoRepository.airMeasurementsDto());
+        AirMeasurements result = airMeasurementMapper
+                .mapToAirMeasurements(mockAirDtoRepository.airMeasurementsDtos().get(0));
         assertEquals(expect,result);
     }
 }

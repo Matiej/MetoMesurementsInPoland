@@ -21,7 +21,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MeasuringOnlineControllerTest {
+public class MeasuringOnlineControllerTestSuit {
 
     private final MockOnlineRepository mockOnlineRepository = new MockOnlineRepository();
     private final Converter converter = new Converter();

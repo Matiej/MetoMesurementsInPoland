@@ -85,38 +85,22 @@ public class MockSynopticRepository {
                 .pressure(999)
                 .build();
 
+        SynopticMeasurements synopticMeasurements3 = new SynopticMeasurements.SynopticMeasurementsBuilder()
+                .id(3L)
+                .foreignId(133)
+                .city("Szczecin3")
+                .saveDate(date)
+                .temperature(19)
+                .windSpeed(11)
+                .airHumidity(26)
+                .pressure(999)
+                .build();
+
         List<SynopticMeasurements> synopticMeasurementsList = new ArrayList<>();
         synopticMeasurementsList.add(synopticMeasurements);
         synopticMeasurementsList.add(synopticMeasurements1);
         synopticMeasurementsList.add(synopticMeasurements2);
+        synopticMeasurementsList.add(synopticMeasurements3);
         return synopticMeasurementsList;
-    }
-
-    public SynopticMeasurements measurements1(){
-        LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
-        return new SynopticMeasurements.SynopticMeasurementsBuilder()
-                .id(3L)
-                .foreignId(133)
-                .city("Szczecin3")
-                .saveDate(date)
-                .temperature(19)
-                .windSpeed(11)
-                .airHumidity(26)
-                .pressure(999)
-                .build();
-    }
-
-    public SynopticMeasurements measurements2(){
-        LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
-        return new SynopticMeasurements.SynopticMeasurementsBuilder()
-                .id(3L)
-                .foreignId(133)
-                .city("Szczecin3")
-                .saveDate(date)
-                .temperature(19)
-                .windSpeed(11)
-                .airHumidity(26)
-                .pressure(999)
-                .build();
     }
 }

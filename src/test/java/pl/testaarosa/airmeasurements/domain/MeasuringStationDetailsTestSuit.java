@@ -10,8 +10,8 @@ public class MeasuringStationDetailsTestSuit {
 
     @Test
     public void testAirmeasurementsDto(){
-        MeasuringStationDetails measuringStationDetails1 = detailsRepository.details1();
-        MeasuringStationDetails measuringStationDetails2 = detailsRepository.details2();
+        MeasuringStationDetails measuringStationDetails1 = detailsRepository.detailsList().get(0);
+        MeasuringStationDetails measuringStationDetails2 = detailsRepository.detailsList().get(1);
         new EqualsTester().addEqualityGroup(measuringStationDetails1,measuringStationDetails2).testEquals();
     }
 }

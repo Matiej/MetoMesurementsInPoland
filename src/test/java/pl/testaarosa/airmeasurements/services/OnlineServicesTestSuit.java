@@ -25,19 +25,21 @@ public class OnlineServicesTestSuit {
 
     @Before
     public void init() {
-        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.resultForOnlineService());
+//        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.resultForOnlineService());
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.measuringStationOnLineList());
     }
 
     @Test
     public void testGetAllMeasuringStations() {
         int result = service.getAllMeasuringStations().size();
-        int expect = 3;
+        int expect = 4;
         assertEquals(expect, result);
+        assertEquals(mockOnlineRepository.measuringStationOnLineList(),service.getAllMeasuringStations());
     }
 
     @Test
     public void getGivenCityMeasuringStationsWithSynopticData() {
-        int result = service.getGivenCityMeasuringStationsWithSynopticData("te").size();
+        int result = service.getGivenCityMeasuringStationsWithSynopticData("Warsz").size();
         int expect = 2;
         assertEquals(expect, result);
     }
@@ -45,21 +47,21 @@ public class OnlineServicesTestSuit {
     @Test
     public void testgetHotestOnlineStation() {
         MeasuringStationOnLine result = service.getHottestOnlineStation();
-        MeasuringStationOnLine expect = mockOnlineRepository.resultForOnlineService().get(0);
+        MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(1);
         assertEquals(expect, result);
     }
 
     @Test
     public void testgetHotestOnlineStation1() {
         MeasuringStationOnLine result = service.getHottestOnlineStation();
-        MeasuringStationOnLine expect = mockOnlineRepository.resultForOnlineService().get(1);
+        MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(1);
         assertTrue(result.getStationName().contains(expect.getStationName()));
     }
 
     @Test
     public void testgetColdestOnlineStation() {
         MeasuringStationOnLine result = service.getColdestOnlineStation();
-        MeasuringStationOnLine expect = mockOnlineRepository.resultForOnlineService().get(2);
+        MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(0);
         assertEquals(expect, result);
     }
 }

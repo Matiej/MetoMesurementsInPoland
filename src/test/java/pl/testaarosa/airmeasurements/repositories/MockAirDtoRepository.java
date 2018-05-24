@@ -3,9 +3,14 @@ package pl.testaarosa.airmeasurements.repositories;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.LevelDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MockAirDtoRepository {
 
-    public AirMeasurementsDto airMeasurementsDto() {
+    public List<AirMeasurementsDto> airMeasurementsDtos() {
+        List<AirMeasurementsDto> airMeasurementsDtoList = new ArrayList<>();
+
         LevelDto stIndexLevel = new LevelDto.Builder()
                 .indexLevelName("stILevel")
                 .id(1)
@@ -59,49 +64,6 @@ public class MockAirDtoRepository {
         airMeasurementsDto1.setSo2SourceDataDate("2018-05-05 12:01:05");
         airMeasurementsDto1.setStCalcDate("2018-05-05 12:01:05");
         airMeasurementsDto1.setId(1);
-        return airMeasurementsDto1;
-    }
-
-    public AirMeasurementsDto airMeasurementsDto1() {
-        LevelDto stIndexLevel = new LevelDto.Builder()
-                .indexLevelName("stILevel")
-                .id(1)
-                .build();
-
-        LevelDto so2IndexLevel = new LevelDto.Builder()
-                .indexLevelName("so2LEVEL")
-                .id(0)
-                .build();
-
-        LevelDto no2IndexLevel = new LevelDto.Builder()
-                .indexLevelName("noLEVEL")
-                .id(0)
-                .build();
-
-        LevelDto coIndexLevel = new LevelDto.Builder()
-                .indexLevelName("coLEVEL")
-                .id(0)
-                .build();
-
-        LevelDto pm10IndexLevel = new LevelDto.Builder()
-                .indexLevelName("pm10LEVEL")
-                .id(0)
-                .build();
-
-        LevelDto pm25IndexLevel = new LevelDto.Builder()
-                .indexLevelName("pm25LEVEL")
-                .id(0)
-                .build();
-
-        LevelDto o3IndexLevel = new LevelDto.Builder()
-                .indexLevelName("o3LEVEL")
-                .id(0)
-                .build();
-
-        LevelDto c6h6IndexLevel = new LevelDto.Builder()
-                .indexLevelName("c6hLEVEL")
-                .id(0)
-                .build();
 
         AirMeasurementsDto airMeasurementsDto = new AirMeasurementsDto();
         airMeasurementsDto.setStIndexLevel(stIndexLevel);
@@ -116,6 +78,9 @@ public class MockAirDtoRepository {
         airMeasurementsDto.setSo2SourceDataDate("2018-05-05 12:01:05");
         airMeasurementsDto.setStCalcDate("2018-05-05 12:01:05");
         airMeasurementsDto.setId(1);
-        return airMeasurementsDto;
+
+        airMeasurementsDtoList.add(airMeasurementsDto);
+        airMeasurementsDtoList.add(airMeasurementsDto1);
+        return airMeasurementsDtoList;
     }
 }

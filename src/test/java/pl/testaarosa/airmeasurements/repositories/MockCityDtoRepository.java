@@ -2,21 +2,25 @@ package pl.testaarosa.airmeasurements.repositories;
 
 import pl.testaarosa.airmeasurements.domain.measurementsdto.CityDto;
 
-public class MockCityDtoRepository {
-    MockCityRegionDtoRepository mockCityRegionDtoRepository = new MockCityRegionDtoRepository();
-    public CityDto cityDto1() {
-        CityDto cityDto1 = new CityDto();
-        cityDto1.setCityName("City");
-        cityDto1.setId(1);
-        cityDto1.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDto1());
-        return cityDto1;
-    }
+import java.util.ArrayList;
+import java.util.List;
 
-    public CityDto cityDto2() {
+public class MockCityDtoRepository {
+    private final MockCityRegionDtoRepository mockCityRegionDtoRepository = new MockCityRegionDtoRepository();
+
+    public List<CityDto> cityDtos() {
+        List<CityDto> cityDtos = new ArrayList<>();
+        CityDto cityDto1 = new CityDto();
+        cityDto1.setCityName("Warszawa");
+        cityDto1.setId(1);
+        cityDto1.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(1));
+
         CityDto cityDto2 = new CityDto();
-        cityDto2.setCityName("City");
+        cityDto2.setCityName("Warszawa");
         cityDto2.setId(1);
-        cityDto2.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDto1());
-        return cityDto2;
+        cityDto2.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(1));
+        cityDtos.add(cityDto1);
+        cityDtos.add(cityDto2);
+        return cityDtos;
     }
 }

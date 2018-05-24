@@ -14,7 +14,9 @@ import java.util.Optional;
 @Component
 public class MeasuringStationOnLineMapper {
 
-    public MeasuringStationOnLine mapToMeasuringStation(MeasuringStationDto measuringStationDto, AirMeasurementsDto airMeasurementsDto, SynopticMeasurementDto synopticMeasurementDto) {
+    public MeasuringStationOnLine mapToMeasuringStation(MeasuringStationDto measuringStationDto,
+                                                        AirMeasurementsDto airMeasurementsDto,
+                                                        SynopticMeasurementDto synopticMeasurementDto) {
 
         SynopticMeasurementDto synop = Optional.ofNullable(synopticMeasurementDto).orElse(emptyObj());
         String cityName = measuringStationDto.getCityDto().getCityName();

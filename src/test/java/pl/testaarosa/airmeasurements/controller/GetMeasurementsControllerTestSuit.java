@@ -11,21 +11,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import pl.testaarosa.airmeasurements.repositories.Converter;
-import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
-import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
-import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;
-import pl.testaarosa.airmeasurements.controller.GetMeasurementsController;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.repositories.Converter;
+import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
+import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
+import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;
 import pl.testaarosa.airmeasurements.services.GetMeasurementsService;
 
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetMeasurementsControllerTest {
+public class GetMeasurementsControllerTestSuit {
     private final MockStationRepository mockStationRepository = new MockStationRepository();
     private final MockAirRepository mockAirRepository = new MockAirRepository();
     private final MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();

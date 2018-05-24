@@ -9,8 +9,8 @@ public class AirMeasurementsDtoTestSuit {
 
     @Test
     public void testAirmeasurementsDto(){
-        AirMeasurementsDto airMeasurementsDto = mockAirDtoRepository.airMeasurementsDto();
-        AirMeasurementsDto airMeasurementsDto1 = mockAirDtoRepository.airMeasurementsDto1();
+        AirMeasurementsDto airMeasurementsDto = mockAirDtoRepository.airMeasurementsDtos().get(0);
+        AirMeasurementsDto airMeasurementsDto1 = mockAirDtoRepository.airMeasurementsDtos().get(1);
         new EqualsTester().addEqualityGroup(airMeasurementsDto, airMeasurementsDto1).testEquals();
     }
 }
