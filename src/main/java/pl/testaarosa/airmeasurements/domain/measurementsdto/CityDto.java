@@ -49,16 +49,12 @@ public class CityDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CityDto)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof CityDto)) return false;
         CityDto cityDto = (CityDto) o;
-        return getId() == cityDto.getId() && Objects.equals(getCityName(), cityDto.getCityName()) && Objects.equals(
-                getCityRegionDto(),
-                cityDto.getCityRegionDto());
+        return getId() == cityDto.getId() &&
+                Objects.equals(getCityName(), cityDto.getCityName()) &&
+                Objects.equals(getCityRegionDto(), cityDto.getCityRegionDto());
     }
 
     @Override

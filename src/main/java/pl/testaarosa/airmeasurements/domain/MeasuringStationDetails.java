@@ -17,6 +17,13 @@ public class MeasuringStationDetails {
     public MeasuringStationDetails() {
     }
 
+    private MeasuringStationDetails(MeasuringStationDetailsBuilder builder) {
+        this.city = builder.city;
+        this.commune = builder.commune;
+        this.district = builder.district;
+        this.voivodeship = builder.voivodeship;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -35,11 +42,15 @@ public class MeasuringStationDetails {
         return Objects.hash(getId(), getCity(), getCommune(), getDistrict(), getVoivodeship());
     }
 
-    private MeasuringStationDetails(MeasuringStationDetailsBuilder builder) {
-        this.city = builder.city;
-        this.commune = builder.commune;
-        this.district = builder.district;
-        this.voivodeship = builder.voivodeship;
+    @Override
+    public String toString() {
+        return "MeasuringStationDetails{" +
+                "id=" + id +
+                ", city='" + city + '\'' +
+                ", commune='" + commune + '\'' +
+                ", district='" + district + '\'' +
+                ", voivodeship='" + voivodeship + '\'' +
+                '}';
     }
 
     public Long getId() {

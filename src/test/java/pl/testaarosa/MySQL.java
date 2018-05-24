@@ -14,9 +14,9 @@ public class MySQL {
 
         Connection conn = null;
         try {
-            String username = "testaarosa";
+            String username = "sema";
             String password = "Sd7udnmDnU_?";
-            String dbUrl = "jdbc:mysql://mysql4.gear.host/testaarosa";
+            String dbUrl = "jdbc:mysql://mysql4.gear.host/sema";
             conn = DriverManager.getConnection(dbUrl, username, password);
             assertFalse(conn.isClosed());
             //      System.out.println("Connection Established to MYSQL Database");

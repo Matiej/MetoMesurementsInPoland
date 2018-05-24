@@ -68,7 +68,6 @@ public class MeasuringStationDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MeasuringStationDto)) return false;
-        if (!super.equals(o)) return false;
         MeasuringStationDto that = (MeasuringStationDto) o;
         return getId() == that.getId() &&
                 Objects.equals(getStationName(), that.getStationName()) &&
@@ -81,7 +80,7 @@ public class MeasuringStationDto {
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), getId(), getStationName(), getGegrLat(), getGegrLon(), getAddressStreet(), getCityDto());
+        return Objects.hash(getId(), getStationName(), getGegrLat(), getGegrLon(), getAddressStreet(), getCityDto());
     }
 
     @Override

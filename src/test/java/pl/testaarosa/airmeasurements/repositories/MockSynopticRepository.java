@@ -91,4 +91,32 @@ public class MockSynopticRepository {
         synopticMeasurementsList.add(synopticMeasurements2);
         return synopticMeasurementsList;
     }
+
+    public SynopticMeasurements measurements1(){
+        LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
+        return new SynopticMeasurements.SynopticMeasurementsBuilder()
+                .id(3L)
+                .foreignId(133)
+                .city("Szczecin3")
+                .saveDate(date)
+                .temperature(19)
+                .windSpeed(11)
+                .airHumidity(26)
+                .pressure(999)
+                .build();
+    }
+
+    public SynopticMeasurements measurements2(){
+        LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
+        return new SynopticMeasurements.SynopticMeasurementsBuilder()
+                .id(3L)
+                .foreignId(133)
+                .city("Szczecin3")
+                .saveDate(date)
+                .temperature(19)
+                .windSpeed(11)
+                .airHumidity(26)
+                .pressure(999)
+                .build();
+    }
 }

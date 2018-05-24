@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockStationRepository {
+    private final MockAirRepository mockAirRepository = new MockAirRepository();
+    private final MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();
+    private final MockMeasuringStationDetailsRepository details = new MockMeasuringStationDetailsRepository();
 
-    public List<MeasuringStation> stations(){
-        MockAirRepository mockAirRepository = new MockAirRepository();
-        MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();
+    public List<MeasuringStation> stations() {
         List<MeasuringStation> result = new ArrayList<>();
 
         MeasuringStation station1 = new MeasuringStation();
@@ -21,7 +22,7 @@ public class MockStationRepository {
         station1.setLongitude("15");
         station1.setStreet("Piekna");
         station1.setCity("Warszawa");
-        station1.setStationDetails(new MeasuringStationDetails());
+        station1.setStationDetails(details.details1());
         station1.setAirMeasurementsList(mockAirRepository.airMeasurements1());
         station1.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements1());
 
@@ -33,7 +34,7 @@ public class MockStationRepository {
         station2.setLongitude("15");
         station2.setStreet("Morska");
         station2.setCity("Szczecin");
-        station2.setStationDetails(new MeasuringStationDetails());
+        station2.setStationDetails(details.details1());
         station2.setAirMeasurementsList(mockAirRepository.airMeasurements2());
         station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
 
@@ -42,7 +43,7 @@ public class MockStationRepository {
         return result;
     }
 
-    public MeasuringStation station(){
+    public MeasuringStation station() {
         MeasuringStation station = new MeasuringStation();
         station.setId(1L);
         station.setStationId(1);
@@ -51,9 +52,24 @@ public class MockStationRepository {
         station.setLongitude("");
         station.setStreet("");
         station.setCity("");
-        station.setStationDetails(new MeasuringStationDetails());
-        station.setAirMeasurementsList(new ArrayList<>());
-        station.setSynopticMeasurements(new ArrayList<>());
+        station.setStationDetails(details.details2());
+        station.setAirMeasurementsList(mockAirRepository.airMeasurements2());
+        station.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
+        return station;
+    }
+
+    public MeasuringStation station1() {
+        MeasuringStation station = new MeasuringStation();
+        station.setId(1L);
+        station.setStationId(1);
+        station.setStationName("");
+        station.setLatitude("");
+        station.setLongitude("");
+        station.setStreet("");
+        station.setCity("");
+        station.setStationDetails(details.details1());
+        station.setAirMeasurementsList(mockAirRepository.airMeasurements2());
+        station.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
         return station;
     }
 }

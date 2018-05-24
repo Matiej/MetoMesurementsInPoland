@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockOnlineRepository {
+    private final MockAirDtoRepository mockAirDtoRepository = new MockAirDtoRepository();
+    private final MockSynopticDtoRepository mockSynopticDtoRepository = new MockSynopticDtoRepository();
+
     public List<MeasuringStationOnLine> resultForOnlineController() {
         List<MeasuringStationOnLine> measuringStationOnLines = new ArrayList<>();
 
@@ -51,8 +54,8 @@ public class MockOnlineRepository {
         return measuringStationOnLines;
     }
 
-    public List<MeasuringStationOnLine> resultForOnlineService(){
-        List<MeasuringStationOnLine>  measuringStationOnLines = new ArrayList<>();
+    public List<MeasuringStationOnLine> resultForOnlineService() {
+        List<MeasuringStationOnLine> measuringStationOnLines = new ArrayList<>();
         LevelDto lvl = new LevelDto.Builder().id(1).indexLevelName("test name").build();
         AirMeasurementsDto air = new AirMeasurementsDto();
         air.setId(1);
@@ -112,6 +115,36 @@ public class MockOnlineRepository {
         measuringStationOnLines.add(msOnline1);
         measuringStationOnLines.add(msOnline2);
 
-         return measuringStationOnLines;
+        return measuringStationOnLines;
+    }
+
+    public MeasuringStationOnLine measuringStationOnLine1() {
+        return  new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(2)
+                .gegrLatitude(0.0)
+                .gegrLongitude(0.0)
+                .stationName("Test station")
+                .stationStreet("test")
+                .stationCity("te")
+                .stationDistrict("di")
+                .stationVoivodeship("vo")
+                .air(mockAirDtoRepository.airMeasurementsDto())
+                .synoptics(mockSynopticDtoRepository.synoptic1())
+                .build();
+    }
+
+    public MeasuringStationOnLine measuringStationOnLine2() {
+        return  new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(2)
+                .gegrLatitude(0.0)
+                .gegrLongitude(0.0)
+                .stationName("Test station")
+                .stationStreet("test")
+                .stationCity("te")
+                .stationDistrict("di")
+                .stationVoivodeship("vo")
+                .air(mockAirDtoRepository.airMeasurementsDto())
+                .synoptics(mockSynopticDtoRepository.synoptic1())
+                .build();
     }
 }

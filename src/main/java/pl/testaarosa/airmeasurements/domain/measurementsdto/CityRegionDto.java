@@ -46,26 +46,17 @@ public class CityRegionDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CityRegionDto)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof CityRegionDto)) return false;
         CityRegionDto that = (CityRegionDto) o;
-        return Objects.equals(getCommuneName(), that.getCommuneName()) && Objects.equals(getDistrictName(),
-                                                                                         that.getDistrictName()) && Objects
-                .equals(getVoivodeship(), that.getVoivodeship());
+        return Objects.equals(getCommuneName(), that.getCommuneName()) &&
+                Objects.equals(getDistrictName(), that.getDistrictName()) &&
+                Objects.equals(getVoivodeship(), that.getVoivodeship());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), getCommuneName(), getDistrictName(), getVoivodeship());
+        return Objects.hash(getCommuneName(), getDistrictName(), getVoivodeship());
     }
-
-
 }

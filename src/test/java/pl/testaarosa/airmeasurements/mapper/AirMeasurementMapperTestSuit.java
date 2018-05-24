@@ -5,21 +5,20 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
-import pl.testaarosa.airmeasurements.repositories.MockDto;
-import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
+import pl.testaarosa.airmeasurements.repositories.MockAirDtoRepository;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AirMeasurementMapperTest {
+public class AirMeasurementMapperTestSuit {
     private final MockAirRepository mockAirRepository = new MockAirRepository();
-    private final MockDto mockDto = new MockDto();
+    private final MockAirDtoRepository mockAirDtoRepository = new MockAirDtoRepository();
     private final AirMeasurementMapper airMeasurementMapper = new AirMeasurementMapper();
 
     @Test
     public void testMapToAirMeasurements(){
         AirMeasurements expect = mockAirRepository.airMeasurement();
-        AirMeasurements result = airMeasurementMapper.mapToAirMeasurements(mockDto.airMeasurementsDto());
+        AirMeasurements result = airMeasurementMapper.mapToAirMeasurements(mockAirDtoRepository.airMeasurementsDto());
         assertEquals(expect,result);
     }
 }

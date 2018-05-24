@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetMeasurementsServiceImplTest {
+public class GetMeasurementsServiceImplTestSuit {
     private final MockStationRepository mockStationRepository = new MockStationRepository();
     private final MockAirRepository mockAirRepository = new MockAirRepository();
     private final MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();
