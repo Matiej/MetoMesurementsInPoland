@@ -5,6 +5,9 @@ import pl.testaarosa.airmeasurements.domain.measurementsdto.LevelDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class MockAirDtoRepository {
 
@@ -79,8 +82,48 @@ public class MockAirDtoRepository {
         airMeasurementsDto.setStCalcDate("2018-05-05 12:01:05");
         airMeasurementsDto.setId(1);
 
+        AirMeasurementsDto airMeasurementsDto2 = new AirMeasurementsDto();
+        airMeasurementsDto2.setStIndexLevel(stIndexLevel);
+        airMeasurementsDto2.setSo2IndexLevel(so2IndexLevel);
+        airMeasurementsDto2.setNo2IndexLevel(no2IndexLevel);
+        airMeasurementsDto2.setCoIndexLevel(coIndexLevel);
+        airMeasurementsDto2.setPm10IndexLevel(pm10IndexLevel);
+        airMeasurementsDto2.setPm25IndexLevel(pm25IndexLevel);
+        airMeasurementsDto2.setO3IndexLevel(o3IndexLevel);
+        airMeasurementsDto2.setC6h6IndexLevel(c6h6IndexLevel);
+        airMeasurementsDto2.setStCalcDate("2018-05-12 12:05:01:05");
+        airMeasurementsDto2.setSo2SourceDataDate("2018-05-05 12:01:05");
+        airMeasurementsDto2.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementsDto2.setId(2);
+
+        AirMeasurementsDto airMeasurementsDto3 = new AirMeasurementsDto();
+        airMeasurementsDto3.setStIndexLevel(stIndexLevel);
+        airMeasurementsDto3.setSo2IndexLevel(so2IndexLevel);
+        airMeasurementsDto3.setNo2IndexLevel(no2IndexLevel);
+        airMeasurementsDto3.setCoIndexLevel(coIndexLevel);
+        airMeasurementsDto3.setPm10IndexLevel(pm10IndexLevel);
+        airMeasurementsDto3.setPm25IndexLevel(pm25IndexLevel);
+        airMeasurementsDto3.setO3IndexLevel(o3IndexLevel);
+        airMeasurementsDto3.setC6h6IndexLevel(c6h6IndexLevel);
+        airMeasurementsDto3.setStCalcDate("2018-05-12 12:05:01:05");
+        airMeasurementsDto3.setSo2SourceDataDate("2018-05-05 12:01:05");
+        airMeasurementsDto3.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementsDto3.setId(3);
+
         airMeasurementsDtoList.add(airMeasurementsDto);
         airMeasurementsDtoList.add(airMeasurementsDto1);
+        airMeasurementsDtoList.add(airMeasurementsDto2);
+        airMeasurementsDtoList.add(airMeasurementsDto3);
         return airMeasurementsDtoList;
+    }
+
+    public Map<Integer, AirMeasurementsDto> measurementsDtoMap(){
+        Map<Integer, AirMeasurementsDto> map = new TreeMap<>();
+        int i =0;
+        for (AirMeasurementsDto airMeasurementsDto : airMeasurementsDtos()) {
+            map.put(i, airMeasurementsDto);
+            i++;
+        }
+        return map;
     }
 }

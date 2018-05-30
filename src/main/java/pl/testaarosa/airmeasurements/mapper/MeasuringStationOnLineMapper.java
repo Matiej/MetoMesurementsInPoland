@@ -39,7 +39,9 @@ public class MeasuringStationOnLineMapper {
                                                                          .build();
     }
 
-    public List<MeasuringStationOnLine> mapToMeasuringStationList(List<MeasuringStationDto> measuringStationDtos, Map<Integer, AirMeasurementsDto> airMap, Map<String, SynopticMeasurementDto> synMap) {
+    public List<MeasuringStationOnLine> mapToMeasuringStationList(List<MeasuringStationDto> measuringStationDtos,
+                                                                  Map<Integer, AirMeasurementsDto> airMap,
+                                                                  Map<String, SynopticMeasurementDto> synMap) {
         List<MeasuringStationOnLine> measuringStationOnLineList = new LinkedList<>();
         for (MeasuringStationDto measuringStationDto : measuringStationDtos) {
             int stationId = measuringStationDto.getId();

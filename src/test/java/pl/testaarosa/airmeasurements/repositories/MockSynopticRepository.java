@@ -10,9 +10,10 @@ public class MockSynopticRepository {
 
     public List<SynopticMeasurements> synopticMeasurements1(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01);
+        LocalDateTime current = LocalDateTime.now().withNano(0);
         SynopticMeasurements synopticMeasurements = new SynopticMeasurements.SynopticMeasurementsBuilder()
                 .id(1L)
-                .foreignId(100)
+                .foreignId(11)
                 .city("Warszawa")
                 .saveDate(date)
                 .temperature(6)
@@ -23,13 +24,13 @@ public class MockSynopticRepository {
 
         SynopticMeasurements synopticMeasurements1 = new SynopticMeasurements.SynopticMeasurementsBuilder()
                 .id(2L)
-                .foreignId(110)
+                .foreignId(1)
                 .city("Warszawa")
-                .saveDate(date)
+                .saveDate(current)
                 .temperature(11)
-                .windSpeed(25)
-                .airHumidity(16)
-                .pressure(888)
+                .windSpeed(50)
+                .airHumidity(77)
+                .pressure(1001)
                 .build();
 
         SynopticMeasurements synopticMeasurements2 = new SynopticMeasurements.SynopticMeasurementsBuilder()
@@ -37,7 +38,7 @@ public class MockSynopticRepository {
                 .foreignId(130)
                 .city("Warszawa")
                 .saveDate(date)
-                .temperature(11)
+                .temperature(12)
                 .windSpeed(35)
                 .airHumidity(66)
                 .pressure(999)

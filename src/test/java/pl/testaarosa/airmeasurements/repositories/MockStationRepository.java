@@ -28,31 +28,44 @@ public class MockStationRepository {
 
         MeasuringStation station2 = new MeasuringStation();
         station2.setId(1L);
-        station2.setStationId(1);
-        station2.setStationName("Szczecin-Centrum");
+        station2.setStationId(2);
+        station2.setStationName("Poznan");
         station2.setLatitude("15");
         station2.setLongitude("15");
         station2.setStreet("Morska");
-        station2.setCity("Szczecin");
+        station2.setCity("Poznan");
         station2.setStationDetails(details.detailsList().get(0));
         station2.setAirMeasurementsList(mockAirRepository.airMeasurements2());
         station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
 
         MeasuringStation station3 = new MeasuringStation();
         station3.setId(1L);
-        station3.setStationId(1);
-        station3.setStationName("Szczecin-Centrum");
+        station3.setStationId(3);
+        station3.setStationName("Krakow");
         station3.setLatitude("15");
         station3.setLongitude("15");
         station3.setStreet("Morska");
-        station3.setCity("Szczecin");
+        station3.setCity("Krakow");
         station3.setStationDetails(details.detailsList().get(0));
         station3.setAirMeasurementsList(mockAirRepository.airMeasurements2());
         station3.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
 
+        MeasuringStation station4 = new MeasuringStation();
+        station4.setId(1L);
+        station4.setStationId(3);
+        station4.setStationName("Krakow");
+        station4.setLatitude("15");
+        station4.setLongitude("15");
+        station4.setStreet("Morska");
+        station4.setCity("Krakow");
+        station4.setStationDetails(details.detailsList().get(0));
+        station4.setAirMeasurementsList(mockAirRepository.airMeasurements2());
+        station4.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
+
         result.add(station1);
         result.add(station2);
         result.add(station3);
+        result.add(station4);
         return result;
     }
 

@@ -42,7 +42,7 @@ public class MeasuringOnlineControllerTestSuit {
 
     @Test
     public void getAllMeasuringStationsWithSynopticDataControllerTest() throws Exception {
-        List<MeasuringStationOnLine> stationOnLineList = mockOnlineRepository.resultForOnlineController();
+        List<MeasuringStationOnLine> stationOnLineList = mockOnlineRepository.measuringStationOnLineList();
         when(measuringOnlineServices.getAllMeasuringStations()).thenReturn(stationOnLineList);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/all"))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLineList)));
@@ -50,7 +50,7 @@ public class MeasuringOnlineControllerTestSuit {
 
     @Test
     public void getGivenCityMeasuringStationsWithSynopticDataControllerTest() throws Exception {
-        List<MeasuringStationOnLine> stationOnLines = mockOnlineRepository.resultForOnlineController();
+        List<MeasuringStationOnLine> stationOnLines = mockOnlineRepository.measuringStationOnLineList();
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
                 .thenReturn(stationOnLines);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/select").param("city", "wawa"))
@@ -59,7 +59,7 @@ public class MeasuringOnlineControllerTestSuit {
 
     @Test
     public void getHotestOnlineStationTest() throws Exception {
-        MeasuringStationOnLine stationOnLine = mockOnlineRepository.resultForOnlineController().get(0);
+        MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
         when(measuringOnlineServices.getHottestOnlineStation()).thenReturn(stationOnLine);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/hottest"))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(
@@ -68,7 +68,7 @@ public class MeasuringOnlineControllerTestSuit {
 
     @Test
     public void getColdestOnlineStationTest() throws Exception {
-        MeasuringStationOnLine stationOnLine = mockOnlineRepository.resultForOnlineController().get(0);
+        MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
         when(measuringOnlineServices.getColdestOnlineStation()).
                 thenReturn(stationOnLine);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/coldest"))

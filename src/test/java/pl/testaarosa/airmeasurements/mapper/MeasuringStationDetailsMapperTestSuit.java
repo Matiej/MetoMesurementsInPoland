@@ -16,7 +16,7 @@ public class MeasuringStationDetailsMapperTestSuit {
     @Test
     public void testMapToAirMeasurements(){
         MeasuringStationDetails expect = mockDetails.detailsList().get(0);
-        MeasuringStationDto stationDto = mockMStationDtoRepo.measuringStationDtoList().get(0);
+        MeasuringStationDto stationDto = mockMStationDtoRepo.measuringStationDtoList().get(2);
         MeasuringStationDetails result = mapper.mapToStationDetails(stationDto);
         assertEquals(expect,result);
     }

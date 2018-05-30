@@ -17,18 +17,17 @@ import java.util.stream.Collectors;
 
 @Service
 class ApiSupplierRetriever {
+    private RestTemplate restTemplate = new RestTemplate();
 
     public List<MeasuringStationDto> measuringStationApiProcessor() {
-        RestTemplate restTemplate = new RestTemplate();
         String url = MeasuringStationApiSupplier.allMeasuringStationsApi;
-        ResponseEntity<MeasuringStationDto[]> responseEntity = restTemplate.getForEntity(url,
-                                                                                         MeasuringStationDto[].class);
+        ResponseEntity<MeasuringStationDto[]> responseEntity = restTemplate
+                .getForEntity(url,MeasuringStationDto[].class);
         synopticMeasurementProcessor();
         return Arrays.stream(responseEntity.getBody()).collect(Collectors.toList());
     }
 
     public Map<String, SynopticMeasurementDto> synopticMeasurementProcessor() {
-        RestTemplate restTemplate = new RestTemplate();
         String url = SynopticStationApiSupplier.allSynopticStationsData;
         ResponseEntity<SynopticMeasurementDto[]> responseEntity = restTemplate.getForEntity(url,
                                                                                             SynopticMeasurementDto[].class);
@@ -37,7 +36,6 @@ class ApiSupplierRetriever {
     }
 
     public Map<Integer, AirMeasurementsDto> airMeasurementsProcessor() {
-        RestTemplate restTemplate = new RestTemplate();
         String url = MeasuringStationApiSupplier.measurementsAdi;
         Map<Integer, AirMeasurementsDto> airMap = new HashMap<>();
         for (MeasuringStationDto measuringStationDto : measuringStationApiProcessor()) {

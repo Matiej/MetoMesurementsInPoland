@@ -9,9 +9,9 @@ public class MeasuringStationDtoTestSuit {
     private final MockMeasuringStationDtoRepository mockMStDtoRepository = new MockMeasuringStationDtoRepository();
 
     @Test
-    public void testCityRegionDto(){
-        MeasuringStationDto measuringStationDto1 = mockMStDtoRepository.measuringStationDtoList().get(0);
-        MeasuringStationDto measuringStationDto2 = mockMStDtoRepository.measuringStationDtoList().get(1);
+    public void testStationDto(){
+        MeasuringStationDto measuringStationDto1 = mockMStDtoRepository.measuringStationDtoList().get(2);
+        MeasuringStationDto measuringStationDto2 = mockMStDtoRepository.measuringStationDtoList().get(3);
         new EqualsTester().addEqualityGroup(measuringStationDto1,measuringStationDto2).testEquals();
     }
 }

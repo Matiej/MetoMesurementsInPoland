@@ -12,7 +12,7 @@ public class SynopticMeasurementMapper {
 
     public SynopticMeasurements maptToSynopticMeasurement(SynopticMeasurementDto synDto) {
         SynopticMeasurementDto synMeasurements = Optional.ofNullable(synDto).orElse(emptyObj());
-        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDateTime currentDate = LocalDateTime.now().withNano(0);
         return new SynopticMeasurements.SynopticMeasurementsBuilder().foreignId(synMeasurements.getId())
                                                                      .city(synMeasurements.getCity())
                                                                      .saveDate(currentDate)

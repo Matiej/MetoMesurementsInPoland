@@ -29,7 +29,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder().title("Meteo")
                                    .description("Air and weather measurements in Poland")
                                    .version("0.1")
-                                   .contact(new Contact("Matiej@eNinja", "www.testaarosa.pl", "maciek@testaarosa.pl"))
+                                   .contact(new Contact("Matiej", "www.testaarosa.pl", "maciek@testaarosa.pl"))
                                    .license("Apache License 2.0")
                                    .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
                                    .build();

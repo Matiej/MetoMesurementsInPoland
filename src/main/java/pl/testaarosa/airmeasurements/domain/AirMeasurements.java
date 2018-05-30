@@ -113,11 +113,6 @@ public class AirMeasurements {
     }
 
     @Override
-    public String toString() {
-        return "AirMeasurements: " + "id: " + id + ", Station id: " + foreignId + ", measurementDate: " + measurementDate + "\n, saveDate: " + saveDate + ", airQuality: " + airQuality + "\n" + ", stIndexLevel: " + stIndexLevel + ", so2IndexLevel: " + so2IndexLevel + "\n" + ", no2IndexLevel: " + no2IndexLevel + ", coIndexLevel: " + coIndexLevel + "\n" + ", pm10IndexLevel: " + pm10IndexLevel + ", pm25IndexLevel: " + pm25IndexLevel + "\n" + ", o3IndexLevel: " + o3IndexLevel + ", c6h6IndexLevel: " + c6h6IndexLevel + "\n" + "_____________________________" + "\n";
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AirMeasurements)) return false;
@@ -143,6 +138,12 @@ public class AirMeasurements {
 
         return Objects.hash(getId(), getForeignId(), getMeasurementDate(), getSaveDate(), getAirQuality(), getStIndexLevel(), getSo2IndexLevel(), getNo2IndexLevel(), getCoIndexLevel(), getPm10IndexLevel(), getPm25IndexLevel(), getO3IndexLevel(), getC6h6IndexLevel(), getMeasuringStation());
     }
+
+    @Override
+    public String toString() {
+        return "AirMeasurements: " + "id: " + id + ", Station id: " + foreignId + ", measurementDate: " + measurementDate + "\n, saveDate: " + saveDate + ", airQuality: " + airQuality + "\n" + ", stIndexLevel: " + stIndexLevel + ", so2IndexLevel: " + so2IndexLevel + "\n" + ", no2IndexLevel: " + no2IndexLevel + ", coIndexLevel: " + coIndexLevel + "\n" + ", pm10IndexLevel: " + pm10IndexLevel + ", pm25IndexLevel: " + pm25IndexLevel + "\n" + ", o3IndexLevel: " + o3IndexLevel + ", c6h6IndexLevel: " + c6h6IndexLevel + "\n" + "_____________________________" + "\n";
+    }
+
 
     public static class AirMaesurementsBuilder {
         private Long id;

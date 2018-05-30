@@ -25,7 +25,6 @@ public class OnlineServicesTestSuit {
 
     @Before
     public void init() {
-//        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.resultForOnlineService());
         when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.measuringStationOnLineList());
     }
 

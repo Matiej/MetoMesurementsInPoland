@@ -11,7 +11,7 @@ public class MeasuringStationTestSuit {
     @Test
     public void testAirmeasurementsDto(){
         MeasuringStation station = mockStationRepository.stations().get(2);
-        MeasuringStation station1 = mockStationRepository.stations().get(1);
+        MeasuringStation station1 = mockStationRepository.stations().get(3);
         new EqualsTester().addEqualityGroup(station1, station).testEquals();
     }
 }

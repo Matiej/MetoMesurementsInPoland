@@ -10,7 +10,7 @@ public class SynopticMeasurementDtoTestSuit {
     @Test
     public void testCityRegionDto(){
         SynopticMeasurementDto synopticMeasurementDto1 = mocksynDto.mockSynopticDtoRepositories().get(0);
-        SynopticMeasurementDto synopticMeasurementDto2 = mocksynDto.mockSynopticDtoRepositories().get(1);
+        SynopticMeasurementDto synopticMeasurementDto2 = mocksynDto.mockSynopticDtoRepositories().get(4);
         new EqualsTester().addEqualityGroup(synopticMeasurementDto1,synopticMeasurementDto2).testEquals();
     }
 }

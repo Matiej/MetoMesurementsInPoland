@@ -82,42 +82,30 @@ public class SynopticMeasurements {
     }
 
     @Override
-    public String toString() {
-        return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure + "\n" + "_____________________________" + "\n";
-    }
-
-    @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SynopticMeasurements)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof SynopticMeasurements)) return false;
         SynopticMeasurements that = (SynopticMeasurements) o;
-        return getForeignId() == that.getForeignId() && Double.compare(that.getTemperature(),
-                                                                       getTemperature()) == 0 && Double.compare(that.getWindSpeed(),
-                                                                                                                getWindSpeed()) == 0 && Double
-                .compare(that.getAirHumidity(), getAirHumidity()) == 0 && Double.compare(that.getPressure(),
-                                                                                         getPressure()) == 0 && Objects.equals(
-                getId(),
-                that.getId()) && Objects.equals(getCity(), that.getCity()) && Objects.equals(getSaveDate(),
-                                                                                             that.getSaveDate()) && Objects
-                .equals(getMeasuringStation(), that.getMeasuringStation());
+        return getForeignId() == that.getForeignId() &&
+                Double.compare(that.getTemperature(), getTemperature()) == 0 &&
+                Double.compare(that.getWindSpeed(), getWindSpeed()) == 0 &&
+                Double.compare(that.getAirHumidity(), getAirHumidity()) == 0 &&
+                Double.compare(that.getPressure(), getPressure()) == 0 &&
+                Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getCity(), that.getCity()) &&
+                Objects.equals(getSaveDate(), that.getSaveDate()) &&
+                Objects.equals(getMeasuringStation(), that.getMeasuringStation());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(),
-                            getForeignId(),
-                            getCity(),
-                            getSaveDate(),
-                            getTemperature(),
-                            getWindSpeed(),
-                            getAirHumidity(),
-                            getPressure(),
-                            getMeasuringStation());
+        return Objects.hash(getId(), getForeignId(), getCity(), getSaveDate(), getTemperature(), getWindSpeed(), getAirHumidity(), getPressure(), getMeasuringStation());
+    }
+
+    @Override
+    public String toString() {
+        return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure + "\n" + "_____________________________" + "\n";
     }
 
     public static class SynopticMeasurementsBuilder {
