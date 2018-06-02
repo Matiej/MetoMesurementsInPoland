@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Optional.ofNullable;
+
 @Component
 public class AirMeasurementMapper {
 
@@ -17,7 +19,8 @@ public class AirMeasurementMapper {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime currentDate = LocalDateTime.now();
-        LocalDateTime toSql = LocalDateTime.parse(airDto.getStCalcDate(), formatter);
+
+        LocalDateTime toSql = LocalDateTime.parse(ofNullable(airDto.getStCalcDate()).orElse(currentDate.format(formatter)), formatter);
         return new AirMeasurements.AirMaesurementsBuilder().foreignId(airDto.getId())
                                                            .measurementDate(toSql)
                                                            .saveDate(currentDate.withNano(0))
