@@ -5,24 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
-public class Converter {
+public class Converter<T> {
 
-    public String jsonInString(List<?> objects) {
-
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonInString = "";
-
-        try {
-            jsonInString = mapper.writeValueAsString(objects);
-            jsonInString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objects);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return jsonInString;
-    }
-
-
-    public String jsonInString(Object object) {
+    public String jsonInString(T object) {
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonInString = "";
