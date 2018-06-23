@@ -11,6 +11,7 @@ import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 import pl.testaarosa.airmeasurements.services.MeasuringOnlineServices;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Api(description = "Get measurements directly from API")
 @RestController
@@ -26,26 +27,26 @@ public class MeasuringOnlineController {
 
     @ApiOperation(value = "Get all stations")
     @RequestMapping(value = "/stations/all", method = RequestMethod.GET)
-    public List<MeasuringStationOnLine> getAllMeasuringStationsWithSynopticDataController() {
+    public List<MeasuringStationOnLine> getAllMeasuringStationsWithSynopticDataController() throws ExecutionException, InterruptedException {
         return measuringOnlineServices.getAllMeasuringStations();
     }
 
     @ApiOperation(value = "Get all measurements stations for given city name")
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
     @RequestMapping(value = "/stations/select", method = RequestMethod.GET)
-    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticDataController(String city) {
+    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticDataController(String city) throws ExecutionException, InterruptedException {
         return measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city);
     }
 
     @ApiOperation(value = "Get hottest station")
     @RequestMapping(value = "/stations/hottest", method = RequestMethod.GET)
-    public MeasuringStationOnLine getHottestOnlineStation() {
+    public MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException {
         return measuringOnlineServices.getHottestOnlineStation();
     }
 
     @ApiOperation(value = "Get coldest station")
     @RequestMapping(value = "/stations/coldest", method = RequestMethod.GET)
-    public MeasuringStationOnLine getColdestOnlineStation() {
+    public MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException {
         return measuringOnlineServices.getColdestOnlineStation();
     }
 }

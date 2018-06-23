@@ -3,15 +3,16 @@ package pl.testaarosa.airmeasurements.services;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface MeasuringOnlineServices {
-    List<MeasuringStationOnLine> getAllMeasuringStations();
+    List<MeasuringStationOnLine> getAllMeasuringStations() throws ExecutionException, InterruptedException;
 
-    List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String cityName);
+    List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String cityName) throws ExecutionException, InterruptedException;
 
-    MeasuringStationOnLine getHottestOnlineStation();
+    MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException;
 
-    MeasuringStationOnLine getColdestOnlineStation();
+    MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException;
 
-    void addAllStations();
+    void addAllStations() throws ExecutionException, InterruptedException;
 }

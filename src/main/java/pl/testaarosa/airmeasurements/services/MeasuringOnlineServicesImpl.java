@@ -12,6 +12,7 @@ import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,8 +33,8 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
         this.apiSupplierRetriver = apiSupplierRetriver;
     }
 
-    public void addAllStations() {
-        for (MeasuringStationDto measuringStationDto : apiSupplierRetriver.measuringStationApiProcessor()) {
+    public void addAllStations() throws ExecutionException, InterruptedException {
+        for (MeasuringStationDto measuringStationDto : apiSupplierRetriver.measuringStationApiProcessor().get()) {
             int id = measuringStationDto.getId();
             if (!stRepository.existsAllByStationId(id)) {
                 MeasuringStation measuringStation = stMapper.mapToMeasuringSt(measuringStationDto);
@@ -45,12 +46,12 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     }
 
     @Override
-    public List<MeasuringStationOnLine> getAllMeasuringStations() {
+    public List<MeasuringStationOnLine> getAllMeasuringStations() throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure();
     }
 
     @Override
-    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String stationCity) {
+    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String stationCity) throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure()
                      .stream()
                      .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
@@ -58,7 +59,7 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     }
 
     @Override
-    public MeasuringStationOnLine getHottestOnlineStation() {
+    public MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure()
                      .stream()
                      .filter(f -> f.getSynoptics().getTemperature() < 9999)
@@ -67,7 +68,7 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     }
 
     @Override
-    public MeasuringStationOnLine getColdestOnlineStation() {
+    public MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure()
                      .stream()
                      .filter(f -> f.getSynoptics().getTemperature() < 9999)

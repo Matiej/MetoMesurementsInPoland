@@ -18,7 +18,10 @@ import javax.transaction.Transactional;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+//TODO refaktor konkret!.
 @Service
 public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
@@ -40,30 +43,30 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         this.airRepository = airRepository;
         this.measuringOnlineServices = measuringOnlineServices;
     }
-
+//TODO ale masakra metoda-> i to ja sam pisalem. ??
     @Transactional
     @Override
-    public String addMeasurements(int statioId) {
+    public String addMeasurements(int statioId) throws ExecutionException, InterruptedException {
         int id = 0;
         long startTime1 = System.currentTimeMillis();
-        for (MeasuringStationDto measuringStationDto : apiSupplierRetriever.measuringStationApiProcessor()) {
+        for (MeasuringStationDto measuringStationDto : apiSupplierRetriever.measuringStationApiProcessor().get()) {
             if (measuringStationDto.getId() == statioId) {
                 id = measuringStationDto.getId();
             }
         }
 
         if (id > 0) {
-            AirMeasurementsDto airDto = apiSupplierRetriever.airMeasurementsProcessor().get(statioId);
+            AirMeasurementsDto airDto = apiSupplierRetriever.airMeasurementsProcessor().get().get(statioId);
             measuringOnlineServices.addAllStations();
             SynopticMeasurementDto synoptic = new SynopticMeasurementDto();
             MeasuringStationDto msDto = new MeasuringStationDto();
 
-            for (MeasuringStationDto measuringStationDto : apiSupplierRetriever.measuringStationApiProcessor()) {
+            for (MeasuringStationDto measuringStationDto : apiSupplierRetriever.measuringStationApiProcessor().get()) {
                 if (measuringStationDto.getId() == statioId) {
                     msDto = measuringStationDto;
-                    synoptic = Optional.ofNullable(apiSupplierRetriever.synopticMeasurementProcessor()
-                                                                       .get(msDto.getCityDto().getCityName()))
-                                       .orElse(emptyObj());
+                    synoptic = Optional.ofNullable(apiSupplierRetriever.synopticMeasurementProcessor().get()
+                            .get(msDto.getCityDto().getCityName()))
+                            .orElse(emptyObj());
                 }
             }
 
@@ -84,22 +87,23 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             double execution = (endTime1 - startTime1) / 60000.0;
             return "Measurement execution time: " + df2.format(execution) + " minutes, saved as below: \n" + measuringStation + "\n" + "######################################################################################### \n" + synopticMeasurements + "\n" + "######################################################################################### \n" + airMeasurements;
         }
+        CompletableFuture.allOf().join();
         return " No data for measuring station Id: " + statioId;
     }
-
-    //@Transactional
+//TODO zrobic normallnie tj zwroci obiekt nie stringi-> fuknyjnie i jakoś rodzielić to na kilka metod. Moze AIRService, StationSevice i SynopticService
+    @Transactional
     @Override
-    public String addMeasurementsAllStations() {
+    public String addMeasurementsAllStations() throws ExecutionException, InterruptedException {
         measuringOnlineServices.addAllStations();
-        List<MeasuringStationDto> mSDtoList = apiSupplierRetriever.measuringStationApiProcessor();
+        List<MeasuringStationDto> mSDtoList = apiSupplierRetriever.measuringStationApiProcessor().get();
         long startTime1 = System.currentTimeMillis();
         for (MeasuringStationDto msDto : mSDtoList) {
             int id = msDto.getId();
-            AirMeasurementsDto airMeasurementsDto = apiSupplierRetriever.airMeasurementsProcessor().get(id);
+            AirMeasurementsDto airMeasurementsDto = apiSupplierRetriever.airMeasurementsProcessor().get().get(id);
             String cityName = Optional.ofNullable(msDto.getCityDto().getCityName()).orElse("no data");
-            SynopticMeasurementDto synoptic = Optional.ofNullable(apiSupplierRetriever.synopticMeasurementProcessor()
-                                                                                      .get(cityName))
-                                                      .orElse(emptyObj());
+            SynopticMeasurementDto synoptic = Optional.ofNullable(apiSupplierRetriever.synopticMeasurementProcessor().get()
+                    .get(cityName))
+                    .orElse(emptyObj());
             MeasuringStation measuringStation = measuringStationRepository.findByStationId(id);
 
             AirMeasurements airMeasurements = airMapper.mapToAirMeasurements(airMeasurementsDto);
@@ -114,6 +118,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             synopticMeasurements.setMeasuringStation(measuringStation);
             measuringStationRepository.save(measuringStation);
         }
+        CompletableFuture.allOf().join();
         long endTime1 = System.currentTimeMillis();
         DecimalFormat df2 = new DecimalFormat("###.###");
         double execution = (endTime1 - startTime1) / 60000.0;

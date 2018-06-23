@@ -11,6 +11,8 @@ import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
 import pl.testaarosa.airmeasurements.services.MeasurementStationProcessor;
 import pl.testaarosa.airmeasurements.services.MeasuringOnlineServicesImpl;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -24,12 +26,12 @@ public class OnlineServicesTestSuit {
     private MeasurementStationProcessor msProcessor;
 
     @Before
-    public void init() {
+    public void init() throws ExecutionException, InterruptedException {
         when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.measuringStationOnLineList());
     }
 
     @Test
-    public void testGetAllMeasuringStations() {
+    public void testGetAllMeasuringStations() throws ExecutionException, InterruptedException {
         int result = service.getAllMeasuringStations().size();
         int expect = 4;
         assertEquals(expect, result);
@@ -37,28 +39,28 @@ public class OnlineServicesTestSuit {
     }
 
     @Test
-    public void getGivenCityMeasuringStationsWithSynopticData() {
+    public void getGivenCityMeasuringStationsWithSynopticData() throws ExecutionException, InterruptedException {
         int result = service.getGivenCityMeasuringStationsWithSynopticData("Warsz").size();
         int expect = 2;
         assertEquals(expect, result);
     }
 
     @Test
-    public void testgetHotestOnlineStation() {
+    public void testgetHotestOnlineStation() throws ExecutionException, InterruptedException {
         MeasuringStationOnLine result = service.getHottestOnlineStation();
         MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(1);
         assertEquals(expect, result);
     }
 
     @Test
-    public void testgetHotestOnlineStation1() {
+    public void testgetHotestOnlineStation1() throws ExecutionException, InterruptedException {
         MeasuringStationOnLine result = service.getHottestOnlineStation();
         MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(1);
         assertTrue(result.getStationName().contains(expect.getStationName()));
     }
 
     @Test
-    public void testgetColdestOnlineStation() {
+    public void testgetColdestOnlineStation() throws ExecutionException, InterruptedException {
         MeasuringStationOnLine result = service.getColdestOnlineStation();
         MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(0);
         assertEquals(expect, result);

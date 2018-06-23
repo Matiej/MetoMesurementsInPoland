@@ -10,6 +10,7 @@ import pl.testaarosa.airmeasurements.mapper.MeasuringStationOnLineMapper;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class MeasurementStationProcessor {
@@ -23,10 +24,10 @@ public class MeasurementStationProcessor {
         this.measuringStationMapper = measuringStationMapper;
     }
 
-    public List<MeasuringStationOnLine> fillMeasuringStationListStructure() {
-        List<MeasuringStationDto> msDto = apiSupplierRetriever.measuringStationApiProcessor();
-        Map<String, SynopticMeasurementDto> synoptic = apiSupplierRetriever.synopticMeasurementProcessor();
-        Map<Integer, AirMeasurementsDto> air = apiSupplierRetriever.airMeasurementsProcessor();
+    public List<MeasuringStationOnLine> fillMeasuringStationListStructure() throws ExecutionException, InterruptedException {
+        List<MeasuringStationDto> msDto = apiSupplierRetriever.measuringStationApiProcessor().get();
+        Map<String, SynopticMeasurementDto> synoptic = apiSupplierRetriever.synopticMeasurementProcessor().get();
+        Map<Integer, AirMeasurementsDto> air = apiSupplierRetriever.airMeasurementsProcessor().get();
         return measuringStationMapper.mapToMeasuringStationList(msDto, air, synoptic);
     }
 }
