@@ -19,8 +19,8 @@ public class AirMeasurementsApp {
     @Bean
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(8);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(40);
         executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("Fill DataBase-> ");
         executor.initialize();

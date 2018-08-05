@@ -20,7 +20,12 @@ public class AirMeasurementMapper {
 
         LocalDateTime currentDate = LocalDateTime.now();
 
-        LocalDateTime toSql = LocalDateTime.parse(ofNullable(airDto.getStCalcDate()).orElse(currentDate.format(formatter)), formatter);
+        LocalDateTime toSql;
+        if(airDto.getStCalcDate()==null){
+            toSql = LocalDateTime.parse(currentDate.format(formatter));
+        } else {
+            toSql=LocalDateTime.parse(airDto.getStCalcDate());
+        }
         return new AirMeasurements.AirMaesurementsBuilder().foreignId(airDto.getId())
                                                            .measurementDate(toSql)
                                                            .saveDate(currentDate.withNano(0))

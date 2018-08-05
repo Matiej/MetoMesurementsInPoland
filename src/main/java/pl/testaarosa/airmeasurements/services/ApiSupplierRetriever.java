@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
@@ -12,10 +13,7 @@ import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementD
 import pl.testaarosa.airmeasurements.supplier.MeasuringStationApiSupplier;
 import pl.testaarosa.airmeasurements.supplier.SynopticStationApiSupplier;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -54,15 +52,19 @@ class ApiSupplierRetriever {
     public CompletableFuture<Map<Integer, AirMeasurementsDto>> airMeasurementsProcessor() throws ExecutionException, InterruptedException {
         String url = MeasuringStationApiSupplier.measurementsAdi;
 
-        LOGGER.info("LOOOKING FOR AIR MEASUREMENTS-> " );
+        LOGGER.info("LOOOKING FOR AIR MEASUREMENTS-> ");
+        try {
+            Map<Integer, AirMeasurementsDto> airMap = new HashMap<>();
 
-        Map<Integer, AirMeasurementsDto> airMap = new HashMap<>();
-
-        for (MeasuringStationDto measuringStationDto : measuringStationApiProcessor().get()) {
-            int stationId = measuringStationDto.getId();
-            AirMeasurementsDto obj = restTemplate.getForObject(url + stationId, AirMeasurementsDto.class);
-            airMap.put(stationId, obj);
+            for (MeasuringStationDto measuringStationDto : measuringStationApiProcessor().get()) {
+                int stationId = measuringStationDto.getId();
+                AirMeasurementsDto obj = restTemplate.getForObject(url + stationId, AirMeasurementsDto.class);
+                airMap.put(stationId, obj);
+            }
+            return CompletableFuture.completedFuture(Optional.ofNullable(airMap).orElse(new HashMap<>()));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return CompletableFuture.completedFuture(new HashMap<>());
         }
-        return CompletableFuture.completedFuture(airMap);
     }
 }
