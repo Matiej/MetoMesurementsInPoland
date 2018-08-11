@@ -24,7 +24,7 @@ public class AirMeasurementMapper {
         if(airDto.getStCalcDate()==null){
             toSql = LocalDateTime.parse(currentDate.format(formatter));
         } else {
-            toSql=LocalDateTime.parse(airDto.getStCalcDate());
+            toSql=LocalDateTime.parse(airDto.getStCalcDate(), formatter);
         }
         return new AirMeasurements.AirMaesurementsBuilder().foreignId(airDto.getId())
                                                            .measurementDate(toSql)
