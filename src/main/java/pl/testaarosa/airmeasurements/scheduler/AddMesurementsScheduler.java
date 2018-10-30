@@ -10,6 +10,7 @@ import pl.testaarosa.airmeasurements.services.AddMeasurementsService;
 import pl.testaarosa.airmeasurements.services.EmailNotifierService;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutionException;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
@@ -35,8 +36,8 @@ public class AddMesurementsScheduler {
             String report = addMeasurementsService.addMeasurementsAllStations();
             LOGGER.info(ANSI_BLUE + "Measurements added first try successful");
         } catch (Exception e) {
-            emailNotifierService.sendFirstErrorMail(e.getMessage());
             e.printStackTrace();
+            emailNotifierService.sendFirstErrorMail(e.toString());
             LOGGER.warn(ANSI_RED + "ADDING MEASUREMENTS ERROR, THROW EXCEPTION AND START SECOND TRY THREAD," +
                     " SAVE DATE AND SEND E-MAIL" + ANSI_RESET);
             whiteFlag = true;
@@ -52,14 +53,16 @@ public class AddMesurementsScheduler {
                     if (LocalDateTime.now().isAfter(timeStamp.plusMinutes(10))) {
                         LOGGER.info(ANSI_PURPLE + "Trying add all measurements second time. " + ANSI_RESET);
                         emailNotifierService.sendEmailBeforAddMeasuremetns("second");
+                        addMeasurementsService.addMeasurementsAllStations();
                         LOGGER.info(ANSI_BLUE + "Added measurements second try successful!");
                         whiteFlag = false;
                     }
-                } catch (TransactionException e) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                     LOGGER.warn(ANSI_RED + "ADDING MEASUREMENTS SECOND TRY ERROR THROW EXCEPTION. NEXT ATTEMPT TO DOWNLOAD" +
                             " MEASUREMENTS IN 8 HOURS" + ANSI_RESET);
                     whiteFlag=false;
-                    emailNotifierService.sendSecondErrorMail(e.getMessage());
+                    emailNotifierService.sendSecondErrorMail(e.toString());
                 }
             }
         };
