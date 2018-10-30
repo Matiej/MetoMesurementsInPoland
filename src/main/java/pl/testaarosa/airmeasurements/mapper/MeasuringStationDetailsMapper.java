@@ -11,9 +11,9 @@ public class MeasuringStationDetailsMapper {
     public MeasuringStationDetails mapToStationDetails(MeasuringStationDto stationDto) {
         CityRegionDto cityRegionDto = stationDto.getCityDto().getCityRegionDto();
         return new MeasuringStationDetails.MeasuringStationDetailsBuilder().city(stationDto.getCityDto().getCityName())
-                                                                           .commune(cityRegionDto.getCommuneName())
-                                                                           .district(cityRegionDto.getDistrictName())
-                                                                           .voivodeship(cityRegionDto.getVoivodeship())
-                                                                           .build();
+                .commune(cityRegionDto.getCommuneName())
+                .district(cityRegionDto.getDistrictName())
+                .voivodeship(cityRegionDto.getVoivodeship())
+                .build();
     }
 }

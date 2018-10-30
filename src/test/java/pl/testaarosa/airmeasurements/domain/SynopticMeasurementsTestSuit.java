@@ -2,6 +2,7 @@ package pl.testaarosa.airmeasurements.domain;
 
 import com.google.common.testing.EqualsTester;
 import org.junit.Test;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;
 
 public class SynopticMeasurementsTestSuit {

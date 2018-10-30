@@ -1,6 +1,6 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

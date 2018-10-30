@@ -94,10 +94,10 @@ public class SynopticMeasurementDto {
         }
         SynopticMeasurementDto that = (SynopticMeasurementDto) o;
         return getId() == that.getId() && Double.compare(that.getTemperature(),
-                                                         getTemperature()) == 0 && Double.compare(that.getWindSpeed(),
-                                                                                                  getWindSpeed()) == 0 && Double
+                getTemperature()) == 0 && Double.compare(that.getWindSpeed(),
+                getWindSpeed()) == 0 && Double
                 .compare(that.getAirHumidity(), getAirHumidity()) == 0 && Double.compare(that.getPressure(),
-                                                                                         getPressure()) == 0 && Objects.equals(
+                getPressure()) == 0 && Objects.equals(
                 getCity(),
                 that.getCity());
     }

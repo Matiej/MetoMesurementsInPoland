@@ -1,5 +1,7 @@
 package pl.testaarosa.airmeasurements.domain;
 
+import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -27,7 +27,7 @@ class ApiSupplierRetriever {
     @Async
     public CompletableFuture<List<MeasuringStationDto>> measuringStationApiProcessor() {
 
-        LOGGER.info("LOOOKIG FOR MEASURING STATIONS-> ");
+        LOGGER.info("\u001B[33mLOOOKIG FOR MEASURING STATIONS-> \u001B[0m");
 
         String url = MeasuringStationApiSupplier.allMeasuringStationsApi;
         ResponseEntity<MeasuringStationDto[]> responseEntity = restTemplate
@@ -39,7 +39,7 @@ class ApiSupplierRetriever {
     @Async
     public CompletableFuture<Map<String, SynopticMeasurementDto>> synopticMeasurementProcessor() {
 
-        LOGGER.info("LOOOKING FOR SYNOPTIC MEASUREMENTES-> ");
+        LOGGER.info("\u001B[32mLOOOKING FOR SYNOPTIC MEASUREMENTES-> \u001B[0m");
 
         String url = SynopticStationApiSupplier.allSynopticStationsData;
         ResponseEntity<SynopticMeasurementDto[]> responseEntity = restTemplate.getForEntity(url,
@@ -52,7 +52,7 @@ class ApiSupplierRetriever {
     public CompletableFuture<Map<Integer, AirMeasurementsDto>> airMeasurementsProcessor() throws ExecutionException, InterruptedException {
         String url = MeasuringStationApiSupplier.measurementsAdi;
 
-        LOGGER.info("LOOOKING FOR AIR MEASUREMENTS-> ");
+        LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS-> \u001B[0m");
         try {
             Map<Integer, AirMeasurementsDto> airMap = new HashMap<>();
 

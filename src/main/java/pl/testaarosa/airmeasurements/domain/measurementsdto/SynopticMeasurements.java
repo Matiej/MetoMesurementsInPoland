@@ -1,6 +1,7 @@
-package pl.testaarosa.airmeasurements.domain;
+package pl.testaarosa.airmeasurements.domain.measurementsdto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -81,32 +81,32 @@ public class MeasuringStationOnLine {
         }
         MeasuringStationOnLine that = (MeasuringStationOnLine) o;
         return getId() == that.getId() && Double.compare(that.getGegrLatitude(),
-                                                         getGegrLatitude()) == 0 && Double.compare(that.getGegrLongitude(),
-                                                                                                   getGegrLongitude()) == 0 && Objects
+                getGegrLatitude()) == 0 && Double.compare(that.getGegrLongitude(),
+                getGegrLongitude()) == 0 && Objects
                 .equals(getStationName(), that.getStationName()) && Objects.equals(getStationStreet(),
-                                                                                   that.getStationStreet()) && Objects.equals(
+                that.getStationStreet()) && Objects.equals(
                 getStationCity(),
                 that.getStationCity()) && Objects.equals(getStationDistrict(),
-                                                         that.getStationDistrict()) && Objects.equals(
+                that.getStationDistrict()) && Objects.equals(
                 getStationVoivodeship(),
                 that.getStationVoivodeship()) && Objects.equals(getAir(),
-                                                                that.getAir()) && Objects.equals(getSynoptics(),
-                                                                                                 that.getSynoptics());
+                that.getAir()) && Objects.equals(getSynoptics(),
+                that.getSynoptics());
     }
 
     @Override
     public int hashCode() {
 
         return Objects.hash(getId(),
-                            getGegrLatitude(),
-                            getGegrLongitude(),
-                            getStationName(),
-                            getStationStreet(),
-                            getStationCity(),
-                            getStationDistrict(),
-                            getStationVoivodeship(),
-                            getAir(),
-                            getSynoptics());
+                getGegrLatitude(),
+                getGegrLongitude(),
+                getStationName(),
+                getStationStreet(),
+                getStationCity(),
+                getStationDistrict(),
+                getStationVoivodeship(),
+                getAir(),
+                getSynoptics());
     }
 
     @Override

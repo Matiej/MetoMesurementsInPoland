@@ -1,10 +1,9 @@
 package pl.testaarosa.airmeasurements.services;
 
-import pl.testaarosa.airmeasurements.domain.*;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
 
 import java.util.List;
 

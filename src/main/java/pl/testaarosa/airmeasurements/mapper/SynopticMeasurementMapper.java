@@ -1,7 +1,7 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package pl.testaarosa.airmeasurements.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
 
 import java.util.List;
 

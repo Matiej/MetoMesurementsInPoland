@@ -21,22 +21,22 @@ public class MeasuringStationOnLineMapper {
         SynopticMeasurementDto synop = Optional.ofNullable(synopticMeasurementDto).orElse(emptyObj());
         String cityName = measuringStationDto.getCityDto().getCityName();
         return new MeasuringStationOnLine.MeasuringStationOnLineBuilder().id(measuringStationDto.getId())
-                                                                         .gegrLatitude(Double.parseDouble(
-                                                                                 measuringStationDto.getGegrLat()))
-                                                                         .gegrLongitude(Double.parseDouble(
-                                                                                 measuringStationDto.getGegrLon()))
-                                                                         .stationName(measuringStationDto.getStationName())
-                                                                         .stationStreet(measuringStationDto.getAddressStreet())
-                                                                         .stationCity(cityName)
-                                                                         .stationDistrict(measuringStationDto.getCityDto()
-                                                                                                             .getCityRegionDto()
-                                                                                                             .getDistrictName())
-                                                                         .stationVoivodeship(measuringStationDto.getCityDto()
-                                                                                                                .getCityRegionDto()
-                                                                                                                .getVoivodeship())
-                                                                         .air(airMeasurementsDto)
-                                                                         .synoptics(synop)
-                                                                         .build();
+                .gegrLatitude(Double.parseDouble(
+                        measuringStationDto.getGegrLat()))
+                .gegrLongitude(Double.parseDouble(
+                        measuringStationDto.getGegrLon()))
+                .stationName(measuringStationDto.getStationName())
+                .stationStreet(measuringStationDto.getAddressStreet())
+                .stationCity(cityName)
+                .stationDistrict(measuringStationDto.getCityDto()
+                        .getCityRegionDto()
+                        .getDistrictName())
+                .stationVoivodeship(measuringStationDto.getCityDto()
+                        .getCityRegionDto()
+                        .getVoivodeship())
+                .air(airMeasurementsDto)
+                .synoptics(synop)
+                .build();
     }
 
     public List<MeasuringStationOnLine> mapToMeasuringStationList(List<MeasuringStationDto> measuringStationDtos,
@@ -47,8 +47,8 @@ public class MeasuringStationOnLineMapper {
             int stationId = measuringStationDto.getId();
             String stationCity = measuringStationDto.getCityDto().getCityName();
             measuringStationOnLineList.add(mapToMeasuringStation(measuringStationDto,
-                                                                 airMap.get(stationId),
-                                                                 synMap.get(stationCity)));
+                    airMap.get(stationId),
+                    synMap.get(stationCity)));
         }
         return measuringStationOnLineList;
     }

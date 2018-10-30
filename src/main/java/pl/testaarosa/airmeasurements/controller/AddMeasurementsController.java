@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,13 +24,15 @@ public class AddMeasurementsController {
         this.measurementsService = measurementsService;
     }
 
+    @Transactional
     @RequestMapping(value = "/station", method = RequestMethod.GET)
     @ApiOperation(value = "Add measurements from selected station")
-    @ApiImplicitParam(required = true, name = "id", value = "station Id", dataType = "int", paramType = "query")
+    @ApiImplicitParam(required = true, name = "id", value = "station Id", paramType = "query")
     public String addMeasurements(int id) throws ExecutionException, InterruptedException {
         return measurementsService.addMeasurements(id);
     }
 
+    @Transactional
     @ApiOperation(value = "Add all measurements from API. Warning! It takes about 90 minutes")
     @RequestMapping(value = "/station/all", method = RequestMethod.GET)
     public String allMeasurements() throws ExecutionException, InterruptedException {
