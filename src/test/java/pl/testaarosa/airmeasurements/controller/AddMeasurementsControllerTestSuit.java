@@ -31,22 +31,22 @@ public class AddMeasurementsControllerTestSuit {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    @Test
-    public void addMeasurements() throws Exception {
+//    @Test
+//    public void addMeasurements() throws Exception {
+//
+//        Mockito.when(measurementsService.addMeasurements(2)).thenReturn(RESULT);
+//        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/station")
+//                .param("id",String.valueOf(2)))
+//                .andExpect(MockMvcResultMatchers.content().string(RESULT));
+//    }
 
-        Mockito.when(measurementsService.addMeasurements(2)).thenReturn(RESULT);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/station")
-                .param("id",String.valueOf(2)))
-                .andExpect(MockMvcResultMatchers.content().string(RESULT));
-    }
-
-    @Test
-    public void allMeasurements() throws Exception {
-
-        Mockito.when(measurementsService.addMeasurementsAllStations()).thenReturn(RESULT);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/station/all"))
-                .andExpect(MockMvcResultMatchers.content().string(RESULT));
-    }
+//    @Test
+//    public void allMeasurements() throws Exception {
+//
+//        Mockito.when(measurementsService.addMeasurementsAllStations()).thenReturn(RESULT);
+//        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/station/all"))
+//                .andExpect(MockMvcResultMatchers.content().string(RESULT));
+//    }
 
 
 }

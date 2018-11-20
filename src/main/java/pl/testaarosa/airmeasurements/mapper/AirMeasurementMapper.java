@@ -54,7 +54,7 @@ public class AirMeasurementMapper {
         int l5 = air.getPm10IndexLevel().getId();
         int l6 = air.getPm25IndexLevel().getId();
         List<Integer> airLevels = Arrays.asList(l1, l2, l3, l4, l5, l6);
-        int level = airLevels.stream().mapToInt(l -> l).max().orElse(6);
+        int level = airLevels.stream().filter(t-> t<6).mapToInt(l -> l).max().orElse(6);
 
         switch (level) {
             case 0:
@@ -73,4 +73,5 @@ public class AirMeasurementMapper {
                 return MeasurementsAirLevel.NO_DATA;
         }
     }
+
 }

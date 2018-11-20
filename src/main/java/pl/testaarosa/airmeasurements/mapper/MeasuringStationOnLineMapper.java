@@ -20,7 +20,8 @@ public class MeasuringStationOnLineMapper {
 
         SynopticMeasurementDto synop = Optional.ofNullable(synopticMeasurementDto).orElse(emptyObj());
         String cityName = measuringStationDto.getCityDto().getCityName();
-        return new MeasuringStationOnLine.MeasuringStationOnLineBuilder().id(measuringStationDto.getId())
+        return new MeasuringStationOnLine.MeasuringStationOnLineBuilder()
+                .id(measuringStationDto.getId())
                 .gegrLatitude(Double.parseDouble(
                         measuringStationDto.getGegrLat()))
                 .gegrLongitude(Double.parseDouble(

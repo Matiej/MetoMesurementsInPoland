@@ -18,6 +18,10 @@ public class SynopticMeasurementDto {
     private double airHumidity;
     @JsonProperty("cisnienie")
     private double pressure;
+    @JsonProperty("data_pomiaru")
+    private String measurementDate;
+    @JsonProperty("godzina_pomiaru")
+    private String getMeasurementHour;
 
     public SynopticMeasurementDto() {
     }
@@ -77,6 +81,22 @@ public class SynopticMeasurementDto {
 
     public void setPressure(double pressure) {
         this.pressure = Optional.ofNullable(pressure).orElse(9999.0);
+    }
+
+    public String getMeasurementDate() {
+        return measurementDate;
+    }
+
+    public void setMeasurementDate(String measurementDate) {
+        this.measurementDate = measurementDate;
+    }
+
+    public String getGetMeasurementHour() {
+        return getMeasurementHour;
+    }
+
+    public void setGetMeasurementHour(String getMeasurementHour) {
+        this.getMeasurementHour = getMeasurementHour;
     }
 
     @Override

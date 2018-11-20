@@ -1,7 +1,7 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.junit.Test;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticDtoRepository;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;

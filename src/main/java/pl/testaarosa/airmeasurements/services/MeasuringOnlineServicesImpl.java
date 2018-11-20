@@ -1,7 +1,9 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
@@ -11,11 +13,13 @@ import pl.testaarosa.airmeasurements.mapper.MeasuringStationMapper;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
+@Scope(scopeName = "prototype")
 public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
 
     private final MeasurementStationProcessor msProc;
@@ -33,16 +37,21 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
         this.apiSupplierRetriver = apiSupplierRetriver;
     }
 
-    public void addAllStations() throws ExecutionException, InterruptedException {
+    @Transactional
+    @Override
+    public List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException {
+        List<MeasuringStation> measuringStationList = new LinkedList<>();
         for (MeasuringStationDto measuringStationDto : apiSupplierRetriver.measuringStationApiProcessor().get()) {
+            MeasuringStation measuringStation = stMapper.mapToMeasuringSt(measuringStationDto);
+            measuringStationList.add(measuringStation);
             int id = measuringStationDto.getId();
             if (!stRepository.existsAllByStationId(id)) {
-                MeasuringStation measuringStation = stMapper.mapToMeasuringSt(measuringStationDto);
                 MeasuringStationDetails stDetails = staDetMapper.mapToStationDetails(measuringStationDto);
                 measuringStation.setStationDetails(stDetails);
                 stRepository.save(measuringStation);
             }
         }
+        return  measuringStationList;
     }
 
     @Override

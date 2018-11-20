@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;

@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "STATION_DETAILS")
 public class MeasuringStationDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String city;
     private String commune;

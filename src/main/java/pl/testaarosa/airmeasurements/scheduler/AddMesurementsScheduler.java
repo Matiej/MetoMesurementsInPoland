@@ -33,7 +33,7 @@ public class AddMesurementsScheduler {
         LOGGER.info(ANSI_PURPLE + "Add measurements is starting and send e-mail notify" + ANSI_RESET);
         emailNotifierService.sendEmailBeforAddMeasuremetns("first");
         try {
-            String report = addMeasurementsService.addMeasurementsAllStations();
+            addMeasurementsService.addMeasurementsAllStations();
             LOGGER.info(ANSI_BLUE + "Measurements added first try successful");
         } catch (Exception e) {
             e.printStackTrace();

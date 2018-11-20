@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
 import pl.testaarosa.airmeasurements.repositories.MockStationRepository;

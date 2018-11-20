@@ -30,7 +30,8 @@ public class AirMeasurementsDto {
     }
 
     public void setId(int id) {
-        this.id = Optional.ofNullable(id).orElse(999);
+//        this.id = Optional.ofNullable(id).orElse(999);
+        this.id = id;
     }
 
     public String getStCalcDate() {
@@ -122,7 +123,7 @@ public class AirMeasurementsDto {
     }
 
     private LevelDto emptyObj() {
-        return (new LevelDto.Builder().id(0).indexLevelName("->No data available<-").build());
+        return (new LevelDto.Builder().id(6).indexLevelName("No data available").build());
     }
 
     private String currentData() {
@@ -143,17 +144,17 @@ public class AirMeasurementsDto {
         return getId() == that.getId() && Objects.equals(getStCalcDate(), that.getStCalcDate()) && Objects.equals(
                 getStIndexLevel(),
                 that.getStIndexLevel()) && Objects.equals(getSo2IndexLevel(),
-                                                          that.getSo2IndexLevel()) && Objects.equals(
+                that.getSo2IndexLevel()) && Objects.equals(
                 getSo2SourceDataDate(),
                 that.getSo2SourceDataDate()) && Objects.equals(getNo2IndexLevel(),
-                                                               that.getNo2IndexLevel()) && Objects.equals(
+                that.getNo2IndexLevel()) && Objects.equals(
                 getCoIndexLevel(),
                 that.getCoIndexLevel()) && Objects.equals(getCoSourceDataDate(),
-                                                          that.getCoSourceDataDate()) && Objects.equals(
+                that.getCoSourceDataDate()) && Objects.equals(
                 getPm10IndexLevel(),
                 that.getPm10IndexLevel()) && Objects.equals(getPm25IndexLevel(),
-                                                            that.getPm25IndexLevel()) && Objects.equals(getO3IndexLevel(),
-                                                                                                        that.getO3IndexLevel()) && Objects
+                that.getPm25IndexLevel()) && Objects.equals(getO3IndexLevel(),
+                that.getO3IndexLevel()) && Objects
                 .equals(getC6h6IndexLevel(), that.getC6h6IndexLevel());
     }
 
@@ -161,16 +162,16 @@ public class AirMeasurementsDto {
     public int hashCode() {
 
         return Objects.hash(getId(),
-                            getStCalcDate(),
-                            getStIndexLevel(),
-                            getSo2IndexLevel(),
-                            getSo2SourceDataDate(),
-                            getNo2IndexLevel(),
-                            getCoIndexLevel(),
-                            getCoSourceDataDate(),
-                            getPm10IndexLevel(),
-                            getPm25IndexLevel(),
-                            getO3IndexLevel(),
-                            getC6h6IndexLevel());
+                getStCalcDate(),
+                getStIndexLevel(),
+                getSo2IndexLevel(),
+                getSo2SourceDataDate(),
+                getNo2IndexLevel(),
+                getCoIndexLevel(),
+                getCoSourceDataDate(),
+                getPm10IndexLevel(),
+                getPm25IndexLevel(),
+                getO3IndexLevel(),
+                getC6h6IndexLevel());
     }
 }

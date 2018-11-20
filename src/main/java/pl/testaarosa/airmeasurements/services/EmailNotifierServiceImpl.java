@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.Mail;
+import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
 
 import java.time.LocalDateTime;
@@ -59,6 +60,22 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
             messeage.append("Station id: " + m.getId() + ", Latiude: "+m.getGegrLat() + ", Longitude: " + m.getGegrLon() +",\n");
             messeage.append("name: " + m.getStationName()+", address: " + m.getAddressStreet() + ", city: "
                     + m.getCityDto().getCityName() +"\n");
+        });
+        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail));
+        return messeage.toString();
+    }
+
+    public String sendEmailAfterDownloadMeasurementsN(List<MeasuringStation> stationList, String[] shortMess) {
+        String subject = "Meteo download status success.";
+        String messageHead = "Measured time of downloading data: " + shortMess[3] + " minutes\n" + shortMess[0]
+                + " air measurements, " +shortMess[2] + " synoptic measurementes added to data base correct."
+                + "\n  LIST OF STATIONS FOR WHICH MEASUREMENTS WERE TAKEN:\n";
+        StringBuilder messeage = new StringBuilder();
+        messeage.append(messageHead);
+        stationList.forEach(m-> {
+            messeage.append("Station id: " + m.getId() + ", Latiude: "+m.getLatitude() + ", Longitude: " + m.getLatitude() +",\n");
+            messeage.append("name: " + m.getStationName()+", address: " + m.getStreet() + ", city: "
+                    + m.getCity() +"\n");
         });
         emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail));
         return messeage.toString();

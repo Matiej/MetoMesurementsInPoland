@@ -1,7 +1,5 @@
 package pl.testaarosa.airmeasurements.domain;
 
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.Optional;
 @Table(name = "MEASUREMENT_STATION")
 public class MeasuringStation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "FOREIGN_ID")
     private int stationId;

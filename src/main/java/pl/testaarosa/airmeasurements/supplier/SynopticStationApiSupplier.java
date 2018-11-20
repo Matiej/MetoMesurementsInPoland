@@ -4,5 +4,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SynopticStationApiSupplier {
-    public final static String allSynopticStationsData = "https://danepubliczne.imgw.pl/api/data/synop";
+    public final static String ALL_SYNOPTIC_STATIONS_DATA = "https://danepubliczne.imgw.pl/api/data/synop";
+    public final static String SYNOPTIC_STATION_BY_CITY = "https://danepubliczne.imgw.pl/api/data/synop/station/";
 }

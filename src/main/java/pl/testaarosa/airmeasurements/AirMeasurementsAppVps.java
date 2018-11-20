@@ -28,7 +28,7 @@ public class AirMeasurementsAppVps extends SpringBootServletInitializer {
     @Bean
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(8);
         executor.setMaxPoolSize(40);
         executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("DataBase-> ");

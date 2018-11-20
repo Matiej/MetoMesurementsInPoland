@@ -1,7 +1,6 @@
-package pl.testaarosa.airmeasurements.domain.measurementsdto;
+package pl.testaarosa.airmeasurements.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,6 +21,8 @@ public class SynopticMeasurements {
     @Column(name = "AIR_HUMIDITY")
     private double airHumidity;
     private double pressure;
+    private String measurementDate;
+    private String measurementHour;
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "STATION_ID")
@@ -39,6 +40,8 @@ public class SynopticMeasurements {
         this.airHumidity = builder.airHumidity;
         this.pressure = builder.pressure;
         this.measuringStation = builder.measuringStation;
+        this.measurementDate = builder.measurementDate;
+        this.measurementHour = builder.measurementHour;
     }
 
     public Long getId() {
@@ -82,6 +85,14 @@ public class SynopticMeasurements {
         return saveDate;
     }
 
+    public String getMeasurementDate() {
+        return measurementDate;
+    }
+
+    public String getMeasurementHour() {
+        return measurementHour;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,6 +129,8 @@ public class SynopticMeasurements {
         private double windSpeed;
         private double airHumidity;
         private double pressure;
+        private String measurementDate;
+        private String measurementHour;
         private MeasuringStation measuringStation;
 
         public SynopticMeasurementsBuilder id(Long id) {
@@ -162,6 +175,16 @@ public class SynopticMeasurements {
 
         public SynopticMeasurementsBuilder measuringStation(MeasuringStation measuringStation) {
             this.measuringStation = measuringStation;
+            return this;
+        }
+
+        public SynopticMeasurementsBuilder measurementDate(String measurementDate) {
+            this.measurementDate = measurementDate;
+            return this;
+        }
+
+        public SynopticMeasurementsBuilder measurementHour(String measurementHour) {
+            this.measurementHour = measurementHour;
             return this;
         }
 

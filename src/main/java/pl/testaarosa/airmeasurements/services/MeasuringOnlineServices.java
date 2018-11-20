@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.services;
 
+import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface MeasuringOnlineServices {
 
     MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException;
 
-    void addAllStations() throws ExecutionException, InterruptedException;
+    List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException;
 }

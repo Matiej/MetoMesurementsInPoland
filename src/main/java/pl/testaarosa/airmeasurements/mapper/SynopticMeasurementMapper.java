@@ -1,7 +1,8 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurementsTmp;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
 
 import java.time.LocalDateTime;
@@ -21,10 +22,16 @@ public class SynopticMeasurementMapper {
                 .windSpeed(synMeasurements.getWindSpeed())
                 .airHumidity(synMeasurements.getAirHumidity())
                 .pressure(synMeasurements.getPressure())
+                .measurementDate(synDto.getMeasurementDate())
+                .measurementHour(synDto.getGetMeasurementHour())
                 .build();
     }
 
     private SynopticMeasurementDto emptyObj() {
         return new SynopticMeasurementDto(9999, "->>no data available<<-", 9999.0, 9999.0, 9999.0, 9999.0);
     }
+
+//    public SynopticMeasurementsTmp mapToSynopticMeasurementTmp(SynopticMeasurementDto dto) {
+//
+//    }
 }

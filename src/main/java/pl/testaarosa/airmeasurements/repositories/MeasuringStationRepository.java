@@ -11,4 +11,6 @@ public interface MeasuringStationRepository extends CrudRepository<MeasuringStat
     MeasuringStation findByStationId(int stationId);
 
     List<MeasuringStation> findAll();
+
+    MeasuringStation save(MeasuringStation measuringStation);
 }
