@@ -1,5 +1,7 @@
 package pl.testaarosa.airmeasurements.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,10 @@ public class MeasuringStation {
     private String city;
     @OneToOne(cascade = CascadeType.ALL)
     private MeasuringStationDetails stationDetails;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
     private List<AirMeasurements> airMeasurementsList = new ArrayList<>();
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
     private List<SynopticMeasurements> synopticMeasurements = new ArrayList<>();
 

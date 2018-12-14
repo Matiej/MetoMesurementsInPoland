@@ -75,7 +75,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         if (!isStationId(stationId)) {
             throw new NoSuchElementException(ANSI_RED + "Can't find station id: !" + stationId + ANSI_RESET);
         }
-        measuringStationRepository.findAll().stream().filter(m -> m.getStationId() == stationId).forEach(t -> {
+        measuringStationRepository.findAll().stream().parallel().filter(m -> m.getStationId() == stationId).forEach(t -> {
             try {
                 MeasuringStation t1 = t;
                 CompletableFuture<AirMeasurementsDto> airMeasurementsDtoCompletableFuture = null;

@@ -18,6 +18,7 @@ public class SynopticMeasurementMapperTestsuit {
         SynopticMeasurementDto synopticMeasurementDto = dtoRepository.mockSynopticDtoRepositories().get(1);
         SynopticMeasurements result = mapper.maptToSynopticMeasurement(synopticMeasurementDto);
         SynopticMeasurements expect = synopticRepository.synopticMeasurements1().get(1);
+        result.setSaveDate(expect.getSaveDate());
         assertEquals(expect,result);
     }
 }

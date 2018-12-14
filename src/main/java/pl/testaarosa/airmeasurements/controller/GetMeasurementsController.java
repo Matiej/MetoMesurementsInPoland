@@ -34,8 +34,9 @@ public class GetMeasurementsController {
         return getMeasurementsService.findAll();
     }
 
-    @ApiOperation(value = "Get air measurements from given date")
-    @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", paramType = "query")
+    @ApiOperation(value = "Get air measurements from given date", response = AirMeasurements.class)
+    @ApiImplicitParam(required = true, name = "date", dataType = "string",value = "Date in format: YYYY-MM-DD",
+            paramType = "query",  example = "2015-05-21")
     @RequestMapping(value = "/measurements/date", method = RequestMethod.GET)
     public List<AirMeasurements> findAllAirMeasurementsByDate(String date) {
         return getMeasurementsService.getAirMeasurements(date);
@@ -71,7 +72,7 @@ public class GetMeasurementsController {
     @ApiOperation(value = "Get hottest place from given date")
     @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", paramType = "query")
     @RequestMapping(value = "/measurements/hottest", method = RequestMethod.GET)
-    @ResponseStatus()
+//    @ResponseStatus()
     public SynopticMeasurements findAHottestPlaceByDate(String date) {
         return getMeasurementsService.getHottestPlaceGivenDate(date);
     }

@@ -9,8 +9,7 @@ import java.util.List;
 public class MockSynopticRepository {
 
     public List<SynopticMeasurements> synopticMeasurements1(){
-        LocalDateTime date = LocalDateTime.of(2018,05,05,12,01);
-        LocalDateTime current = LocalDateTime.now().withNano(0);
+        LocalDateTime date = LocalDateTime.of(2018,05,05,12,01).withNano(0);
         SynopticMeasurements synopticMeasurements = new SynopticMeasurements.SynopticMeasurementsBuilder()
                 .id(1L)
                 .foreignId(11)
@@ -26,7 +25,7 @@ public class MockSynopticRepository {
                 .id(2L)
                 .foreignId(1)
                 .city("Warszawa")
-                .saveDate(current)
+                .saveDate(date)
                 .temperature(11)
                 .windSpeed(50)
                 .airHumidity(77)

@@ -41,9 +41,9 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     public List<AirMeasurements> getAirMeasurements(String date) {
         LocalDate localDate = LocalDate.parse(date, formatter);
         return airRepository.findAll()
-                            .stream()
-                            .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
-                            .collect(Collectors.toList());
+                .stream()
+                .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -63,59 +63,58 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     @Override
     public SynopticMeasurements getHottestPlaceGivenDate(String date) {
         LocalDate localDate = LocalDate.parse(date, formatter);
-
         return synopticRepository.findAll()
-                                 .stream()
-                                 .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
-                                                                            .toLocalDate()
-                                                                            .isEqual(localDate))
-                                 .max(Comparator.comparing(SynopticMeasurements::getTemperature)
-                                                .thenComparing(SynopticMeasurements::getAirHumidity)
-                                                .reversed()
-                                                .thenComparing(SynopticMeasurements::getWindSpeed)
-                                                .reversed())
-                                 .orElse(null);
+                .stream()
+                .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
+                        .toLocalDate()
+                        .isEqual(localDate))
+                .max(Comparator.comparing(SynopticMeasurements::getTemperature)
+                        .thenComparing(SynopticMeasurements::getAirHumidity)
+                        .reversed()
+                        .thenComparing(SynopticMeasurements::getWindSpeed)
+                        .reversed())
+                .orElse(null);
     }
 
     @Override
     public SynopticMeasurements getColdestPlaceGivenDate(String date) {
         LocalDate localDate = LocalDate.parse(date, formatter);
         return synopticRepository.findAll()
-                                 .stream()
-                                 .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
-                                                                            .toLocalDate()
-                                                                            .isEqual(localDate))
-                                 .min(Comparator.comparing(SynopticMeasurements::getTemperature)
-                                                .thenComparing(SynopticMeasurements::getAirHumidity)
-                                                .reversed()
-                                                .thenComparing(SynopticMeasurements::getWindSpeed)
-                                                .reversed())
-                                 .orElse(null);
+                .stream()
+                .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
+                        .toLocalDate()
+                        .isEqual(localDate))
+                .min(Comparator.comparing(SynopticMeasurements::getTemperature)
+                        .thenComparing(SynopticMeasurements::getAirHumidity)
+                        .reversed()
+                        .thenComparing(SynopticMeasurements::getWindSpeed)
+                        .reversed())
+                .orElse(null);
     }
 
     @Override
     public List<SynopticMeasurements> getColdestPlaces() {
         return synopticRepository.findAll()
-                                 .stream()
-                                 .filter(a -> a.getTemperature() < 9999)
-                                 .sorted(Comparator.comparing(SynopticMeasurements::getTemperature)
-                                                   .thenComparing(SynopticMeasurements::getAirHumidity)
-                                                   .reversed()
-                                                   .thenComparing(SynopticMeasurements::getWindSpeed)
-                                                   .reversed())
-                                 .collect(Collectors.toList());
+                .stream()
+                .filter(a -> a.getTemperature() < 9999)
+                .sorted(Comparator.comparing(SynopticMeasurements::getTemperature)
+                        .thenComparing(SynopticMeasurements::getAirHumidity)
+                        .reversed()
+                        .thenComparing(SynopticMeasurements::getWindSpeed)
+                        .reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<SynopticMeasurements> getHottestPlaces() {
         return synopticRepository.findAll()
-                                 .stream()
-                                 .filter(a -> a.getTemperature() < 9999)
-                                 .sorted(Comparator.comparing(SynopticMeasurements::getTemperature)
-                                                   .reversed()
-                                                   .thenComparing(SynopticMeasurements::getAirHumidity)
-                                                   .thenComparing(SynopticMeasurements::getWindSpeed))
-                                 .collect(Collectors.toList());
+                .stream()
+                .filter(a -> a.getTemperature() < 9999)
+                .sorted(Comparator.comparing(SynopticMeasurements::getTemperature)
+                        .reversed()
+                        .thenComparing(SynopticMeasurements::getAirHumidity)
+                        .thenComparing(SynopticMeasurements::getWindSpeed))
+                .collect(Collectors.toList());
     }
 }
 

@@ -51,7 +51,7 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
                 stRepository.save(measuringStation);
             }
         }
-        return  measuringStationList;
+        return measuringStationList;
     }
 
     @Override
@@ -62,26 +62,29 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     @Override
     public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String stationCity) throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure()
-                     .stream()
-                     .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
-                     .collect(Collectors.toList());
+                .stream()
+                .parallel()
+                .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure()
-                     .stream()
-                     .filter(f -> f.getSynoptics().getTemperature() < 9999)
-                     .max(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
-                     .orElse(null);
+                .stream()
+                .parallel()
+                .filter(f -> f.getSynoptics().getTemperature() < 9999)
+                .max(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
+                .orElse(null);
     }
 
     @Override
     public MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException {
         return msProc.fillMeasuringStationListStructure()
-                     .stream()
-                     .filter(f -> f.getSynoptics().getTemperature() < 9999)
-                     .min(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
-                     .orElse(null);
+                .stream()
+                .parallel()
+                .filter(f -> f.getSynoptics().getTemperature() < 9999)
+                .min(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
+                .orElse(null);
     }
 }

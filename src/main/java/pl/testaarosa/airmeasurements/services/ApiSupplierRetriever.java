@@ -62,11 +62,17 @@ class ApiSupplierRetriever {
         try {
             Map<Integer, AirMeasurementsDto> airMap = new HashMap<>();
 
-            for (MeasuringStationDto measuringStationDto : measuringStationApiProcessor().get()) {
-                int stationId = measuringStationDto.getId();
+            measuringStationApiProcessor().get().parallelStream().forEach(a->{
+                int stationId = a.getId();
                 AirMeasurementsDto obj = restTemplate.getForObject(url + stationId, AirMeasurementsDto.class);
                 airMap.put(stationId, obj);
-            }
+            });
+
+//            for (MeasuringStationDto measuringStationDto : measuringStationApiProcessor().get()) {
+//                int stationId = measuringStationDto.getId();
+//                AirMeasurementsDto obj = restTemplate.getForObject(url + stationId, AirMeasurementsDto.class);
+//                airMap.put(stationId, obj);
+//            }
             return CompletableFuture.completedFuture(Optional.ofNullable(airMap).orElse(new HashMap<>()));
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(), e);

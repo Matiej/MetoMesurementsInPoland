@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import pl.testaarosa.airmeasurements.controller.MeasuringOnlineController;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
@@ -18,7 +17,8 @@ import pl.testaarosa.airmeasurements.services.MeasuringOnlineServices;
 
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeasuringOnlineControllerTestSuit {
@@ -44,8 +44,11 @@ public class MeasuringOnlineControllerTestSuit {
     public void getAllMeasuringStationsWithSynopticDataControllerTest() throws Exception {
         List<MeasuringStationOnLine> stationOnLineList = mockOnlineRepository.measuringStationOnLineList();
         when(measuringOnlineServices.getAllMeasuringStations()).thenReturn(stationOnLineList);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/all"))
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/all"))
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLineList)));
+        verify(measuringOnlineServices, times(1)).getAllMeasuringStations();
+        verifyNoMoreInteractions(measuringOnlineServices);
     }
 
     @Test
@@ -53,7 +56,7 @@ public class MeasuringOnlineControllerTestSuit {
         List<MeasuringStationOnLine> stationOnLines = mockOnlineRepository.measuringStationOnLineList();
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
                 .thenReturn(stationOnLines);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/select").param("city", "wawa"))
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/select").param("city", "wawa"))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLines)));
     }
 
@@ -61,19 +64,22 @@ public class MeasuringOnlineControllerTestSuit {
     public void getHotestOnlineStationTest() throws Exception {
         MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
         when(measuringOnlineServices.getHottestOnlineStation()).thenReturn(stationOnLine);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/hottest"))
-                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(
-                        stationOnLine)));
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/hottest"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLine)));
+        verify(measuringOnlineServices, times(1)).getHottestOnlineStation();
+        verifyNoMoreInteractions(measuringOnlineServices);
     }
 
     @Test
     public void getColdestOnlineStationTest() throws Exception {
         MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
-        when(measuringOnlineServices.getColdestOnlineStation()).
-                thenReturn(stationOnLine);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING+"/stations/coldest"))
-                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(
-                        stationOnLine)));
+        when(measuringOnlineServices.getColdestOnlineStation()).thenReturn(stationOnLine);
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
+                .andExpect(status().is(200))
+                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLine)));
+        verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
+        verifyNoMoreInteractions(measuringOnlineServices);
     }
 
 }
