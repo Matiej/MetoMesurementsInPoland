@@ -32,7 +32,7 @@ public class AddMeasurementsController {
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "No measuring station found"),
             @ApiResponse(code = 200, message = "Measurement saved successful"),
-            @ApiResponse(code = 400, message = "No measuring station for given ID")})
+            @ApiResponse(code = 400, message = "No measuring station found for given ID")})
     @ApiImplicitParam(required = true, name = "id", value = "station Id", paramType = "query")
     public ResponseEntity<Object> addMeasurements(Integer id) {
         try {

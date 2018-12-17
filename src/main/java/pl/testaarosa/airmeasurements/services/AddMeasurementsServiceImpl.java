@@ -1,6 +1,5 @@
 package pl.testaarosa.airmeasurements.services;
 
-import org.hibernate.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
 import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
 import pl.testaarosa.airmeasurements.mapper.SynopticMeasurementMapper;
@@ -25,9 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_PURPLE;
-import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_RED;
-import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_RESET;
+import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 //TODO refaktor konkret!.
 @Service
