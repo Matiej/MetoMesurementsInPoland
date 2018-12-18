@@ -1,16 +1,17 @@
 package pl.testaarosa.airmeasurements.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 import pl.testaarosa.airmeasurements.services.MeasuringOnlineServices;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
 @Api(description = "Get measurements directly from API")
@@ -25,29 +26,71 @@ public class MeasuringOnlineController {
         this.measuringOnlineServices = measuringOnlineServices;
     }
 
-    @ApiOperation(value = "Get all stations")
+    @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = MeasuringStationOnLine.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 200, message = "Measuring stations found"),
+            @ApiResponse(code = 400, message = "Can't get measuring stations information.")})
     @RequestMapping(value = "/stations/all", method = RequestMethod.GET)
-    public List<MeasuringStationOnLine> getAllMeasuringStationsWithSynopticDataController() throws ExecutionException, InterruptedException {
-        return measuringOnlineServices.getAllMeasuringStations();
+    public ResponseEntity<Object> getAllMeasuringStationsWithSynopticDataController() {
+        try {
+            return ResponseEntity.ok().body(measuringOnlineServices.getAllMeasuringStations());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("Can't get measuring stations information because of exception-> " + e.getMessage());
+        }
     }
 
-    @ApiOperation(value = "Get all measurements stations for given city name")
+    @ApiOperation(value = "Get all measurements stations for given city name", response = MeasuringStationOnLine.class)
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 200, message = "Measuring stations for given city found"),
+            @ApiResponse(code = 404, message = "Measuring stations for given city NOT found!"),
+            @ApiResponse(code = 400, message = "Can't get measuring stations for given city.")})
     @RequestMapping(value = "/stations/select", method = RequestMethod.GET)
-    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticDataController(String city) throws ExecutionException, InterruptedException {
-        return measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city);
+    public ResponseEntity<Object> getGivenCityMeasuringStationsWithSynopticDataController(String city) {
+        try {
+            return ResponseEntity.status(200).body(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city));
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("Can't get measuring stations form the city" + city+ "," +
+                    " because of exception-> " + e.getMessage());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(404).body("Measuring stations for city " + city + " NOT found because of error-> "
+            + e.getMessage());
+        }
     }
 
-    @ApiOperation(value = "Get hottest station")
+    @ApiOperation(value = "Get hottest station", response = MeasuringStationOnLine.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 200, message = "Hottest measuring stations for given city found"),
+            @ApiResponse(code = 400, message = "Can't get measuring stations for given city.")})
     @RequestMapping(value = "/stations/hottest", method = RequestMethod.GET)
-    public MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException {
-        return measuringOnlineServices.getHottestOnlineStation();
+    public ResponseEntity<Object> getHottestOnlineStation() {
+        try {
+            return ResponseEntity.ok().body(measuringOnlineServices.getHottestOnlineStation());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("Can't get Hottest measuring station because of exception-> " + e.getMessage());
+        }
     }
 
-    @ApiOperation(value = "Get coldest station")
+    @ApiOperation(value = "Get coldest station",response = MeasuringStationOnLine.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 200, message = "Coldest measuring stations for given city found"),
+            @ApiResponse(code = 400, message = "Can't get measuring stations for given city.")})
     @RequestMapping(value = "/stations/coldest", method = RequestMethod.GET)
-    public MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException {
-        return measuringOnlineServices.getColdestOnlineStation();
+    public ResponseEntity<Object> getColdestOnlineStation() {
+        try {
+            return ResponseEntity.ok(measuringOnlineServices.getColdestOnlineStation());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("Can't get Coldest measuring station because of exception-> " + e.getMessage());
+        }
     }
 }
 

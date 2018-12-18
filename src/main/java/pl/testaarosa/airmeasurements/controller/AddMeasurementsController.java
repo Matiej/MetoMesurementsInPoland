@@ -31,15 +31,15 @@ public class AddMeasurementsController {
     @ApiOperation(value = "Add measurements from selected station", response = MeasuringStation.class)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "No measuring station found"),
-            @ApiResponse(code = 200, message = "Measurement saved successful"),
-            @ApiResponse(code = 400, message = "No measuring station found for given ID")})
+            @ApiResponse(code = 201, message = "Measurement saved successful"),
+            @ApiResponse(code = 404, message = "No measuring station found for given ID")})
     @ApiImplicitParam(required = true, name = "id", value = "station Id", paramType = "query")
     public ResponseEntity<Object> addMeasurements(Integer id) {
         try {
-            return ResponseEntity.ok(measurementsService.addOne(id));
+            return ResponseEntity.status(201).body(measurementsService.addOne(id));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't find measuring station id: " + id);
+            return ResponseEntity.status(404).body("Can't find measuring station id: " + id);
         }
     }
 
@@ -47,18 +47,15 @@ public class AddMeasurementsController {
     @ApiOperation(value = "Add all measurements from API.", response = MeasuringStation.class)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "Can't add measurements."),
-            @ApiResponse(code = 200, message = "Measurements for all stations saved successful."),
+            @ApiResponse(code = 201, message = "Measurements for all stations saved successful."),
             @ApiResponse(code = 400, message = "Measurements for all stations wasn't saved.")})
     @RequestMapping(value = "/station/all", method = RequestMethod.GET)
     public ResponseEntity<Object> allMeasurements() {
         try {
-            return ResponseEntity.ok(measurementsService.addMeasurementsAllStations());
-        } catch (ExecutionException e) {
+            return ResponseEntity.status(201).body(measurementsService.addMeasurementsAllStations());
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't add measurements for all stations");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't add measurements for all stations");
+            return ResponseEntity.status(400).body("Can't add measurements for all stations" + e.getMessage());
         }
     }
 }

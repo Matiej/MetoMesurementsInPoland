@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
-@Scope(scopeName = "prototype")
+//@Scope(scopeName = "prototype")
 public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
 
     private final MeasurementStationProcessor msProc;

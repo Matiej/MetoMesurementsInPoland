@@ -34,7 +34,7 @@ public class AddMesurementsScheduler {
         emailNotifierService.sendEmailBeforAddMeasuremetns("first");
         try {
             addMeasurementsService.addMeasurementsAllStations();
-            LOGGER.info(ANSI_BLUE + "Measurements added first try successful");
+            LOGGER.info(ANSI_BLUE + "Measurements added first try successful"+ ANSI_RESET);
         } catch (Exception e) {
             e.printStackTrace();
             emailNotifierService.sendFirstErrorMail(e.toString());
