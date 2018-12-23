@@ -28,25 +28,25 @@ public class MeasuringOnlineController {
 
     @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = MeasuringStationOnLine.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Measuring stations found"),
-            @ApiResponse(code = 400, message = "Can't get measuring stations information.")})
+            @ApiResponse(code = 404, message = "Can't get measuring stations information.")})
     @RequestMapping(value = "/stations/all", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllMeasuringStationsWithSynopticDataController() {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.getAllMeasuringStations());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't get measuring stations information because of exception-> " + e.getMessage());
+            return ResponseEntity.status(503).body("Can't get measuring stations information because of exception-> " + e.getMessage());
         }
     }
 
     @ApiOperation(value = "Get all measurements stations for given city name", response = MeasuringStationOnLine.class)
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Measuring stations for given city found"),
-            @ApiResponse(code = 404, message = "Measuring stations for given city NOT found!"),
+            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI!  Measuring stations for given city NOT found!"),
             @ApiResponse(code = 400, message = "Can't get measuring stations for given city.")})
     @RequestMapping(value = "/stations/select", method = RequestMethod.GET)
     public ResponseEntity<Object> getGivenCityMeasuringStationsWithSynopticDataController(String city) {
@@ -54,42 +54,42 @@ public class MeasuringOnlineController {
             return ResponseEntity.status(200).body(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city));
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't get measuring stations form the city" + city+ "," +
+            return ResponseEntity.status(503).body("Can't get measuring stations form the city" + city+ "," +
                     " because of exception-> " + e.getMessage());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return ResponseEntity.status(404).body("Measuring stations for city " + city + " NOT found because of error-> "
+            return ResponseEntity.status(400).body("Measuring stations for city " + city + " NOT found because of error-> "
             + e.getMessage());
         }
     }
 
     @ApiOperation(value = "Get hottest station", response = MeasuringStationOnLine.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Hottest measuring stations for given city found"),
-            @ApiResponse(code = 400, message = "Can't get measuring stations for given city.")})
+            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! Can't get hottest measuring stations.")})
     @RequestMapping(value = "/stations/hottest", method = RequestMethod.GET)
     public ResponseEntity<Object> getHottestOnlineStation() {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.getHottestOnlineStation());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't get Hottest measuring station because of exception-> " + e.getMessage());
+            return ResponseEntity.status(503).body("Can't get Hottest measuring station because of exception-> " + e.getMessage());
         }
     }
 
     @ApiOperation(value = "Get coldest station",response = MeasuringStationOnLine.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Server error. Can't get measurement stations information."),
+            @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Coldest measuring stations for given city found"),
-            @ApiResponse(code = 400, message = "Can't get measuring stations for given city.")})
+            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! Can't get coldest measuring stations.")})
     @RequestMapping(value = "/stations/coldest", method = RequestMethod.GET)
     public ResponseEntity<Object> getColdestOnlineStation() {
         try {
             return ResponseEntity.ok(measuringOnlineServices.getColdestOnlineStation());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't get Coldest measuring station because of exception-> " + e.getMessage());
+            return ResponseEntity.status(503).body("Can't get Coldest measuring station because of exception-> " + e.getMessage());
         }
     }
 }
