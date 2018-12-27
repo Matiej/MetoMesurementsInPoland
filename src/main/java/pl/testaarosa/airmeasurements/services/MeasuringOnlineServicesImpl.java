@@ -12,9 +12,7 @@ import pl.testaarosa.airmeasurements.mapper.MeasuringStationDetailsMapper;
 import pl.testaarosa.airmeasurements.mapper.MeasuringStationMapper;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -39,6 +37,7 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
 
     @Transactional
     @Override
+    //TODO samo zło. Poprawic tą metodę i przenieść do innej klasy czy cos -> masakra
     public List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException {
         List<MeasuringStation> measuringStationList = new LinkedList<>();
         for (MeasuringStationDto measuringStationDto : apiSupplierRetriver.measuringStationApiProcessor().get()) {
@@ -55,27 +54,46 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     }
 
     @Override
-    public List<MeasuringStationOnLine> getAllMeasuringStations() throws ExecutionException, InterruptedException {
-        return msProc.fillMeasuringStationListStructure();
+    public List<MeasuringStationOnLine> getAllMeasuringStations() throws ExecutionException, InterruptedException, NoSuchElementException {
+        List<MeasuringStationOnLine> measuringStationOnLines = msProc.fillMeasuringStationListStructure();
+        if (measuringStationOnLines.isEmpty()) {
+            throw new NoSuchElementException("Can't find any online measuring stations");
+        }
+        return measuringStationOnLines;
     }
 
     @Override
-    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String stationCity) throws ExecutionException, InterruptedException {
-        return msProc.fillMeasuringStationListStructure()
-                .stream()
-                .parallel()
-                .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
-                .collect(Collectors.toList());
+    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String stationCity)
+            throws ExecutionException, InterruptedException, IllegalArgumentException, NoSuchElementException {
+        List<MeasuringStationOnLine> measuringStationOnLineList = new ArrayList<>();
+        if (stationCity.isEmpty()) {
+            throw new IllegalArgumentException("City name can't be empty!");
+        } else {
+            measuringStationOnLineList = msProc.fillMeasuringStationListStructure()
+                    .stream()
+                    .parallel()
+                    .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
+                    .collect(Collectors.toList());
+            if(measuringStationOnLineList.isEmpty()) {
+                throw new NoSuchElementException("Cant't find any stations for city: " + stationCity);
+            }
+        }
+
+        return measuringStationOnLineList;
     }
 
     @Override
-    public MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException {
-        return msProc.fillMeasuringStationListStructure()
+    public MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException, NoSuchElementException {
+        MeasuringStationOnLine measuringStationOnLine = msProc.fillMeasuringStationListStructure()
                 .stream()
                 .parallel()
                 .filter(f -> f.getSynoptics().getTemperature() < 9999)
                 .max(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
                 .orElse(null);
+        if(!Optional.ofNullable(measuringStationOnLine).isPresent()){
+            throw new NoSuchElementException("Can't find hottest measurement online");
+        }
+        return measuringStationOnLine;
     }
 
     @Override
