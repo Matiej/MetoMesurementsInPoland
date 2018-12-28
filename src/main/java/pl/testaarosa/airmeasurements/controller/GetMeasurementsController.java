@@ -1,10 +1,10 @@
 package pl.testaarosa.airmeasurements.controller;
 
 import io.swagger.annotations.*;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +14,6 @@ import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.services.GetMeasurementsService;
 
 import java.time.DateTimeException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Api(description = "Get measurements from database")
@@ -42,6 +41,9 @@ public class GetMeasurementsController {
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No measuring stations found!");
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(503).body("Server error. Can't get measurement stations information.");
         }
     }
 
@@ -83,6 +85,8 @@ public class GetMeasurementsController {
             return ResponseEntity.status(400).body("No measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
+        } catch (HibernateException e) {
+            return ResponseEntity.status(503).body("Data base server error. Can't get air measurements information.");
         }
     }
 

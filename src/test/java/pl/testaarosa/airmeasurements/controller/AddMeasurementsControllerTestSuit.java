@@ -72,7 +72,7 @@ public class AddMeasurementsControllerTestSuit {
         Mockito.when(measurementsService.addOne(2)).thenThrow(new NoSuchElementException("TestERROR NoSuchElement, wrong IP"));
         mockMvc.perform(get(MAPPING+"/station")
                 .param("id",String.valueOf(2)))
-                .andExpect(status().is(404));
+                .andExpect(status().is(400));
         verify(measurementsService, times(1)).addOne(2);
         verifyNoMoreInteractions(measurementsService);
     }
@@ -98,7 +98,7 @@ public class AddMeasurementsControllerTestSuit {
     public void shouldAddAllMeasurementsStatus400() throws Exception {
         Mockito.when(measurementsService.addMeasurementsAllStations()).thenThrow(new InterruptedException());
         mockMvc.perform(get(MAPPING+"/station/all"))
-                .andExpect(status().is(400));
+                .andExpect(status().is(503));
         verify(measurementsService, times(1)).addMeasurementsAllStations();
         verifyNoMoreInteractions(measurementsService);
     }

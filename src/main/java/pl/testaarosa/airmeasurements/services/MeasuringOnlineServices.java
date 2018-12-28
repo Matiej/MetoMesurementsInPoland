@@ -1,6 +1,5 @@
 package pl.testaarosa.airmeasurements.services;
 
-import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
 public interface MeasuringOnlineServices {
+
     List<MeasuringStationOnLine> getAllMeasuringStations() throws ExecutionException, InterruptedException, NoSuchElementException;
 
     List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String cityName)
@@ -15,7 +15,5 @@ public interface MeasuringOnlineServices {
 
     MeasuringStationOnLine getHottestOnlineStation() throws ExecutionException, InterruptedException, NoSuchElementException;
 
-    MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException;
-
-    List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException;
+    MeasuringStationOnLine getColdestOnlineStation() throws ExecutionException, InterruptedException, NoSuchElementException;
 }

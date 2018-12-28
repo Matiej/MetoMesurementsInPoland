@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.services;
 
+import org.hibernate.HibernateException;
 import org.springframework.core.convert.ConversionFailedException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
@@ -11,9 +12,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public interface GetMeasurementsService {
-    List<MeasuringStation> findAll() throws NoSuchElementException;
+    List<MeasuringStation> findAll() throws NoSuchElementException, HibernateException;
 
-    List<AirMeasurements> getAirMeasurements(String date) throws NoSuchElementException, DateTimeException;
+    List<AirMeasurements> getAirMeasurements(String date) throws NoSuchElementException, DateTimeException, HibernateException;
 
     List<AirMeasurements> getAirMeasurements(MeasurementsAirLevel measurementsAirLevel) throws RuntimeException;
 

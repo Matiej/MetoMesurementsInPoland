@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
+import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
+import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
 import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
+import pl.testaarosa.airmeasurements.mapper.MeasuringStationDetailsMapper;
+import pl.testaarosa.airmeasurements.mapper.MeasuringStationMapper;
 import pl.testaarosa.airmeasurements.mapper.SynopticMeasurementMapper;
 import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
@@ -38,13 +42,16 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final AirMeasurementRepository airRepository;
     private final MeasuringOnlineServices measuringOnlineServices;
     private final EmailNotifierService emailNotifierService;
+    private final MeasuringStationMapper stMapper;
+    private final MeasuringStationDetailsMapper staDetMapper;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
                                       AirMeasurementMapper airMapper, SynopticMeasurementMapper synopticMapper,
                                       SynopticMeasurementRepository synopticRepository,
                                       AirMeasurementRepository airRepository,
-                                      MeasuringOnlineServices measuringOnlineServices, EmailNotifierService emailNotifierService) {
+                                      MeasuringOnlineServices measuringOnlineServices, EmailNotifierService emailNotifierService,
+                                      MeasuringStationMapper stMapper,MeasuringStationDetailsMapper staDetMapper) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
         this.airMapper = airMapper;
@@ -53,14 +60,36 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         this.airRepository = airRepository;
         this.measuringOnlineServices = measuringOnlineServices;
         this.emailNotifierService = emailNotifierService;
+        this.stMapper = stMapper;
+        this.staDetMapper = staDetMapper;
     }
 
+    @Transactional
+    //TODO samo zło. Poprawic tą metodę i przenieść do innej klasy czy cos -> masakra
+    public List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException {
+        List<MeasuringStation> measuringStationList = new LinkedList<>();
+        for (MeasuringStationDto measuringStationDto : apiSupplierRetriever.measuringStationApiProcessor().get()) {
+            MeasuringStation measuringStation = stMapper.mapToMeasuringSt(measuringStationDto);
+            measuringStationList.add(measuringStation);
+            int id = measuringStationDto.getId();
+            if (!measuringStationRepository.existsAllByStationId(id)) {
+                MeasuringStationDetails stDetails = staDetMapper.mapToStationDetails(measuringStationDto);
+                measuringStation.setStationDetails(stDetails);
+                measuringStationRepository.save(measuringStation);
+            }
+        }
+        return measuringStationList;
+    }
+
+    @Transactional
+    @Override
     public MeasuringStation addOne(Integer stationId) {
         long startTime1 = System.currentTimeMillis();
         Map<String, SynopticMeasurementDto> synopticMeasurementsDtoMap = new HashMap<>();
         AtomicReference<MeasuringStation> measuringStation = new AtomicReference<MeasuringStation>();
         try {
-            measuringOnlineServices.addAllStations();
+//            measuringOnlineServices.addAllStations();
+            addAllStations();
             synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor().get());
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -119,7 +148,8 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         Map<String, SynopticMeasurementDto> synopticMeasurementsDtoMap = new HashMap<>();
         List<MeasuringStation> mSList = new ArrayList<>();
         try {
-            measuringOnlineServices.addAllStations();
+//            measuringOnlineServices.addAllStations();
+            addAllStations();
             synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor().get());
         } catch (ExecutionException e) {
             e.printStackTrace();

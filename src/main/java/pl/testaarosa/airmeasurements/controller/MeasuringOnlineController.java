@@ -94,7 +94,8 @@ public class MeasuringOnlineController {
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Coldest measuring stations for given city found"),
-            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! Can't get coldest measuring stations.")})
+            @ApiResponse(code = 400, message = "Can't find coldest online measurement!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! Can't get coldest measuring stations.")})
     @RequestMapping(value = "/stations/coldest", method = RequestMethod.GET)
     public ResponseEntity<Object> getColdestOnlineStation() {
         try {
@@ -102,6 +103,9 @@ public class MeasuringOnlineController {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return ResponseEntity.status(503).body("Can't get Coldest measuring station because of exception-> " + e.getMessage());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("Can't find coldest online measurement!");
         }
     }
 }

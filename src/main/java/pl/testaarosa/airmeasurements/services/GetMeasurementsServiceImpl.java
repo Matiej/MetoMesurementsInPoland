@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.services;
 
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.stereotype.Service;
@@ -37,24 +38,33 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     }
 
     @Override
-    public List<MeasuringStation> findAll() throws NoSuchElementException {
-        List<MeasuringStation> measuringStationList = stationRepository.findAll();
-        if (measuringStationList.isEmpty()) {
-            throw new NoSuchElementException("Can't find any measurements in data base");
-        } else {
-            return measuringStationList;
+    public List<MeasuringStation> findAll() throws NoSuchElementException, HibernateException{
+        try {
+            List<MeasuringStation> measuringStationList = stationRepository.findAll();
+            if (measuringStationList.isEmpty()) {
+                throw new NoSuchElementException("Can't find any measurements in data base");
+            } else {
+                return measuringStationList;
+            }
+        }catch (HibernateException e) {
+            throw new RuntimeException("There is some db problem: " + e.getMessage());
         }
     }
 
     @Override
-    public List<AirMeasurements> getAirMeasurements(String date) throws DateTimeException, NoSuchElementException {
+    public List<AirMeasurements> getAirMeasurements(String date) throws DateTimeException, NoSuchElementException, HibernateException {
         List<AirMeasurements> airMeasurementsList = new ArrayList<>();
         if (isValidDate(date)) {
-            LocalDate localDate = LocalDate.parse(date, formatter);
-            airMeasurementsList = airRepository.findAll()
-                    .stream()
-                    .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
-                    .collect(Collectors.toList());
+            try {
+                LocalDate localDate = LocalDate.parse(date, formatter);
+                airMeasurementsList = airRepository.findAll()
+                        .stream()
+                        .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
+                        .collect(Collectors.toList());
+            }catch (HibernateException e) {
+                e.printStackTrace();
+                throw new RuntimeException("There is some db connectionproblem: " + e.getMessage());
+            }
         } else if (!isValidDate(date)) {
             throw new DateTimeException("Wrong date format!");
         }

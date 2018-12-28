@@ -195,13 +195,53 @@ public class MeasuringOnlineControllerTestSuit {
     }
 
     @Test
-    public void getColdestOnlineStationTest() throws Exception {
+    public void shouldGetColdestOnlineMeasurement() throws Exception {
         MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
         when(measuringOnlineServices.getColdestOnlineStation()).thenReturn(stationOnLine);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
                 .andExpect(status().is(200))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLine)));
         verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shouldGetColdestOnlineMeasurementAndThrowsExecutionException() throws Exception {
+        when(measuringOnlineServices.getColdestOnlineStation())
+                .thenThrow(new ExecutionException(new Throwable("Get Coldest online measurements, throw ExecutionException and return 503 status")));
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
+                .andExpect(status().is(503));
+        verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shouldGetColdestOnlineMeasurementAndThrowsInterruptedException() throws Exception {
+        when(measuringOnlineServices.getColdestOnlineStation())
+                .thenThrow(new InterruptedException("Get Coldest online measurements, throw InterruptedException and return 503 status"));
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
+                .andExpect(status().is(503));
+        verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shouldGetColdestOnlineMeasurementAndThrowsNoSuchElementException() throws Exception {
+        when(measuringOnlineServices.getColdestOnlineStation())
+                .thenThrow(new NoSuchElementException("Get coldest online measurements, throws NoSuchElementException and return status 400"));
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
+                .andExpect(status().is(400));
+        verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shouldGetColdestOnlineMeasurementAndWrontURLTest() throws Exception {
+        MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
+        when(measuringOnlineServices.getColdestOnlineStation()).thenReturn(stationOnLine);
+        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest404"))
+                .andExpect(status().is(404));
+        verify(measuringOnlineServices, times(0)).getColdestOnlineStation();
         verifyNoMoreInteractions(measuringOnlineServices);
     }
 

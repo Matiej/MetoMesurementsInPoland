@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.controller;
 
+import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +21,9 @@ import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;
 import pl.testaarosa.airmeasurements.services.GetMeasurementsService;
 
+import java.time.DateTimeException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -49,7 +52,7 @@ public class GetMeasurementsControllerTestSuit {
     }
 
     @Test
-    public void testFindAll() throws Exception {
+    public void shouldFindAllStationsWithAllMeasurements() throws Exception {
         List<MeasuringStation> stations = mockStationRepository.stations();
         Mockito.when(service.findAll()).thenReturn(stations);
         String jsonContent = converter.jsonInString(stations);
@@ -61,7 +64,34 @@ public class GetMeasurementsControllerTestSuit {
     }
 
     @Test
-    public void testfindAllAirMeasurementsByDate() throws Exception {
+    public void shouldFindAllStationsWithAllMeasurementsAndThrowsNoSuchElementException() throws Exception {
+        List<MeasuringStation> stations = mockStationRepository.stations();
+        Mockito.when(service.findAll())
+                .thenThrow(new NoSuchElementException("Find all stations with all measurements, throws NoSuchElementException and return status 400"));
+        mockMvc.perform(get(MAPPING + "/stations/all"))
+                .andExpect(status().is(400));
+        verify(service, times(1)).findAll();
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void shouldFindAllStationsWithAllMeasurementsAndThrowsHibernateException() throws Exception {
+        Mockito.when(service.findAll())
+                .thenThrow(new HibernateException("Find all stations with all measurements, throws HibernateException and return status 503"));
+        mockMvc.perform(get(MAPPING + "/stations/all"))
+                .andExpect(status().is(503));
+    }
+
+    @Test
+    public void shouldFindAllStationsWithAllMeasurementsAndWrongURL() throws Exception {
+        mockMvc.perform(get(MAPPING + "/stations/all404"))
+                .andExpect(status().is(404));
+        verify(service, times(0)).findAll();
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void shouldFindAllAirMeasurementsByDate() throws Exception {
         List<AirMeasurements> airMeasurementsList = mockAirRepository.airMeasurements1();
         Mockito.when((service.getAirMeasurements("2018-05-05"))).thenReturn(airMeasurementsList);
         String jsonContent = converter.jsonInString(airMeasurementsList);
@@ -69,7 +99,49 @@ public class GetMeasurementsControllerTestSuit {
                 .param("date", "2018-05-05"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(jsonContent));
-        verify(service,times(1)).getAirMeasurements("2018-05-05");
+        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void shouldFindAllAirMeasurementsByDateAndThrowsNoSuchElementException() throws Exception {
+        Mockito.when((service.getAirMeasurements("2018-05-05"))).
+                thenThrow(new NoSuchElementException("Find all air measurements by given date, throws NoSuchElementException and return status 400"));
+        mockMvc.perform(get(MAPPING + "/measurements/date")
+                .param("date", "2018-05-05"))
+                .andExpect(status().is(400));
+        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void shouldFindAllAirMeasurementsByDateAndThrowsDateTimeException() throws Exception {
+        Mockito.when((service.getAirMeasurements("2018-05-05"))).
+                thenThrow(new DateTimeException("Find all air measurements by given date, throws NoSuchElementException and return status 406"));
+        mockMvc.perform(get(MAPPING + "/measurements/date")
+                .param("date", "2018-05-05"))
+                .andExpect(status().is(406));
+        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void shouldFindAllAirMeasurementsByDateAndThrowsHibernateException() throws Exception {
+        Mockito.when((service.getAirMeasurements("2018-05-05"))).
+                thenThrow(new HibernateException("Find all air measurements by given date, throws HibernateExceptionand return status 406"));
+        mockMvc.perform(get(MAPPING + "/measurements/date")
+                .param("date", "2018-05-05"))
+                .andExpect(status().is(503));
+        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    public void shouldFindAllAirMeasurementsByDateWrongURL() throws Exception {
+        mockMvc.perform(get(MAPPING + "/measurements/date404")
+                .param("date", "2018-05-05"))
+                .andExpect(status().is(404));
+        verify(service, times(0)).getAirMeasurements("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -81,7 +153,7 @@ public class GetMeasurementsControllerTestSuit {
                 .param("date", "2018-05-05"))
                 .andExpect(status().is(200))
                 .andExpect(content().json(converter.jsonInString(synopticMeasurement)));
-        verify(service,times(1)).getHottestPlaceGivenDate("2018-05-05");
+        verify(service, times(1)).getHottestPlaceGivenDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -93,7 +165,7 @@ public class GetMeasurementsControllerTestSuit {
                 .param("date", "2018-05-05"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(converter.jsonInString(synopticMeasurements)));
-        verify(service,times(1)).getColdestPlaceGivenDate("2018-05-05");
+        verify(service, times(1)).getColdestPlaceGivenDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -117,7 +189,7 @@ public class GetMeasurementsControllerTestSuit {
                 .param("date", "2018-05-11"))
                 .andExpect(status().is(200))
                 .andExpect(content().json(converter.jsonInString(synopticMeasurements)));
-        verify(service,times(1)).getSynopticMeasuremets("2018-05-11");
+        verify(service, times(1)).getSynopticMeasuremets("2018-05-11");
         verifyNoMoreInteractions(service);
     }
 
@@ -128,7 +200,7 @@ public class GetMeasurementsControllerTestSuit {
         mockMvc.perform(get(MAPPING + "/measurements/coldestTop"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(converter.jsonInString(measurementsList)));
-        verify(service,times(1)).getColdestPlaces();
+        verify(service, times(1)).getColdestPlaces();
         verifyNoMoreInteractions(service);
     }
 
@@ -139,7 +211,7 @@ public class GetMeasurementsControllerTestSuit {
         mockMvc.perform(get(MAPPING + "/measurements/hottestTop"))
                 .andExpect(status().is(200))
                 .andExpect(content().json(converter.jsonInString(measurementsList)));
-        verify(service,times(1)).getHottestPlaces();
+        verify(service, times(1)).getHottestPlaces();
         verifyNoMoreInteractions(service);
     }
 }
