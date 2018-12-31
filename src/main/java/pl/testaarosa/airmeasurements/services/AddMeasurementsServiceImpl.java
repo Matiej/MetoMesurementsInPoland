@@ -66,7 +66,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
     @Transactional
     //TODO samo zło. Poprawic tą metodę i przenieść do innej klasy czy cos -> masakra
-    public List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException {
+    private List<MeasuringStation> addAllStations() throws ExecutionException, InterruptedException {
         List<MeasuringStation> measuringStationList = new LinkedList<>();
         for (MeasuringStationDto measuringStationDto : apiSupplierRetriever.measuringStationApiProcessor().get()) {
             MeasuringStation measuringStation = stMapper.mapToMeasuringSt(measuringStationDto);

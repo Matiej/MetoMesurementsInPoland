@@ -14,18 +14,19 @@ import java.util.NoSuchElementException;
 public interface GetMeasurementsService {
     List<MeasuringStation> findAll() throws NoSuchElementException, HibernateException;
 
+    List<AirMeasurements> getAirMeasurements(MeasurementsAirLevel measurementsAirLevel) throws IllegalArgumentException,
+            NoSuchElementException, HibernateException;
+
     List<AirMeasurements> getAirMeasurements(String date) throws NoSuchElementException, DateTimeException, HibernateException;
 
-    List<AirMeasurements> getAirMeasurements(MeasurementsAirLevel measurementsAirLevel) throws RuntimeException;
+    List<SynopticMeasurements> getSynopticMeasuremets(String date) throws NoSuchElementException, DateTimeException, HibernateException;
 
-    List<SynopticMeasurements> getSynopticMeasuremets(String date) throws NoSuchElementException, DateTimeException;
+    SynopticMeasurements getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, HibernateException;
 
-    SynopticMeasurements getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException;
+    SynopticMeasurements getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, HibernateException;
 
-    SynopticMeasurements getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException;
+    List<SynopticMeasurements> getHottestPlaces() throws NoSuchElementException, HibernateException;
 
-    List<SynopticMeasurements> getColdestPlaces() throws NoSuchElementException;
-
-    List<SynopticMeasurements> getHottestPlaces() throws NoSuchElementException;
+    List<SynopticMeasurements> getColdestPlaces() throws NoSuchElementException, HibernateException;
 
 }

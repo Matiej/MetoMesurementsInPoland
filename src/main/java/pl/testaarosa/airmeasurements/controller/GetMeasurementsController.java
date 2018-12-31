@@ -28,7 +28,7 @@ public class GetMeasurementsController {
         this.getMeasurementsService = getMeasurementsService;
     }
 
-    @ApiOperation(value = "Get all stations")
+    @ApiOperation(value = "Get all measuring stations with synoptic & air measurements")
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Measurements for all stations loaded from db successful."),
@@ -47,7 +47,7 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get places by Air Quality", response = AirMeasurements.class)
+    @ApiOperation(value = "Get air measurements by Air Quality", response = AirMeasurements.class)
     @ApiImplicitParam(required = true, name = "airLevel", value = "Choose Air Quality", paramType = "query")
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get air measurements information."),
@@ -59,12 +59,14 @@ public class GetMeasurementsController {
     public ResponseEntity<Object> findPlaceByAirQuality(MeasurementsAirLevel airLevel) {
         try {
             return ResponseEntity.ok(getMeasurementsService.getAirMeasurements(airLevel));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(406).body("Not Acceptable! Incorrect air level type or wrong enum like: " + airLevel);
         } catch (NoSuchElementException | ConversionFailedException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No air measurements found for given air level: " + airLevel);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(406).body("Not Acceptable! Incorrect air level type or wrong enum like: " + airLevel);
+        } catch (HibernateException e) {
+            return ResponseEntity.status(503).body("Data base server error. Can't get air measurements information.");
         }
     }
 
@@ -107,48 +109,12 @@ public class GetMeasurementsController {
             return ResponseEntity.status(400).body("No measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
+        } catch (HibernateException e) {
+            return ResponseEntity.status(503).body("Data base server error. Can't get air synoptic information.");
         }
     }
 
-    @ApiOperation(value = "Get coldest place for given date")
-    @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
-            paramType = "query")
-    @ApiResponses(value = {
-            @ApiResponse(code = 503, message = "Server error. Can't get synoptic measurements information."),
-            @ApiResponse(code = 200, message = "Synoptic coldest measurement for given date loaded from db successful."),
-            @ApiResponse(code = 400, message = "No measurements for given date found."),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
-            @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
-    @RequestMapping(value = "/measurements/coldest", method = RequestMethod.GET)
-    public ResponseEntity<Object> findColdestPlaceByDate(String date) {
-        try {
-            return ResponseEntity.ok(getMeasurementsService.getColdestPlaceGivenDate(date));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found. ");
-        } catch (DateTimeException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
-        }
-    }
-
-    @ApiOperation(value = "Get 10 coldest measurements", response = SynopticMeasurements.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 503, message = "Server error. Can't get measurements information."),
-            @ApiResponse(code = 200, message = "Coldest top measurements for all stations loaded from db successful."),
-            @ApiResponse(code = 400, message = "No coldest measurements found!"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!")})
-    @RequestMapping(value = "/measurements/coldestTop", method = RequestMethod.GET)
-    public ResponseEntity<Object> findColdestPlaces() {
-        try {
-            return ResponseEntity.ok(getMeasurementsService.getColdestPlaces());
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(400).body("No coldest measurements found!");
-        }
-    }
-
-    @ApiOperation(value = "Get hottest place for given date", response = SynopticMeasurements.class)
+    @ApiOperation(value = "Get hottest place and synoptic measurements for given date", response = SynopticMeasurements.class)
     @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
             paramType = "query")
     @ApiResponses(value = {
@@ -163,14 +129,42 @@ public class GetMeasurementsController {
             return ResponseEntity.ok().body(getMeasurementsService.getHottestPlaceGivenDate(date));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("No hottest measurement found!");
+            return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
             e.printStackTrace();
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
     }
 
-    @ApiOperation(value = "Get 10 hottest measurements", response = SynopticMeasurements.class)
+    @ApiOperation(value = "Get coldest place and synoptic measurements for given date")
+    @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
+            paramType = "query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 503, message = "Server error. Can't get synoptic measurements information."),
+            @ApiResponse(code = 200, message = "Synoptic coldest measurement for given date loaded from db successful."),
+            @ApiResponse(code = 400, message = "No measurements for given date found."),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
+            @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
+    @RequestMapping(value = "/measurements/coldest", method = RequestMethod.GET)
+    public ResponseEntity<Object> findColdestPlaceByDate(String date) {
+        try {
+            return ResponseEntity.ok(getMeasurementsService.getColdestPlaceGivenDate(date));
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");
+        } catch (DateTimeException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
+        }
+    }
+
+    @ApiOperation(value = "Get top ten hottest measurements and places", response = SynopticMeasurements.class)
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurements information."),
             @ApiResponse(code = 200, message = "Hottest top measurements for all stations loaded from db successful."),
@@ -183,6 +177,26 @@ public class GetMeasurementsController {
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No coldest measurements found!");
+        } catch (HibernateException e) {
+            return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
+        }
+    }
+
+    @ApiOperation(value = "Get top ten coldest measurements and places", response = SynopticMeasurements.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 503, message = "Server error. Can't get measurements information."),
+            @ApiResponse(code = 200, message = "Coldest top measurements for all stations loaded from db successful."),
+            @ApiResponse(code = 400, message = "No coldest measurements found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!")})
+    @RequestMapping(value = "/measurements/coldestTop", method = RequestMethod.GET)
+    public ResponseEntity<Object> findColdestPlaces() {
+        try {
+            return ResponseEntity.ok(getMeasurementsService.getColdestPlaces());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("No coldest measurements found!");
+        } catch (HibernateException e) {
+            return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
     }
 }
