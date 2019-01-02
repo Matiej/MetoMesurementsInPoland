@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface AddMeasurementsService {
 
-    List<MeasuringStation> addMeasurementsAllStations() throws ExecutionException, InterruptedException;
+    List<MeasuringStation> addMeasurementsAllStations() throws RestClientException, HibernateException;
     MeasuringStation addOne(Integer stationId) throws NumberFormatException,RestClientException,
     HibernateException, NoSuchElementException;
 }

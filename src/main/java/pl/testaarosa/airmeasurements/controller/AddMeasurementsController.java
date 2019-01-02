@@ -32,7 +32,7 @@ public class AddMeasurementsController {
     @RequestMapping(value = "/station", method = RequestMethod.GET)
     @ApiOperation(value = "Add measurements from selected station", response = MeasuringStation.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "External server error. Can't add measurement for given stationId!"),
+            @ApiResponse(code = 500, message = "External REST API server error. Can't add measurement for given stationId!"),
             @ApiResponse(code = 503, message = "Server error. Can't add  measurement to data base."),
             @ApiResponse(code = 201, message = "Measurement saved successful"),
             @ApiResponse(code = 400, message = "No measuring station found for given ID"),
@@ -59,6 +59,7 @@ public class AddMeasurementsController {
 
     @ApiOperation(value = "Add all measurements from API for all stations.", response = MeasuringStation.class)
     @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "External REST API server error. Can't add measurements"),
             @ApiResponse(code = 503, message = "Server error. Can't add measurements."),
             @ApiResponse(code = 201, message = "Measurements for all stations saved successful."),
             @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! No measuring station found for given ID")})
@@ -66,9 +67,10 @@ public class AddMeasurementsController {
     public ResponseEntity<Object> allMeasurements() {
         try {
             return ResponseEntity.status(201).body(measurementsService.addMeasurementsAllStations());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(503).body("Can't add measurements for all stations" + e.getMessage());
+        } catch (RestClientException e) {
+            return ResponseEntity.status(500).body("Can't add measurements for all stations" + e.getMessage());
+        } catch (HibernateException e) {
+            return ResponseEntity.status(503).body("Server error. Can't add measurement to data base!");
         }
     }
 }

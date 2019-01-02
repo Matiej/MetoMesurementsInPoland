@@ -187,7 +187,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     }
 
     @Transactional
-    //TODO samo zło. Poprawic tą metodę i przenieść do innej klasy czy cos -> masakra
+    //TODO poprawić moze fora zlikwidować jaoś czy
     private List<MeasuringStation> addAllStations() throws RestClientException {
         List<MeasuringStation> measuringStationList = new LinkedList<>();
         try {
