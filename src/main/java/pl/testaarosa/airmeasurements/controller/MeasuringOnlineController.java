@@ -28,7 +28,7 @@ public class MeasuringOnlineController {
 
     @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = MeasuringStationOnLine.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 503, message = "Server error. Can't get online measuring stations information."),
+            @ApiResponse(code = 500, message = "Server error. Can't get online measuring stations information."),
             @ApiResponse(code = 200, message = "Measuring stations found successful"),
             @ApiResponse(code = 400, message = "Can not find any online measuring stations!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!")})
