@@ -2,15 +2,18 @@ package pl.testaarosa.airmeasurements.controller;
 
 import io.swagger.annotations.*;
 import org.hibernate.HibernateException;
-import org.hibernate.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.services.AddMeasurementsService;
 
+import javax.websocket.server.PathParam;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
@@ -29,19 +32,28 @@ public class AddMeasurementsController {
     @RequestMapping(value = "/station", method = RequestMethod.GET)
     @ApiOperation(value = "Add measurements from selected station", response = MeasuringStation.class)
     @ApiResponses(value = {
+            @ApiResponse(code = 500, message = "External server error. Can't add measurement for given stationId!"),
             @ApiResponse(code = 503, message = "Server error. Can't add  measurement to data base."),
             @ApiResponse(code = 201, message = "Measurement saved successful"),
             @ApiResponse(code = 400, message = "No measuring station found for given ID"),
-            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! No measuring station found for given ID")})
-    @ApiImplicitParam(required = true, name = "id", value = "station Id", paramType = "query")
-    public ResponseEntity<Object> addOneMeasurement(Integer id) {
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring station found for given ID"),
+            @ApiResponse(code = 406, message = "Not Acceptable! Station ID must be an INTEGER and can not be empty!")})
+    @ApiImplicitParam(required = true, name = "stationId", value = "Measuring station Id", dataType = "int", paramType = "query",
+            defaultValue = "114")
+    public ResponseEntity<Object> addOneMeasurement(Integer stationId) {
         try {
-            return ResponseEntity.status(201).body(measurementsService.addOne(id));
+            return ResponseEntity.status(201).body(measurementsService.addOne(stationId));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't find measuring station id: " + id);
+            return ResponseEntity.status(400).body("Can't find measuring station ID: " + stationId);
+        } catch (NumberFormatException | MethodArgumentTypeMismatchException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(406).body("Not Acceptable! Givens Station ID -> " + stationId +
+                    " must be an INTEGER and can not be empty!");
+        } catch (RestClientException e) {
+            return ResponseEntity.status(500).body("Can't add measurement for station-> " + stationId + " because of REST API error " + e.getMessage());
         } catch (HibernateException e) {
-            return ResponseEntity.status(503).body("Server error. Can't add measurement to data base for station:  " + id);
+            return ResponseEntity.status(503).body("Server error. Can't add measurement to data base for station:  " + stationId);
         }
     }
 

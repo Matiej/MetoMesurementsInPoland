@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
@@ -68,58 +69,16 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         this.staDetMapper = staDetMapper;
     }
 
-//    @Transactional
-//    @Override
-//    public MeasuringStation addOne(Integer stationId) throws RestClientException, HibernateException {
-//        long startTime1 = System.currentTimeMillis();
-//        AtomicReference<MeasuringStation> measuringStation = new AtomicReference<MeasuringStation>();
-//        Map<String, SynopticMeasurementDto> synopticMeasurementsDtoMap = new HashMap<>();
-//        addAllStations();
-//        synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor().get());
-//
-//        if (!isStationIdInDb(stationId)) {
-//            throw new NoSuchElementException(ANSI_RED + "Can't find station id: !" + stationId + ANSI_RESET);
-//        }
-//        measuringStationRepository.findAll().stream().parallel().filter(m -> m.getStationId() == stationId).forEach(t -> {
-//
-//            MeasuringStation t1 = t;
-//            CompletableFuture<AirMeasurementsDto> airMeasurementsDtoCompletableFuture = apiSupplierRetriever.airMeasurementsProcessorNew(t1.getStationId());
-//
-//            CompletableFuture.allOf(airMeasurementsDtoCompletableFuture).join();
-//            AirMeasurements airMeasurements = airMapper.mapToAirMeasurements(airMeasurementsDtoCompletableFuture.get());
-//            try {
-//                if (airMeasurements.getForeignId() == t.getStationId()) {
-//                    airMeasurements.setMeasuringStation(t1);
-//                    airRepository.save(airMeasurements);
-//                    t1.getAirMeasurementsList().add(airMeasurements);
-//                }
-//                if (synopticMeasurementsDtoMap.keySet().contains(t1.getCity())) {
-//                    SynopticMeasurements synopticMeasurements = synopticMapper.maptToSynopticMeasurement(synopticMeasurementsDtoMap.get(t.getCity()));
-//                    synopticMeasurements.setMeasuringStation(t1);
-//                    synopticRepository.save(synopticMeasurements);
-//                    LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT FOR STATION ID -> " + t1.getStationId() + " IN THE CITY -> " + t1.getCity() + ANSI_RESET);
-//                    t1.getSynopticMeasurements().add(synopticMeasurements);
-//                }
-//                measuringStation.set(measuringStationRepository.save(t1));
-//            } catch (HibernateException e) {
-//                e.printStackTrace();
-//                throw new RuntimeException("There is some db problem: " + e.getMessage());
-//            }
-//        });
-//        String timeer = timeer(System.currentTimeMillis() - startTime1);
-//        LOGGER.info("Measurement execution time: " + timeer);
-//        return measuringStation.get();
-//    }
     @Transactional
     @Override
-    public MeasuringStation addOne(Integer stationId) throws IllegalArgumentException,RestClientException,
+    public MeasuringStation addOne(Integer stationId) throws NumberFormatException,RestClientException,
             HibernateException, NoSuchElementException {
         long startTime1 = System.currentTimeMillis();
         AtomicReference<MeasuringStation> measuringStation = new AtomicReference<>();
         Map<String, SynopticMeasurementDto> synopticMeasurementsDtoMap = new HashMap<>();
         if(!Optional.ofNullable(stationId).isPresent() && stationId.toString().matches("^[0-9]*$")) {
             LOGGER.error("StationID -> " + stationId +" is empty or format is incorrect!");
-            throw new IllegalArgumentException("StationID -> " + stationId +" is empty or format is incorrect!");
+            throw new NumberFormatException("StationID -> " + stationId +" is empty or format is incorrect!");
         }
         try {
             addAllStations();
@@ -136,8 +95,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                 try {
                     airMeasurements = airMapper.mapToAirMeasurements(airMeasurementsDtoCompletableFuture.get());
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    throw new RestClientException("Can't add measurements for station-> " + stationId + " because of REST API error" + e.getMessage());
+                    throw new RestClientException(e.getMessage());
                 }
                 try {
                     if (airMeasurements.getForeignId() == t.getStationId()) {
@@ -159,7 +117,8 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                 }
             });
         } catch (ExecutionException|InterruptedException e) {
-            throw new RestClientException("Can't add measurements for station-> " + stationId + " because of REST API error" + e.getMessage());
+            e.printStackTrace();
+            throw new RestClientException("Can't add measurements for station-> " + stationId + " because of REST API error");
         }
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         LOGGER.info("Measurement execution time: " + timeer);
@@ -177,7 +136,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor().get());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            throw new RestClientException("Can't find any measuring stations because of REST API error-> " + e.getMessage());
+            throw new RestClientException(e.getMessage());
         }
         AtomicInteger counterAir = new AtomicInteger();
         AtomicInteger counterMeas = new AtomicInteger();
@@ -237,14 +196,18 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                 measuringStationList.add(measuringStation);
                 int id = measuringStationDto.getId();
                 if (!measuringStationRepository.existsAllByStationId(id)) {
-                    MeasuringStationDetails stDetails = staDetMapper.mapToStationDetails(measuringStationDto);
-                    measuringStation.setStationDetails(stDetails);
-                    measuringStationRepository.save(measuringStation);
+                    try {
+                        MeasuringStationDetails stDetails = staDetMapper.mapToStationDetails(measuringStationDto);
+                        measuringStation.setStationDetails(stDetails);
+                        measuringStationRepository.save(measuringStation);
+                    } catch (HibernateException e) {
+                        throw new RuntimeException("External data base server ERROR! Cant' add any measuring station to data base " + e.getMessage());
+                    }
                 }
             }
             return measuringStationList;
         } catch (InterruptedException | ExecutionException e) {
-            throw new RestClientException("Can't find any measuring stations because of REST API error-> " + e.getMessage());
+            throw new RestClientException(" " + e.getMessage());
         }
     }
 

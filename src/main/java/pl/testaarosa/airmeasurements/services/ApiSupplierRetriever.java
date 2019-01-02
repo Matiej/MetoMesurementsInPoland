@@ -42,7 +42,7 @@ class ApiSupplierRetriever {
             return CompletableFuture.completedFuture(Arrays.stream(responseEntity.getBody()).collect(Collectors.toList()));
         } catch (RestClientException e) {
             e.printStackTrace();
-            throw new RuntimeException("Can't find any measuring station because of REST API error-> " + e.getMessage());
+            throw new RuntimeException(" REST API CONNECTION ERROR-> " + e.getMessage());
         }
     }
 
@@ -58,7 +58,7 @@ class ApiSupplierRetriever {
                     .collect(Collectors.toMap(SynopticMeasurementDto::getCity, v -> v)));
         } catch (RestClientException e) {
             e.printStackTrace();
-            throw new RuntimeException("Can't find any measurement because of REST API error-> " + e.getMessage());
+            throw new RuntimeException("Can't find any synoptic measurement because of REST API error-> " + e.getMessage());
         }
     }
 
@@ -80,7 +80,6 @@ class ApiSupplierRetriever {
         } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Can't find any measurement because of REST API error-> " + e.getMessage());
-//            return CompletableFuture.completedFuture(new HashMap<>());
         }
     }
 
@@ -94,7 +93,7 @@ class ApiSupplierRetriever {
             return CompletableFuture.completedFuture(airMeasurementsDto);
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Can't find any measurement because of REST API error-> " + e.getMessage());
+            throw new RuntimeException("Can't find any air measurement for stationID: "+ stationId + " because of REST API error-> " + e.getMessage());
         }
     }
 }

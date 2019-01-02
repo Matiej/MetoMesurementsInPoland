@@ -50,8 +50,8 @@ public class MeasuringOnlineController {
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "External server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Measuring stations for given city found successful"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI!  Measuring stations for given city NOT found!"),
             @ApiResponse(code = 400, message = "Can't get measuring stations for given city."),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI!  Measuring stations for given city NOT found!"),
             @ApiResponse(code = 406, message = "Not Acceptable! City name for measurement stations can not be empty!")})
     @RequestMapping(value = "/stations/select", method = RequestMethod.GET)
     public ResponseEntity<Object> getGivenCityMeasuringStationsWithSynopticDataController(String city) {
