@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 import pl.testaarosa.airmeasurements.services.MeasuringOnlineServices;
@@ -28,39 +29,36 @@ public class MeasuringOnlineController {
 
     @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = MeasuringStationOnLine.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Server error. Can't get online measuring stations information."),
             @ApiResponse(code = 200, message = "Measuring stations found successful"),
             @ApiResponse(code = 400, message = "Can not find any online measuring stations!"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!")})
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
+            @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for all stations")})
     @RequestMapping(value = "/stations/all", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllMeasuringStationsWithSynopticDataController() {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.getAllMeasuringStations());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Can't get measuring stations information because of exception-> " + e.getMessage());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find any online measuring stations");
+        } catch (RestClientException e) {
+            return ResponseEntity.status(500)
+                    .body("External REST API server error! Can't get online measurements for all stations.-> ");
         }
     }
 
     @ApiOperation(value = "Get all measurements stations for given city name", response = MeasuringStationOnLine.class)
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "External server error. Can't get measurement stations information."),
+
             @ApiResponse(code = 200, message = "Measuring stations for given city found successful"),
             @ApiResponse(code = 400, message = "Can't get measuring stations for given city."),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI!  Measuring stations for given city NOT found!"),
-            @ApiResponse(code = 406, message = "Not Acceptable! City name for measurement stations can not be empty!")})
+            @ApiResponse(code = 406, message = "Not Acceptable! City name for measurement stations can not be empty!"),
+            @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for given station.")})
     @RequestMapping(value = "/stations/select", method = RequestMethod.GET)
     public ResponseEntity<Object> getGivenCityMeasuringStationsWithSynopticDataController(String city) {
         try {
             return ResponseEntity.status(200).body(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Can't get measuring stations form the city" + city + "," +
-                    " because of exception-> " + e.getMessage());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Measuring stations for city " + city + " NOT found because of error-> "
@@ -68,6 +66,10 @@ public class MeasuringOnlineController {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return ResponseEntity.status(406).body("City name can't be empty!");
+
+        } catch (RestClientException e) {
+            return ResponseEntity.status(500).body("External REST API server error! Can't get online measurements for the city" + city + "," +
+                    " -> ");
         }
     }
 
@@ -81,12 +83,11 @@ public class MeasuringOnlineController {
     public ResponseEntity<Object> getHottestOnlineStation() {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.getHottestOnlineStation());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Can't get Hottest measuring station because of exception-> " + e.getMessage());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find hottest online measurement!");
+        } catch (RestClientException e) {
+            return ResponseEntity.status(500).body("External REST API server error! Can't get hottest measurement online for station -> ");
         }
     }
 
@@ -100,12 +101,11 @@ public class MeasuringOnlineController {
     public ResponseEntity<Object> getColdestOnlineStation() {
         try {
             return ResponseEntity.ok(measuringOnlineServices.getColdestOnlineStation());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Can't get Coldest measuring station because of exception-> " + e.getMessage());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find coldest online measurement!");
+        } catch (RestClientException e) {
+            return ResponseEntity.status(500).body("External REST API server error! Can't get hottest measurement online for station -> ");
         }
     }
 }

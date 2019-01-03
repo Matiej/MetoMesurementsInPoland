@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
-class ApiSupplierRetriever {
+public class ApiSupplierRetriever {
 
     @Autowired
     private MeasuringStationRepository measuringStationRepository;
@@ -47,7 +47,7 @@ class ApiSupplierRetriever {
     }
 
     @Async
-    public CompletableFuture<Map<String, SynopticMeasurementDto>> synopticMeasurementProcessor() throws RestClientException{
+    public CompletableFuture<Map<String, SynopticMeasurementDto>> synopticMeasurementProcessor() throws RestClientException {
 
         LOGGER.info("\u001B[32mLOOOKING FOR SYNOPTIC MEASUREMENTES-> \u001B[0m");
         try {
@@ -84,7 +84,7 @@ class ApiSupplierRetriever {
     }
 
     @Async
-    public CompletableFuture<AirMeasurementsDto> airMeasurementsProcessorNew(int stationId) throws RestClientException{
+    public CompletableFuture<AirMeasurementsDto> airMeasurementsProcessorNew(int stationId) throws RestClientException {
         String url = MeasuringStationApiSupplier.measurementsAdi;
         LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS FOR STATION ID-> " + stationId + "\u001B[0m");
         try {
@@ -93,7 +93,7 @@ class ApiSupplierRetriever {
             return CompletableFuture.completedFuture(airMeasurementsDto);
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Can't find any air measurement for stationID: "+ stationId + " because of REST API error-> " + e.getMessage());
+            throw new RuntimeException("Can't find any air measurement for stationID: " + stationId + " because of REST API error-> " + e.getMessage());
         }
     }
 }

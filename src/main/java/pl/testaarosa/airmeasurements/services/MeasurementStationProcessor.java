@@ -26,7 +26,6 @@ public class MeasurementStationProcessor {
     }
 
     public List<MeasuringStationOnLine> fillMeasuringStationListStructure() throws ExecutionException, InterruptedException {
-
         CompletableFuture<List<MeasuringStationDto>> listCompletableFuture = apiSupplierRetriever.measuringStationApiProcessor();
         CompletableFuture<Map<String, SynopticMeasurementDto>> mapCompletableFuture = apiSupplierRetriever.synopticMeasurementProcessor();
         CompletableFuture<Map<Integer, AirMeasurementsDto>> mapCompletableFuture1 = apiSupplierRetriever.airMeasurementsProcessor();

@@ -32,12 +32,12 @@ public class AddMeasurementsController {
     @RequestMapping(value = "/station", method = RequestMethod.GET)
     @ApiOperation(value = "Add measurements from selected station", response = MeasuringStation.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "External REST API server error. Can't add measurement for given stationId!"),
-            @ApiResponse(code = 503, message = "Server error. Can't add  measurement to data base."),
             @ApiResponse(code = 201, message = "Measurement saved successful"),
             @ApiResponse(code = 400, message = "No measuring station found for given ID"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring station found for given ID"),
-            @ApiResponse(code = 406, message = "Not Acceptable! Station ID must be an INTEGER and can not be empty!")})
+            @ApiResponse(code = 406, message = "Not Acceptable! Station ID must be an INTEGER and can not be empty!"),
+            @ApiResponse(code = 500, message = "External REST API server error. Can't add measurement for given stationId!"),
+            @ApiResponse(code = 503, message = "Server error. Can't add  measurement to data base."),})
     @ApiImplicitParam(required = true, name = "stationId", value = "Measuring station Id", dataType = "int", paramType = "query",
             defaultValue = "114")
     public ResponseEntity<Object> addOneMeasurement(Integer stationId) {
@@ -59,10 +59,10 @@ public class AddMeasurementsController {
 
     @ApiOperation(value = "Add all measurements from API for all stations.", response = MeasuringStation.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "External REST API server error. Can't add measurements"),
-            @ApiResponse(code = 503, message = "Server error. Can't add measurements."),
             @ApiResponse(code = 201, message = "Measurements for all stations saved successful."),
-            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! No measuring station found for given ID")})
+            @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! No measuring station found for given ID"),
+            @ApiResponse(code = 500, message = "External REST API server error. Can't add measurements"),
+            @ApiResponse(code = 503, message = "Server error. Can't add measurements.")})
     @RequestMapping(value = "/station/all", method = RequestMethod.GET)
     public ResponseEntity<Object> allMeasurements() {
         try {

@@ -1,13 +1,11 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.hibernate.HibernateException;
-import org.hibernate.TransactionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
@@ -24,7 +22,6 @@ import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -71,19 +68,19 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
     @Transactional
     @Override
-    public MeasuringStation addOne(Integer stationId) throws NumberFormatException,RestClientException,
+    public MeasuringStation addOne(Integer stationId) throws NumberFormatException, RestClientException,
             HibernateException, NoSuchElementException {
         long startTime1 = System.currentTimeMillis();
         AtomicReference<MeasuringStation> measuringStation = new AtomicReference<>();
         Map<String, SynopticMeasurementDto> synopticMeasurementsDtoMap = new HashMap<>();
-        if(!Optional.ofNullable(stationId).isPresent() && stationId.toString().matches("^[0-9]*$")) {
-            LOGGER.error("StationID -> " + stationId +" is empty or format is incorrect!");
-            throw new NumberFormatException("StationID -> " + stationId +" is empty or format is incorrect!");
+        if (!Optional.ofNullable(stationId).isPresent() && stationId.toString().matches("^[0-9]*$")) {
+            LOGGER.error("StationID -> " + stationId + " is empty or format is incorrect!");
+            throw new NumberFormatException("StationID -> " + stationId + " is empty or format is incorrect!");
         }
         try {
             addAllStations();
             if (!isStationIdInDb(stationId)) {
-                throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationId + " in data base!"  + ANSI_RESET);
+                throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationId + " in data base!" + ANSI_RESET);
             }
             synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor().get());
 
@@ -116,7 +113,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                     throw new RuntimeException("There is some db problem: " + e.getMessage());
                 }
             });
-        } catch (ExecutionException|InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             throw new RestClientException("Can't add measurements for station-> " + stationId + " because of REST API error");
         }
@@ -205,10 +202,10 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                     }
                 }
             }
-            return measuringStationList;
         } catch (InterruptedException | ExecutionException e) {
             throw new RestClientException(" " + e.getMessage());
         }
+        return measuringStationList;
     }
 
     private String timeer(Long timeMiliseconds) {

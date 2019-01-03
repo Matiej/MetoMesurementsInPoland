@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestClientException;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
 import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
@@ -83,26 +84,11 @@ public class MeasuringOnlineControllerTestSuit {
     }
 
     @Test
-    public void shouldNotFindAllMeasuringStationsAndThrowsInterruptedException() throws Exception {
+    public void shouldNotFindAllMeasuringStationsAndThrowsRestClientException() throws Exception {
         //given
         //when
         when(measuringOnlineServices.getAllMeasuringStations())
-                .thenThrow(new InterruptedException("Find all onLine measuring stations, throws throws InterruptedException, return status 500"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/all"))
-                .andExpect(status().is(500))
-                .andReturn();
-        //then
-        verify(measuringOnlineServices, times(1)).getAllMeasuringStations();
-        verifyNoMoreInteractions(measuringOnlineServices);
-    }
-
-    @Test
-    public void shouldNotFindAllMeasuringStationsAndThrowsExecutionException() throws Exception {
-        //given
-        //when
-        when(measuringOnlineServices.getAllMeasuringStations()).thenThrow(new ExecutionException(
-                new Throwable("Find all measuring stations, throws ExecutionException and return 500 status")));
-        //then
+                .thenThrow(new RestClientException("Find all onLine measuring stations, throws throws RestClientException, return status 500"));
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/all"))
                 .andExpect(status().is(500))
                 .andReturn();
@@ -170,28 +156,11 @@ public class MeasuringOnlineControllerTestSuit {
     }
 
     @Test
-    public void shouldGetGivenCityMeasuringStationsAndThrowsInterruptedException() throws Exception {
+    public void shouldGetGivenCityMeasuringStationsAndThrowsRestClientException() throws Exception {
         //given
         //when
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
-                .thenThrow(new InterruptedException
-                        ("Get measuring station for given city, throw InterruptedException, then return status 500"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/select")
-                .param("city", "wawa"))
-                .andExpect(status().is(500))
-                .andReturn();
-        //then
-        verify(measuringOnlineServices, times(1)).getGivenCityMeasuringStationsWithSynopticData("wawa");
-        verifyNoMoreInteractions(measuringOnlineServices);
-    }
-
-    @Test
-    public void shouldGetGivenCityMeasuringStationsAndThrowsExecutionException() throws Exception {
-        //given
-        //when
-        when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
-                .thenThrow(new ExecutionException(new Throwable("Get online measurements for given city, throw ExecutionException and return 500 status")));
-        //then
+                .thenThrow(new RestClientException("Get measuring station for given city, throw RestClientException, then return status 500"));
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/select")
                 .param("city", "wawa"))
                 .andExpect(status().is(500))
@@ -241,25 +210,11 @@ public class MeasuringOnlineControllerTestSuit {
     }
 
     @Test
-    public void shouldGetHotestOnlineMeasurementAndThrowsExecutionException() throws Exception {
+    public void shouldGetHotestOnlineMeasurementAndThrowsRestClientException() throws Exception {
         //given
         //when
         when(measuringOnlineServices.getHottestOnlineStation())
-                .thenThrow(new ExecutionException(new Throwable("Get Hottest online measurements, throw ExecutionException and return 500 status")));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/hottest"))
-                .andExpect(status().is(500))
-                .andReturn();
-        //then
-        verify(measuringOnlineServices, times(1)).getHottestOnlineStation();
-        verifyNoMoreInteractions(measuringOnlineServices);
-    }
-
-    @Test
-    public void shouldGetHotestOnlineMeasurementAndThrowsInterruptedException() throws Exception {
-        //given
-        //when
-        when(measuringOnlineServices.getHottestOnlineStation())
-                .thenThrow(new InterruptedException("Get hottest online measurements, throw InterruptedException and return 500 status"));
+                .thenThrow(new RestClientException("Get Hottest online measurements, throw RestClientException and return 500 status"));
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/hottest"))
                 .andExpect(status().is(500))
                 .andReturn();
@@ -308,29 +263,15 @@ public class MeasuringOnlineControllerTestSuit {
     }
 
     @Test
-    public void shouldGetColdestOnlineMeasurementAndThrowsExecutionException() throws Exception {
+    public void shouldGetColdestOnlineMeasurementAndThrowsRestClientException() throws Exception {
         //given
         //when
         when(measuringOnlineServices.getColdestOnlineStation())
-                .thenThrow(new ExecutionException(new Throwable("Get Coldest online measurements, throw ExecutionException and return 500 status")));
+                .thenThrow(new RestClientException("Get Coldest online measurements, throw RestClientException and return 500 status"));
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
                 .andExpect(status().is(500));
         //then
         verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
         verifyNoMoreInteractions(measuringOnlineServices);
     }
-
-    @Test
-    public void shouldGetColdestOnlineMeasurementAndThrowsInterruptedException() throws Exception {
-        //given
-        //when
-        when(measuringOnlineServices.getColdestOnlineStation())
-                .thenThrow(new InterruptedException("Get Coldest online measurements, throw InterruptedException and return 500 status"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))
-                .andExpect(status().is(500));
-        //then
-        verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
-        verifyNoMoreInteractions(measuringOnlineServices);
-    }
-
 }
