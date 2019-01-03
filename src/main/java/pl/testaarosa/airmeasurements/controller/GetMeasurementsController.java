@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.testaarosa.airmeasurements.domain.AirMeasurements;
 import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
+import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
 import pl.testaarosa.airmeasurements.services.GetMeasurementsService;
 
@@ -28,7 +29,8 @@ public class GetMeasurementsController {
         this.getMeasurementsService = getMeasurementsService;
     }
 
-    @ApiOperation(value = "Get all measuring stations with synoptic & air measurements")
+    @ApiOperation(value = "Get all measuring stations with synoptic & air measurements", response = MeasuringStation.class,
+    position = 1)
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Measurements for all stations loaded from db successful."),
@@ -47,7 +49,7 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get air measurements by Air Quality", response = AirMeasurements.class)
+    @ApiOperation(value = "Get air measurements by Air Quality", response = AirMeasurements.class, position = 2)
     @ApiImplicitParam(required = true, name = "airLevel", value = "Choose Air Quality", paramType = "query")
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get air measurements information."),
@@ -70,7 +72,7 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get air measurements for given date", response = AirMeasurements.class)
+    @ApiOperation(value = "Get air measurements for given date", response = AirMeasurements.class, position = 3)
     @ApiImplicitParam(required = true, name = "date", dataType = "String", value = "Date in format: YYYY-MM-DD",
             paramType = "query", example = "2015-05-21")
     @ApiResponses(value = {
@@ -92,7 +94,7 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get synoptic measurements for given date")
+    @ApiOperation(value = "Get synoptic measurements for given date", response = SynopticMeasurements.class, position = 4)
     @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD",
             dataType = "String", paramType = "query")
     @ApiResponses(value = {
@@ -114,7 +116,8 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get hottest place and synoptic measurements for given date", response = SynopticMeasurements.class)
+    @ApiOperation(value = "Get hottest place and synoptic measurements for given date", response = SynopticMeasurements.class,
+    position = 5)
     @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
             paramType = "query")
     @ApiResponses(value = {
@@ -139,7 +142,8 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get coldest place and synoptic measurements for given date")
+    @ApiOperation(value = "Get coldest place and synoptic measurements for given date", response = SynopticMeasurements.class,
+    position = 6)
     @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
             paramType = "query")
     @ApiResponses(value = {
@@ -164,7 +168,7 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get top ten hottest measurements and places", response = SynopticMeasurements.class)
+    @ApiOperation(value = "Get top ten hottest measurements and places", response = SynopticMeasurements.class, position = 7)
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurements information."),
             @ApiResponse(code = 200, message = "Hottest top measurements for all stations loaded from db successful."),
@@ -182,7 +186,7 @@ public class GetMeasurementsController {
         }
     }
 
-    @ApiOperation(value = "Get top ten coldest measurements and places", response = SynopticMeasurements.class)
+    @ApiOperation(value = "Get top ten coldest measurements and places", response = SynopticMeasurements.class, position = 8)
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurements information."),
             @ApiResponse(code = 200, message = "Coldest top measurements for all stations loaded from db successful."),
