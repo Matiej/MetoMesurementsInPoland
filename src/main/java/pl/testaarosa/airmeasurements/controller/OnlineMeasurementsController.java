@@ -7,27 +7,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
-import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
-import pl.testaarosa.airmeasurements.services.MeasuringOnlineServices;
+import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutionException;
 
 @Api(description = "Get online measurements directly from API")
 @RestController
 @RequestMapping("/online")
-public class MeasuringOnlineController {
+public class OnlineMeasurementsController {
 
-    private final MeasuringOnlineServices measuringOnlineServices;
+    private final OnlineMeasurementService measuringOnlineServices;
 
     @Autowired
-    public MeasuringOnlineController(MeasuringOnlineServices measuringOnlineServices) {
+    public OnlineMeasurementsController(OnlineMeasurementService measuringOnlineServices) {
         this.measuringOnlineServices = measuringOnlineServices;
     }
 
-    @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = MeasuringStationOnLine.class)
+    @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = OnlineMeasurementDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Measuring stations found successful"),
             @ApiResponse(code = 400, message = "Can not find any online measuring stations!"),
@@ -46,7 +43,7 @@ public class MeasuringOnlineController {
         }
     }
 
-    @ApiOperation(value = "Get all measurements stations for given city name", response = MeasuringStationOnLine.class)
+    @ApiOperation(value = "Get all online measurements  for given city name", response = OnlineMeasurementDto.class)
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
     @ApiResponses(value = {
 
@@ -73,7 +70,7 @@ public class MeasuringOnlineController {
         }
     }
 
-    @ApiOperation(value = "Get hottest station", response = MeasuringStationOnLine.class)
+    @ApiOperation(value = "Get hottest station", response = OnlineMeasurementDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "External server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Hottest measuring stations for given city found successful"),
@@ -91,7 +88,7 @@ public class MeasuringOnlineController {
         }
     }
 
-    @ApiOperation(value = "Get coldest station", response = MeasuringStationOnLine.class)
+    @ApiOperation(value = "Get coldest station", response = OnlineMeasurementDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 500, message = "External server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Coldest measuring stations for given city found"),

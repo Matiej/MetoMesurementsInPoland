@@ -1,19 +1,19 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
+import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
 public class SynopticMeasurementMapper {
-
-    public SynopticMeasurements maptToSynopticMeasurement(SynopticMeasurementDto synDto) {
+//TODO porządek z tym emptyObj w pizdu.
+    public SynopticMeasurement maptToSynopticMeasurement(SynopticMeasurementDto synDto) {
         SynopticMeasurementDto synMeasurements = Optional.ofNullable(synDto).orElse(emptyObj());
         LocalDateTime currentDate = LocalDateTime.now().withNano(0);
-        return new SynopticMeasurements.SynopticMeasurementsBuilder()
+        return new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .foreignId(synMeasurements.getId())
                 .city(synMeasurements.getCity())
                 .saveDate(currentDate)

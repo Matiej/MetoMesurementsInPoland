@@ -4,14 +4,14 @@ import com.google.common.testing.EqualsTester;
 import org.junit.Test;
 import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
 
-public class AirMeasurementsTestSuit {
+public class AirMeasurementTestSuit {
 
     private final MockAirRepository mockAirRepository = new MockAirRepository();
 
     @Test
     public void testAirmeasurementsDto(){
-        AirMeasurements airMeasurements = mockAirRepository.airMeasurement();
-        AirMeasurements airMeasurements1 = mockAirRepository.airMeasurement1();
-        new EqualsTester().addEqualityGroup(airMeasurements1, airMeasurements).testEquals();
+        AirMeasurement airMeasurement = mockAirRepository.airMeasurement();
+        AirMeasurement airMeasurement1 = mockAirRepository.airMeasurement1();
+        new EqualsTester().addEqualityGroup(airMeasurement1, airMeasurement).testEquals();
     }
 }

@@ -24,7 +24,7 @@ public class AirMeasurementsApp {
         executor.setCorePoolSize(Runtime.getRuntime().availableProcessors()*5);
         executor.setMaxPoolSize(80);
         executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("DataBase-> ");
+        executor.setThreadNamePrefix("Thread-> ");
         executor.initialize();
         return executor;
     }

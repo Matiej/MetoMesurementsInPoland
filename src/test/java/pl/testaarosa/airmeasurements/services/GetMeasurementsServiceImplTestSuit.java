@@ -5,14 +5,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
-import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.repositories.*;
 import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
-import pl.testaarosa.airmeasurements.services.GetMeasurementsServiceImpl;
 
 import java.util.List;
 
@@ -84,9 +83,9 @@ public class GetMeasurementsServiceImplTestSuit {
 
     @Test
     public void getMeasurementsByAirQuality() {
-        List<AirMeasurements> measurementsList = mockAirRepository.airMeasurements1();
-        when(airRepository.findAllByAirQuality(MeasurementsAirLevel.BAD)).thenReturn(measurementsList);
-        assertEquals(measurementsList,service.getAirMeasurements(MeasurementsAirLevel.BAD));
+        List<AirMeasurement> measurementsList = mockAirRepository.airMeasurements1();
+        when(airRepository.findAllByAirQuality(AirMeasurementLevel.BAD)).thenReturn(measurementsList);
+        assertEquals(measurementsList,service.getAirMeasurements(AirMeasurementLevel.BAD));
     }
 
     @Test

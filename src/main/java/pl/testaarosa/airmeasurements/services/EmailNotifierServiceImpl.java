@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.Mail;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

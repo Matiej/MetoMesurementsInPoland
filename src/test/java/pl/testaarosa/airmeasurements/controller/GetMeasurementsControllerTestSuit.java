@@ -11,10 +11,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
-import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
 import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
@@ -111,15 +111,15 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindPlaceByAirQuality() throws Exception {
         //given
-        List<AirMeasurements> airMeasurementsList = mockAirRepository.airMeasurements1();
+        List<AirMeasurement> airMeasurementList = mockAirRepository.airMeasurements1();
         //when
-        Mockito.when(service.getAirMeasurements(MeasurementsAirLevel.BAD)).thenReturn(airMeasurementsList);
+        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD)).thenReturn(airMeasurementList);
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(converter.jsonInString(airMeasurementsList)));
+                .andExpect(content().json(converter.jsonInString(airMeasurementList)));
         //then
-        verify(service, times(1)).getAirMeasurements(MeasurementsAirLevel.BAD);
+        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -127,14 +127,14 @@ public class GetMeasurementsControllerTestSuit {
     public void shouldFindPlaceByAirQualityAndThrowsNoSuchElementException() throws Exception {
         //givem
         //when
-        Mockito.when(service.getAirMeasurements(MeasurementsAirLevel.BAD))
+        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD))
                 .thenThrow(new NoSuchElementException("Find all air measurements by given air quality level, throws NoSuchElementException and return status 400"));
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements(MeasurementsAirLevel.BAD);
+        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -147,7 +147,7 @@ public class GetMeasurementsControllerTestSuit {
                 .andExpect(status().is(404))
                 .andReturn();
         //then
-        verify(service, times(0)).getAirMeasurements(MeasurementsAirLevel.BAD);
+        verify(service, times(0)).getAirMeasurements(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -155,14 +155,14 @@ public class GetMeasurementsControllerTestSuit {
     public void shouldFindPlaceByAirQualityAndThrowsIllegalArgumentException() throws Exception {
         //given
         //when
-        Mockito.when(service.getAirMeasurements(MeasurementsAirLevel.BAD))
+        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD))
                 .thenThrow(new IllegalArgumentException("Find all air measurements by given air quality level, throws NoSuchElementException and return status 406"));
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().is(406))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements(MeasurementsAirLevel.BAD);
+        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -170,24 +170,24 @@ public class GetMeasurementsControllerTestSuit {
     public void shouldFindPlaceByAirQualityAndThrowsHibernateException() throws Exception {
         //given
         //when
-        Mockito.when(service.getAirMeasurements(MeasurementsAirLevel.BAD))
+        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD))
                 .thenThrow(new HibernateException("Find all air measurements by given air quality level, throws NoSuchElementException and return status 503"));
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().is(503))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements(MeasurementsAirLevel.BAD);
+        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
     @Test
     public void shouldFindAllAirMeasurementsByDate() throws Exception {
         //given
-        List<AirMeasurements> airMeasurementsList = mockAirRepository.airMeasurements1();
+        List<AirMeasurement> airMeasurementList = mockAirRepository.airMeasurements1();
         //when
-        Mockito.when((service.getAirMeasurements("2018-05-05"))).thenReturn(airMeasurementsList);
-        String jsonContent = converter.jsonInString(airMeasurementsList);
+        Mockito.when((service.getAirMeasurements("2018-05-05"))).thenReturn(airMeasurementList);
+        String jsonContent = converter.jsonInString(airMeasurementList);
         mockMvc.perform(get(MAPPING + "/measurements/date")
                 .param("date", "2018-05-05"))
                 .andExpect(status().isOk())
@@ -258,7 +258,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsByDate() throws Exception {
         //given
-        List<SynopticMeasurements> synopticMeasurements = mockSynopticRepository.synopticMeasurements2();
+        List<SynopticMeasurement> synopticMeasurements = mockSynopticRepository.synopticMeasurements2();
         //when
         Mockito.when((service.getSynopticMeasuremets("2018-05-11"))).thenReturn(synopticMeasurements);
         mockMvc.perform(get(MAPPING + "/measurements/synoptic")
@@ -273,7 +273,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsByDateAndThrowsNoSuchElementException() throws Exception {
         //given
-        List<SynopticMeasurements> synopticMeasurements = new ArrayList<>();
+        List<SynopticMeasurement> synopticMeasurements = new ArrayList<>();
         //when
         Mockito.when((service.getSynopticMeasuremets("2018-05-11")))
                 .thenThrow(new NoSuchElementException("Find all synoptic measurements by given date, throws NoSuchElementException return status 400"))
@@ -301,7 +301,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsByDateAndThrowsDateTimeException() throws Exception {
         //given
-        List<SynopticMeasurements> synopticMeasurements = new ArrayList<>();
+        List<SynopticMeasurement> synopticMeasurements = new ArrayList<>();
         //when
         Mockito.when((service.getSynopticMeasuremets("2018www-05-11")))
                 .thenThrow(new DateTimeException("Find all synoptic measurements by given date, throws NDateTimeException return status 406"))
@@ -318,7 +318,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsByDateAndThrowsHibernateException() throws Exception {
         //given
-        List<SynopticMeasurements> synopticMeasurements = new ArrayList<>();
+        List<SynopticMeasurement> synopticMeasurements = new ArrayList<>();
         //when
         Mockito.when((service.getSynopticMeasuremets("2018-05-11")))
                 .thenThrow(new HibernateException("Find all synoptic measurements by given date, throws HibernateException return status 503"))
@@ -335,7 +335,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAHottestPlaceByDate() throws Exception {
         //given
-        SynopticMeasurements synopticMeasurement = mockSynopticRepository.synopticMeasurements1().get(0);
+        SynopticMeasurement synopticMeasurement = mockSynopticRepository.synopticMeasurements1().get(0);
         //when
         Mockito.when(service.getHottestPlaceGivenDate("2018-05-05")).thenReturn(synopticMeasurement);
         mockMvc.perform(get(MAPPING + "/measurements/hottest")
@@ -408,13 +408,13 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindColdestPlaceByDate() throws Exception {
         //given
-        SynopticMeasurements synopticMeasurements = mockSynopticRepository.synopticMeasurements2().get(0);
+        SynopticMeasurement synopticMeasurement = mockSynopticRepository.synopticMeasurements2().get(0);
         //when
-        Mockito.when(service.getColdestPlaceGivenDate("2018-05-05")).thenReturn(synopticMeasurements);
+        Mockito.when(service.getColdestPlaceGivenDate("2018-05-05")).thenReturn(synopticMeasurement);
         mockMvc.perform(get(MAPPING + "/measurements/coldest")
                 .param("date", "2018-05-05"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(converter.jsonInString(synopticMeasurements)));
+                .andExpect(content().json(converter.jsonInString(synopticMeasurement)));
         //then
         verify(service, times(1)).getColdestPlaceGivenDate("2018-05-05");
         verifyNoMoreInteractions(service);
@@ -477,7 +477,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindTopTenHottestPlaces() throws Exception {
         //given
-        List<SynopticMeasurements> measurementsList = mockSynopticRepository.synopticMeasurements2();
+        List<SynopticMeasurement> measurementsList = mockSynopticRepository.synopticMeasurements2();
         //when
         Mockito.when(service.getHottestPlaces()).thenReturn(measurementsList);
         mockMvc.perform(get(MAPPING + "/measurements/hottestTop"))
@@ -531,7 +531,7 @@ public class GetMeasurementsControllerTestSuit {
     @Test
     public void shouldFindTopTenColdestPlaces() throws Exception {
         //given
-        List<SynopticMeasurements> measurementsList = mockSynopticRepository.synopticMeasurements2();
+        List<SynopticMeasurement> measurementsList = mockSynopticRepository.synopticMeasurements2();
         //when
         when(service.getColdestPlaces()).thenReturn(measurementsList);
         mockMvc.perform(get(MAPPING + "/measurements/coldestTop"))

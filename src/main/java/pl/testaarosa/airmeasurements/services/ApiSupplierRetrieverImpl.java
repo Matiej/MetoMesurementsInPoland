@@ -8,9 +8,15 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.MeasuringStation;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
+import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
+import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
+import pl.testaarosa.airmeasurements.mapper.MeasuringStationMapper;
+import pl.testaarosa.airmeasurements.mapper.SynopticMeasurementMapper;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.supplier.MeasuringStationApiSupplier;
 import pl.testaarosa.airmeasurements.supplier.SynopticStationApiSupplier;
@@ -20,26 +26,41 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-@Service
-public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever{
+import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_RESET;
+import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_YELLOW;
 
-    @Autowired
-    private MeasuringStationRepository measuringStationRepository;
+@Service
+public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiSupplierRetrieverImpl.class);
-
     private RestTemplate restTemplate = new RestTemplate();
+
+    private final MeasuringStationMapper measuringStationMapper;
+    private final AirMeasurementMapper airMeasurementMapper;
+    private final SynopticMeasurementMapper synopticMeasurementMapper;
+
+    @Autowired
+    public ApiSupplierRetrieverImpl(MeasuringStationMapper measuringStationMapper,
+                                    AirMeasurementMapper airMeasurementMapper, SynopticMeasurementMapper synopticMeasurementMapper) {
+        this.measuringStationMapper = measuringStationMapper;
+        this.airMeasurementMapper = airMeasurementMapper;
+        this.synopticMeasurementMapper = synopticMeasurementMapper;
+    }
 
     @Async
     @Override
-    public CompletableFuture<List<MeasuringStationDto>> measuringStationApiProcessor() throws RestClientException {
-
-        LOGGER.info("\u001B[33mLOOOKIG FOR MEASURING STATIONS-> \u001B[0m");
+    public CompletableFuture<List<MeasuringStation>> measuringStationApiProcessor() throws RestClientException {
         try {
-            String url = MeasuringStationApiSupplier.allMeasuringStationsApi;
+            String url = MeasuringStationApiSupplier.ALL_MEASURING_STATIONS_API_URL;
             ResponseEntity<MeasuringStationDto[]> responseEntity = restTemplate
                     .getForEntity(url, MeasuringStationDto[].class);
-            return CompletableFuture.completedFuture(Arrays.stream(responseEntity.getBody()).collect(Collectors.toList()));
+            MeasuringStationDto[] measuringStationDtos = responseEntity.getBody();
+            LOGGER.info(ANSI_YELLOW + "LOOKING MEASURING STATIONS.GOT => " + measuringStationDtos.length + ANSI_RESET);
+            return CompletableFuture.completedFuture(Arrays
+                    .stream(measuringStationDtos)
+                    .parallel()
+                    .map(measuringStationMapper::mapToMeasuringSt)
+                    .collect(Collectors.toList()));
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new RuntimeException(" REST API CONNECTION ERROR-> " + e.getMessage());
@@ -48,15 +69,16 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever{
 
     @Async
     @Override
-    public CompletableFuture<Map<String, SynopticMeasurementDto>> synopticMeasurementProcessor() throws RestClientException {
-
-        LOGGER.info("\u001B[32mLOOOKING FOR SYNOPTIC MEASUREMENTES-> \u001B[0m");
+    public CompletableFuture<Map<String, SynopticMeasurement>> synopticMeasurementProcessor() throws RestClientException {
         try {
-            String url = SynopticStationApiSupplier.ALL_SYNOPTIC_STATIONS_DATA;
+            String url = SynopticStationApiSupplier.ALL_SYNOPTIC_STATIONS_API_URL;
             ResponseEntity<SynopticMeasurementDto[]> responseEntity = restTemplate.getForEntity(url,
                     SynopticMeasurementDto[].class);
-            return CompletableFuture.completedFuture(Arrays.stream(responseEntity.getBody())
-                    .collect(Collectors.toMap(SynopticMeasurementDto::getCity, v -> v)));
+            SynopticMeasurementDto[] measurementDtos = responseEntity.getBody();
+            LOGGER.info("\u001B[32mLOOOKING FOR SYNOPTIC MEASUREMENTES. GOT => " + measurementDtos.length + " \u001B[0m");
+            return CompletableFuture.completedFuture(Arrays.stream(measurementDtos)
+                    .parallel()
+                    .collect(Collectors.toMap(SynopticMeasurementDto::getCity, synopticMeasurementMapper::maptToSynopticMeasurement)));
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new RuntimeException("Can't find any synoptic measurement because of REST API error-> " + e.getMessage());
@@ -65,19 +87,21 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever{
 
     @Async
     @Override
-    public CompletableFuture<Map<Integer, AirMeasurementsDto>> airMeasurementsProcessor() throws ExecutionException,
+    public CompletableFuture<Map<Integer, AirMeasurement>> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws ExecutionException,
             InterruptedException, RestClientException {
-        String url = MeasuringStationApiSupplier.measurementsAdi;
-
+        String url = MeasuringStationApiSupplier.MEASRURING_STATION_API_URL_BY_ID;
         LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS-> \u001B[0m");
         try {
-            Map<Integer, AirMeasurementsDto> airMap = new HashMap<>();
-
-            measuringStationApiProcessor().get().parallelStream().forEach(a -> {
-                int stationId = a.getId();
-                AirMeasurementsDto obj = restTemplate.getForObject(url + stationId, AirMeasurementsDto.class);
-                airMap.put(stationId, obj);
-            });
+            Map<Integer, AirMeasurement> airMap = new HashMap<>();
+//            CompletableFuture<List<MeasuringStation>> listCompletableFuture = measuringStationApiProcessor();
+//            List<MeasuringStation> measuringStationList = listCompletableFuture.join();
+            measuringStationList
+                    .parallelStream()
+                    .forEach(a -> {
+                        int stationId = a.getStationId();
+                        AirMeasurementDto obj = restTemplate.getForObject(url + stationId, AirMeasurementDto.class);
+                        airMap.put(stationId, airMeasurementMapper.mapToAirMeasurements(obj));
+                    });
             return CompletableFuture.completedFuture(Optional.ofNullable(airMap).orElse(new HashMap<>()));
         } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
@@ -87,16 +111,87 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever{
 
     @Async
     @Override
-    public CompletableFuture<AirMeasurementsDto> airMeasurementsProcessorNew(int stationId) throws RestClientException {
-        String url = MeasuringStationApiSupplier.measurementsAdi;
+    public CompletableFuture<AirMeasurement> airMeasurementProcessorById(int stationId) throws RestClientException {
+        String url = MeasuringStationApiSupplier.MEASRURING_STATION_API_URL_BY_ID;
         LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS FOR STATION ID-> " + stationId + "\u001B[0m");
         try {
-            System.out.println("xxxx");
-            AirMeasurementsDto airMeasurementsDto = restTemplate.getForObject(url + stationId, AirMeasurementsDto.class);
-            return CompletableFuture.completedFuture(airMeasurementsDto);
+            AirMeasurementDto airMeasurementDto = restTemplate.getForObject(url + stationId, AirMeasurementDto.class);
+            return CompletableFuture.completedFuture(airMeasurementMapper.mapToAirMeasurements(airMeasurementDto));
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException("Can't find any air measurement for stationID: " + stationId + " because of REST API error-> " + e.getMessage());
         }
     }
+
+
+//    @Async
+//    @Override
+//    public CompletableFuture<List<MeasuringStationDto>> measuringStationApiProcessor() throws RestClientException {
+//
+//        try {
+//            String url = MeasuringStationApiSupplier.ALL_MEASURING_STATIONS_API_URL;
+//            ResponseEntity<MeasuringStationDto[]> responseEntity = restTemplate
+//                    .getForEntity(url, MeasuringStationDto[].class);
+//            MeasuringStationDto[] measuringStationDtos = responseEntity.getBody();
+//            LOGGER.info(ANSI_YELLOW+"LOOKING MEASURING STATIONS.GOT => " + measuringStationDtos.length + ANSI_RESET);
+//            return CompletableFuture.completedFuture(Arrays.stream(measuringStationDtos).collect(Collectors.toList()));
+//        } catch (RestClientException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(" REST API CONNECTION ERROR-> " + e.getMessage());
+//        }
+//    }
+
+//    @Async
+//    @Override
+//    public CompletableFuture<Map<String, SynopticMeasurementDto>> synopticMeasurementProcessor() throws RestClientException {
+//
+//        try {
+//            String url = SynopticStationApiSupplier.ALL_SYNOPTIC_STATIONS_API_URL;
+//            ResponseEntity<SynopticMeasurementDto[]> responseEntity = restTemplate.getForEntity(url,
+//                    SynopticMeasurementDto[].class);
+//            SynopticMeasurementDto[] measurementDtos = responseEntity.getBody();
+//            LOGGER.info("\u001B[32mLOOOKING FOR SYNOPTIC MEASUREMENTES. GOT => "+ measurementDtos.length +  " \u001B[0m");
+//            return CompletableFuture.completedFuture(Arrays.stream(measurementDtos)
+//                    .collect(Collectors.toMap(SynopticMeasurementDto::getCity, v -> v)));
+//        } catch (RestClientException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Can't find any synoptic measurement because of REST API error-> " + e.getMessage());
+//        }
+//    }
+//
+//    @Async
+//    @Override
+//    public CompletableFuture<Map<Integer, AirMeasurementDto>> airMeasurementsProcessor() throws ExecutionException,
+//            InterruptedException, RestClientException {
+//        String url = MeasuringStationApiSupplier.MEASRURING_STATION_API_URL_BY_ID;
+//
+//        LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS-> \u001B[0m");
+//        try {
+//            Map<Integer, AirMeasurementDto> airMap = new HashMap<>();
+//
+//            measuringStationApiProcessor().get().parallelStream().forEach(a -> {
+//                int stationId = a.getId();
+//                AirMeasurementDto obj = restTemplate.getForObject(url + stationId, AirMeasurementDto.class);
+//                airMap.put(stationId, obj);
+//            });
+//            return CompletableFuture.completedFuture(Optional.ofNullable(airMap).orElse(new HashMap<>()));
+//        } catch (RuntimeException e) {
+//            LOGGER.error(e.getMessage(), e);
+//            throw new RuntimeException("Can't find any measurement because of REST API error-> " + e.getMessage());
+//        }
+//    }
+//
+//    @Async
+//    @Override
+//    public CompletableFuture<AirMeasurementDto> airMeasurementProcessorById(int stationId) throws RestClientException {
+//        String url = MeasuringStationApiSupplier.MEASRURING_STATION_API_URL_BY_ID;
+//        LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS FOR STATION ID-> " + stationId + "\u001B[0m");
+//        try {
+//            AirMeasurementDto airMeasurementDto = restTemplate.getForObject(url + stationId, AirMeasurementDto.class);
+//            return CompletableFuture.completedFuture(airMeasurementDto);
+//        } catch (RestClientException e) {
+//            LOGGER.error(e.getMessage(), e);
+//            throw new RuntimeException("Can't find any air measurement for stationID: " + stationId + " because of REST API error-> " + e.getMessage());
+//        }
+//    }
 }

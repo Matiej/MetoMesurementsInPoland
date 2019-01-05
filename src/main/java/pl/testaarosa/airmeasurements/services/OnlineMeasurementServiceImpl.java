@@ -3,32 +3,34 @@ package pl.testaarosa.airmeasurements.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
+import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 //@Scope(scopeName = "prototype")
-public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
+public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
 
     @Autowired
-    private final MeasurementStationProcessor msProc;
+    private final OnlineMeasurementProcessor msProc;
 
     @Autowired
-    public MeasuringOnlineServicesImpl(MeasurementStationProcessor msProc) {
+    public OnlineMeasurementServiceImpl(OnlineMeasurementProcessor msProc) {
         this.msProc = msProc;
     }
 
     @Override
-    public List<MeasuringStationOnLine> getAllMeasuringStations() throws RestClientException, NoSuchElementException {
+    public List<OnlineMeasurementDto> getAllMeasuringStations() throws RestClientException, NoSuchElementException {
         try {
-            List<MeasuringStationOnLine> measuringStationOnLines = msProc.fillMeasuringStationListStructure();
-            if (measuringStationOnLines.isEmpty()) {
+            List<OnlineMeasurementDto> onlineMeasurementDtos = msProc.fillMeasuringStationListStructure();
+            if (onlineMeasurementDtos.isEmpty()) {
                 throw new NoSuchElementException("Can't find any online measuring stations");
             }
-            return measuringStationOnLines;
+            return onlineMeasurementDtos;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             throw new RestClientException("External REST API server error! Can't get online measurements for all stations.-> " + e.getMessage());
@@ -36,19 +38,19 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     }
 
     @Override
-    public List<MeasuringStationOnLine> getGivenCityMeasuringStationsWithSynopticData(String stationCity)
+    public List<OnlineMeasurementDto> getGivenCityMeasuringStationsWithSynopticData(String stationCity)
             throws RestClientException, IllegalArgumentException, NoSuchElementException {
-        List<MeasuringStationOnLine> measuringStationOnLineList = new ArrayList<>();
+        List<OnlineMeasurementDto> onlineMeasurementDtoList = new ArrayList<>();
         if (stationCity.isEmpty()) {
             throw new IllegalArgumentException("City name can't be empty!");
         } else {
             try {
-                measuringStationOnLineList = msProc.fillMeasuringStationListStructure()
+                onlineMeasurementDtoList = msProc.fillMeasuringStationListStructure()
                         .stream()
                         .parallel()
                         .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
-                        .collect(Collectors.toList());
-                if (measuringStationOnLineList.isEmpty()) {
+                        .collect(toList());
+                if (onlineMeasurementDtoList.isEmpty()) {
                     throw new NoSuchElementException("Cant't find any stations for city: " + stationCity);
                 }
             } catch (ExecutionException | InterruptedException e) {
@@ -56,22 +58,22 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
                 throw new RestClientException(e.getMessage());
             }
         }
-        return measuringStationOnLineList;
+        return onlineMeasurementDtoList;
     }
 
     @Override
-    public MeasuringStationOnLine getHottestOnlineStation() throws RestClientException, NoSuchElementException {
+    public OnlineMeasurementDto getHottestOnlineStation() throws RestClientException, NoSuchElementException {
         try {
-            MeasuringStationOnLine measuringStationOnLine = msProc.fillMeasuringStationListStructure()
+            OnlineMeasurementDto onlineMeasurementDto = msProc.fillMeasuringStationListStructure()
                     .stream()
                     .parallel()
-                    .filter(f -> f.getSynoptics().getTemperature() < 9999)
-                    .max(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
+                    .filter(s-> Optional.ofNullable(s.getSynopticMs()).isPresent())
+                    .max(Comparator.comparing(t -> t.getSynopticMs().getTemperature()))
                     .orElse(null);
-            if (!Optional.ofNullable(measuringStationOnLine).isPresent()) {
+            if (!Optional.ofNullable(onlineMeasurementDto).isPresent()) {
                 throw new NoSuchElementException("Can't find hottest measurement online");
             }
-            return measuringStationOnLine;
+            return onlineMeasurementDto;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             throw new RestClientException(e.getMessage());
@@ -79,18 +81,18 @@ public class MeasuringOnlineServicesImpl implements MeasuringOnlineServices {
     }
 
     @Override
-    public MeasuringStationOnLine getColdestOnlineStation() throws RestClientException, NoSuchElementException {
+    public OnlineMeasurementDto getColdestOnlineStation() throws RestClientException, NoSuchElementException {
         try {
-            MeasuringStationOnLine measuringStationOnLine = msProc.fillMeasuringStationListStructure()
+            OnlineMeasurementDto onlineMeasurementDto = msProc.fillMeasuringStationListStructure()
                     .stream()
                     .parallel()
-                    .filter(f -> f.getSynoptics().getTemperature() < 9999)
-                    .min(Comparator.comparing(t -> t.getSynoptics().getTemperature()))
+                    .filter(s-> Optional.ofNullable(s.getSynopticMs()).isPresent())
+                    .min(Comparator.comparing(t -> t.getSynopticMs().getTemperature()))
                     .orElse(null);
-            if (!Optional.ofNullable(measuringStationOnLine).isPresent()) {
+            if (!Optional.ofNullable(onlineMeasurementDto).isPresent()) {
                 throw new NoSuchElementException("Can't find coldest measurement online");
             }
-            return measuringStationOnLine;
+            return onlineMeasurementDto;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             throw new RestClientException("External REST API server error! Can't get coldest measurement online for station "

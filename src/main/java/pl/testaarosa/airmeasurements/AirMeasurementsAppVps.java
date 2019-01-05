@@ -31,7 +31,7 @@
 //        executor.setCorePoolSize(8);
 //        executor.setMaxPoolSize(40);
 //        executor.setQueueCapacity(500);
-//        executor.setThreadNamePrefix("DataBase-> ");
+//        executor.setThreadNamePrefix("Thread-> ");
 //        executor.initialize();
 //        return executor;
 //    }

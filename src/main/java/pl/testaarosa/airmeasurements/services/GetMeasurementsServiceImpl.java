@@ -2,22 +2,18 @@ package pl.testaarosa.airmeasurements.services;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.stereotype.Service;
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
-import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,31 +48,31 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     }
 
     @Override
-    public List<AirMeasurements> getAirMeasurements(MeasurementsAirLevel measurementsAirLevel) throws IllegalArgumentException,
+    public List<AirMeasurement> getAirMeasurements(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
             NoSuchElementException, HibernateException {
-        List<AirMeasurements> allByAirQuality;
-        if (isMeasurementLevelValid(measurementsAirLevel)) {
+        List<AirMeasurement> allByAirQuality;
+        if (isMeasurementLevelValid(airMeasurementLevel)) {
             try {
-                allByAirQuality = airRepository.findAllByAirQuality(measurementsAirLevel);
+                allByAirQuality = airRepository.findAllByAirQuality(airMeasurementLevel);
             } catch (HibernateException e) {
                 throw new RuntimeException("There is some db problem: " + e.getMessage());
             }
         } else {
-            throw new IllegalArgumentException("Not recognized enum: " + measurementsAirLevel);
+            throw new IllegalArgumentException("Not recognized enum: " + airMeasurementLevel);
         }
         if (allByAirQuality.isEmpty()) {
-            throw new NoSuchElementException("There are no measurements for given air level: " + measurementsAirLevel);
+            throw new NoSuchElementException("There are no measurements for given air level: " + airMeasurementLevel);
         }
         return allByAirQuality;
     }
 
     @Override
-    public List<AirMeasurements> getAirMeasurements(String date) throws DateTimeException, NoSuchElementException, HibernateException {
-        List<AirMeasurements> airMeasurementsList = new ArrayList<>();
+    public List<AirMeasurement> getAirMeasurements(String date) throws DateTimeException, NoSuchElementException, HibernateException {
+        List<AirMeasurement> airMeasurementList = new ArrayList<>();
         if (isValidDate(date)) {
             try {
                 LocalDate localDate = LocalDate.parse(date, formatter);
-                airMeasurementsList = airRepository.findAll()
+                airMeasurementList = airRepository.findAll()
                         .stream()
                         .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
                         .collect(Collectors.toList());
@@ -87,20 +83,20 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
         } else if (!isValidDate(date)) {
             throw new DateTimeException("Wrong date format!");
         }
-        if (airMeasurementsList.isEmpty()) {
+        if (airMeasurementList.isEmpty()) {
             throw new NoSuchElementException("Cant't find any air measurements for date: " + date);
         }
-        return airMeasurementsList;
+        return airMeasurementList;
     }
 
     @Override
-    public List<SynopticMeasurements> getSynopticMeasuremets(String date) throws DateTimeException, NoSuchElementException,
+    public List<SynopticMeasurement> getSynopticMeasuremets(String date) throws DateTimeException, NoSuchElementException,
             HibernateException {
-        List<SynopticMeasurements> synopticMeasurementsList = new ArrayList<>();
+        List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
         if (isValidDate(date)) {
             try {
                 LocalDate localDate = LocalDate.parse(date, formatter);
-                synopticMeasurementsList = synopticRepository.findAll().stream()
+                synopticMeasurementList = synopticRepository.findAll().stream()
                         .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
                         .collect(Collectors.toList());
             } catch (HibernateException e) {
@@ -110,17 +106,17 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
         } else if (!isValidDate(date)) {
             throw new DateTimeException("Wrong date format!");
         }
-        if (synopticMeasurementsList.isEmpty()) {
+        if (synopticMeasurementList.isEmpty()) {
             throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
         }
-        return synopticMeasurementsList;
+        return synopticMeasurementList;
     }
 
 
     @Override
-    public SynopticMeasurements getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
+    public SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
             HibernateException {
-        SynopticMeasurements synopticMeasurement = new SynopticMeasurements();
+        SynopticMeasurement synopticMeasurement = new SynopticMeasurement();
         if (isValidDate(date)) {
             try {
                 LocalDate localDate = LocalDate.parse(date, formatter);
@@ -129,10 +125,10 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
                         .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
                                 .toLocalDate()
                                 .isEqual(localDate))
-                        .max(Comparator.comparing(SynopticMeasurements::getTemperature)
-                                .thenComparing(SynopticMeasurements::getAirHumidity)
+                        .max(Comparator.comparing(SynopticMeasurement::getTemperature)
+                                .thenComparing(SynopticMeasurement::getAirHumidity)
                                 .reversed()
-                                .thenComparing(SynopticMeasurements::getWindSpeed)
+                                .thenComparing(SynopticMeasurement::getWindSpeed)
                                 .reversed())
                         .orElse(null);
             } catch (HibernateException e) {
@@ -148,9 +144,9 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     }
 
     @Override
-    public SynopticMeasurements getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
+    public SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
             HibernateException {
-        SynopticMeasurements synopticColdestMeasurement = new SynopticMeasurements();
+        SynopticMeasurement synopticColdestMeasurement = new SynopticMeasurement();
         if (isValidDate(date)) {
             try {
                 LocalDate localDate = LocalDate.parse(date, formatter);
@@ -158,10 +154,10 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
                         .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
                                 .toLocalDate()
                                 .isEqual(localDate))
-                        .min(Comparator.comparing(SynopticMeasurements::getTemperature)
-                                .thenComparing(SynopticMeasurements::getAirHumidity)
+                        .min(Comparator.comparing(SynopticMeasurement::getTemperature)
+                                .thenComparing(SynopticMeasurement::getAirHumidity)
                                 .reversed()
-                                .thenComparing(SynopticMeasurements::getWindSpeed)
+                                .thenComparing(SynopticMeasurement::getWindSpeed)
                                 .reversed())
                         .orElse(null);
             } catch (HibernateException e) {
@@ -178,16 +174,16 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     }
 
     @Override
-    public List<SynopticMeasurements> getHottestPlaces() throws NoSuchElementException, HibernateException {
-        List<SynopticMeasurements> measurementsList = new ArrayList<>();
+    public List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, HibernateException {
+        List<SynopticMeasurement> measurementsList = new ArrayList<>();
         try {
             measurementsList = synopticRepository.findAll()
                     .stream()
                     .filter(a -> a.getTemperature() < 9999)
-                    .sorted(Comparator.comparing(SynopticMeasurements::getTemperature)
+                    .sorted(Comparator.comparing(SynopticMeasurement::getTemperature)
                             .reversed()
-                            .thenComparing(SynopticMeasurements::getAirHumidity)
-                            .thenComparing(SynopticMeasurements::getWindSpeed))
+                            .thenComparing(SynopticMeasurement::getAirHumidity)
+                            .thenComparing(SynopticMeasurement::getWindSpeed))
                     .collect(Collectors.toList());
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -201,16 +197,16 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     }
 
     @Override
-    public List<SynopticMeasurements> getColdestPlaces() throws NoSuchElementException, HibernateException {
-        List<SynopticMeasurements> synopticMeasurementsList;
+    public List<SynopticMeasurement> getColdestPlaces() throws NoSuchElementException, HibernateException {
+        List<SynopticMeasurement> synopticMeasurementList;
         try {
-            synopticMeasurementsList = synopticRepository.findAll()
+            synopticMeasurementList = synopticRepository.findAll()
                     .stream()
                     .filter(a -> a.getTemperature() < 9999)
-                    .sorted(Comparator.comparing(SynopticMeasurements::getTemperature)
-                            .thenComparing(SynopticMeasurements::getAirHumidity)
+                    .sorted(Comparator.comparing(SynopticMeasurement::getTemperature)
+                            .thenComparing(SynopticMeasurement::getAirHumidity)
                             .reversed()
-                            .thenComparing(SynopticMeasurements::getWindSpeed)
+                            .thenComparing(SynopticMeasurement::getWindSpeed)
                             .reversed())
                     .limit(10)
                     .collect(Collectors.toList());
@@ -218,10 +214,10 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
             e.printStackTrace();
             throw new RuntimeException("There is some db problem: " + e.getMessage());
         }
-        if (synopticMeasurementsList.isEmpty()) {
+        if (synopticMeasurementList.isEmpty()) {
             throw new NoSuchElementException("Can't find coldest 10 measurements");
         } else {
-            return synopticMeasurementsList;
+            return synopticMeasurementList;
         }
     }
 
@@ -239,8 +235,8 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
         }
     }
 
-    private boolean isMeasurementLevelValid(MeasurementsAirLevel measurementsAirLevel) {
-        return Arrays.stream(MeasurementsAirLevel.values()).anyMatch(m -> m.equals(measurementsAirLevel));
+    private boolean isMeasurementLevelValid(AirMeasurementLevel airMeasurementLevel) {
+        return Arrays.stream(AirMeasurementLevel.values()).anyMatch(m -> m.equals(airMeasurementLevel));
     }
 }
 

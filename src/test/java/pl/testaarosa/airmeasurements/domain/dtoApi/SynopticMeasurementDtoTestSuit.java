@@ -1,4 +1,4 @@
-package pl.testaarosa.airmeasurements.domain.measurementsdto;
+package pl.testaarosa.airmeasurements.domain.dtoApi;
 
 import com.google.common.testing.EqualsTester;
 import org.junit.Test;

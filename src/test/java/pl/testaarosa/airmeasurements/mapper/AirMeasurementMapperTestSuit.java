@@ -3,7 +3,7 @@ package pl.testaarosa.airmeasurements.mapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
 import pl.testaarosa.airmeasurements.repositories.MockAirDtoRepository;
 
@@ -17,8 +17,8 @@ public class AirMeasurementMapperTestSuit {
 
     @Test
     public void testMapToAirMeasurements(){
-        AirMeasurements expect = mockAirRepository.airMeasurement();
-        AirMeasurements result = airMeasurementMapper
+        AirMeasurement expect = mockAirRepository.airMeasurement();
+        AirMeasurement result = airMeasurementMapper
                 .mapToAirMeasurements(mockAirDtoRepository.airMeasurementsDtos().get(0));
         assertEquals(expect,result);
     }

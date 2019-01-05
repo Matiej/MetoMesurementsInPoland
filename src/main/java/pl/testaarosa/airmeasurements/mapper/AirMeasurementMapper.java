@@ -1,9 +1,9 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
-import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
+import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,23 +11,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Optional.ofNullable;
-
 @Component
 public class AirMeasurementMapper {
 
-    public AirMeasurements mapToAirMeasurements(AirMeasurementsDto airDto) {
+    public AirMeasurement mapToAirMeasurements(AirMeasurementDto airDto) {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         LocalDateTime currentDate = LocalDateTime.now().withNano(0);
-
         LocalDateTime toSql;
         if (Optional.ofNullable(airDto).isPresent()) {
             toSql = LocalDateTime.parse(airDto.getStCalcDate(), formatter);
         } else {
             toSql = currentDate;
         }
-        return new AirMeasurements.AirMaesurementsBuilder()
+        return new AirMeasurement.AirMaesurementsBuilder()
                 .foreignId(airDto.getId())
                 .measurementDate(toSql)
                 .saveDate(currentDate)
@@ -46,7 +42,7 @@ public class AirMeasurementMapper {
                 .build();
     }
 
-    private MeasurementsAirLevel airQuality(AirMeasurementsDto air) {
+    private AirMeasurementLevel airQuality(AirMeasurementDto air) {
         int l1 = air.getC6h6IndexLevel().getId();
         int l2 = air.getStIndexLevel().getId();
         int l3 = air.getNo2IndexLevel().getId();
@@ -58,19 +54,19 @@ public class AirMeasurementMapper {
 
         switch (level) {
             case 0:
-                return MeasurementsAirLevel.VERY_GOOD;
+                return AirMeasurementLevel.VERY_GOOD;
             case 1:
-                return MeasurementsAirLevel.GOOD;
+                return AirMeasurementLevel.GOOD;
             case 2:
-                return MeasurementsAirLevel.MODERATE;
+                return AirMeasurementLevel.MODERATE;
             case 3:
-                return MeasurementsAirLevel.SUFFICIENT;
+                return AirMeasurementLevel.SUFFICIENT;
             case 4:
-                return MeasurementsAirLevel.BAD;
+                return AirMeasurementLevel.BAD;
             case 5:
-                return MeasurementsAirLevel.VERY_BAD;
+                return AirMeasurementLevel.VERY_BAD;
             default:
-                return MeasurementsAirLevel.NO_DATA;
+                return AirMeasurementLevel.NO_DATA;
         }
     }
 

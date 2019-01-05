@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class AirMeasurements {
+public class AirMeasurement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +18,7 @@ public class AirMeasurements {
     @Column(name = "SAVE_DATE")
     private LocalDateTime saveDate;
     @Enumerated(value = EnumType.STRING)
-    private MeasurementsAirLevel airQuality;
+    private AirMeasurementLevel airQuality;
     private String stIndexLevel; //powietrze ogólnie
     private String so2IndexLevel; //dwutlenek siarki
     private String no2IndexLevel; //dwutlenek azotu
@@ -32,10 +32,10 @@ public class AirMeasurements {
     @JoinColumn(name = "STATION_ID")
     private MeasuringStation measuringStation;
 
-    public AirMeasurements() {
+    public AirMeasurement() {
     }
 
-    private AirMeasurements(AirMaesurementsBuilder builder) {
+    private AirMeasurement(AirMaesurementsBuilder builder) {
         this.foreignId = builder.foreignId;
         this.measurementDate = builder.measurementDate;
         this.saveDate = builder.saveDate;
@@ -51,6 +51,7 @@ public class AirMeasurements {
         this.measuringStation = builder.measuringStation;
     }
 
+    @JsonIgnore
     public Long getId() {
         return id;
     }
@@ -67,7 +68,7 @@ public class AirMeasurements {
         return saveDate;
     }
 
-    public MeasurementsAirLevel getAirQuality() {
+    public AirMeasurementLevel getAirQuality() {
         return airQuality;
     }
 
@@ -115,8 +116,8 @@ public class AirMeasurements {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AirMeasurements)) return false;
-        AirMeasurements that = (AirMeasurements) o;
+        if (!(o instanceof AirMeasurement)) return false;
+        AirMeasurement that = (AirMeasurement) o;
         return getForeignId() == that.getForeignId() &&
                 Objects.equals(getId(), that.getId()) &&
                 Objects.equals(getMeasurementDate(), that.getMeasurementDate()) &&
@@ -141,7 +142,7 @@ public class AirMeasurements {
 
     @Override
     public String toString() {
-        return "AirMeasurements: " + "id: " + id + ", Station id: " + foreignId + ", measurementDate: " + measurementDate + "\n, saveDate: " + saveDate + ", airQuality: " + airQuality + "\n" + ", stIndexLevel: " + stIndexLevel + ", so2IndexLevel: " + so2IndexLevel + "\n" + ", no2IndexLevel: " + no2IndexLevel + ", coIndexLevel: " + coIndexLevel + "\n" + ", pm10IndexLevel: " + pm10IndexLevel + ", pm25IndexLevel: " + pm25IndexLevel + "\n" + ", o3IndexLevel: " + o3IndexLevel + ", c6h6IndexLevel: " + c6h6IndexLevel + "\n" + "_____________________________" + "\n";
+        return "AirMeasurement: " + "id: " + id + ", Station id: " + foreignId + ", measurementDate: " + measurementDate + "\n, saveDate: " + saveDate + ", airQuality: " + airQuality + "\n" + ", stIndexLevel: " + stIndexLevel + ", so2IndexLevel: " + so2IndexLevel + "\n" + ", no2IndexLevel: " + no2IndexLevel + ", coIndexLevel: " + coIndexLevel + "\n" + ", pm10IndexLevel: " + pm10IndexLevel + ", pm25IndexLevel: " + pm25IndexLevel + "\n" + ", o3IndexLevel: " + o3IndexLevel + ", c6h6IndexLevel: " + c6h6IndexLevel + "\n" + "_____________________________" + "\n";
     }
 
 
@@ -150,7 +151,7 @@ public class AirMeasurements {
         private int foreignId;
         private LocalDateTime measurementDate;
         private LocalDateTime saveDate;
-        private MeasurementsAirLevel airQuality;
+        private AirMeasurementLevel airQuality;
         private String stIndexLevel; //powietrze ogólnie
         private String so2IndexLevel; //dwutlenek siarki
         private String no2IndexLevel; //dwutlenek azotu
@@ -181,7 +182,7 @@ public class AirMeasurements {
             return this;
         }
 
-        public AirMaesurementsBuilder airQuality(MeasurementsAirLevel airQuality) {
+        public AirMaesurementsBuilder airQuality(AirMeasurementLevel airQuality) {
             this.airQuality = airQuality;
             return this;
         }
@@ -231,8 +232,8 @@ public class AirMeasurements {
             return this;
         }
 
-        public AirMeasurements build() {
-            return new AirMeasurements(this);
+        public AirMeasurement build() {
+            return new AirMeasurement(this);
         }
     }
 }

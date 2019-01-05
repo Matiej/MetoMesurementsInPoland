@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Entity
-@Table(name = "MEASUREMENT_STATION")
+@Table(name = "MEASURING_ST")
 public class MeasuringStation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,10 +26,10 @@ public class MeasuringStation {
     private MeasuringStationDetails stationDetails;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
-    private List<AirMeasurements> airMeasurementsList = new ArrayList<>();
+    private List<AirMeasurement> airMeasurementList = new ArrayList<>();
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
-    private List<SynopticMeasurements> synopticMeasurements = new ArrayList<>();
+    private List<SynopticMeasurement> synopticMeasurements = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -95,19 +95,19 @@ public class MeasuringStation {
         this.stationDetails = stationDetails;
     }
 
-    public List<AirMeasurements> getAirMeasurementsList() {
-        return airMeasurementsList;
+    public List<AirMeasurement> getAirMeasurementList() {
+        return airMeasurementList;
     }
 
-    public void setAirMeasurementsList(List<AirMeasurements> airMeasurementsList) {
-        this.airMeasurementsList = airMeasurementsList;
+    public void setAirMeasurementList(List<AirMeasurement> airMeasurementList) {
+        this.airMeasurementList = airMeasurementList;
     }
 
-    public List<SynopticMeasurements> getSynopticMeasurements() {
+    public List<SynopticMeasurement> getSynopticMeasurements() {
         return synopticMeasurements;
     }
 
-    public void setSynopticMeasurements(List<SynopticMeasurements> synopticMeasurements) {
+    public void setSynopticMeasurements(List<SynopticMeasurement> synopticMeasurements) {
         this.synopticMeasurements = synopticMeasurements;
     }
 
@@ -124,20 +124,20 @@ public class MeasuringStation {
                 Objects.equals(getStreet(), that.getStreet()) &&
                 Objects.equals(getCity(), that.getCity()) &&
                 Objects.equals(getStationDetails(), that.getStationDetails()) &&
-                Objects.equals(getAirMeasurementsList(), that.getAirMeasurementsList()) &&
+                Objects.equals(getAirMeasurementList(), that.getAirMeasurementList()) &&
                 Objects.equals(getSynopticMeasurements(), that.getSynopticMeasurements());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId(), getStationId(), getStationName(), getLatitude(), getLongitude(), getStreet(), getCity(), getStationDetails(), getAirMeasurementsList(), getSynopticMeasurements());
+        return Objects.hash(getId(), getStationId(), getStationName(), getLatitude(), getLongitude(), getStreet(), getCity(), getStationDetails(), getAirMeasurementList(), getSynopticMeasurements());
     }
 
     @Override
     public String toString() {
         return "MeasuringStation id: " + id + ", foreign id: " + stationId + ", station name: " + stationName + "\n" + ", latitude=: " + latitude + ", longitude: " + longitude + ", street: " + street + ", city: "
-                + city + "\n" + stationDetails +  "\n" + airMeasurementsList + "\n" + synopticMeasurements;
+                + city + "\n" + stationDetails +  "\n" + airMeasurementList + "\n" + synopticMeasurements;
     }
 }
 

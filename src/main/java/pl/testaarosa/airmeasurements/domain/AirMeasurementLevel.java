@@ -1,6 +1,6 @@
 package pl.testaarosa.airmeasurements.domain;
 
-public enum MeasurementsAirLevel {
+public enum AirMeasurementLevel {
     VERY_GOOD,
     GOOD,
     MODERATE,

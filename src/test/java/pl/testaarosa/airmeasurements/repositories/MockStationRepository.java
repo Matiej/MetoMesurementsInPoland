@@ -1,7 +1,6 @@
 package pl.testaarosa.airmeasurements.repositories;
 
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,43 +22,43 @@ public class MockStationRepository {
         station1.setStreet("Piekna");
         station1.setCity("Warszawa");
         station1.setStationDetails(details.detailsList().get(0));
-        station1.setAirMeasurementsList(mockAirRepository.airMeasurements1());
+        station1.setAirMeasurementList(mockAirRepository.airMeasurements1());
         station1.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements1());
 
         MeasuringStation station2 = new MeasuringStation();
         station2.setId(1L);
-        station2.setStationId(2);
-        station2.setStationName("Poznan");
+        station2.setStationId(1);
+        station2.setStationName("Wawrszawa-Centrum");
         station2.setLatitude("15");
         station2.setLongitude("15");
-        station2.setStreet("Morska");
-        station2.setCity("Poznan");
+        station2.setStreet("Piekna");
+        station2.setCity("Warszawa");
         station2.setStationDetails(details.detailsList().get(0));
-        station2.setAirMeasurementsList(mockAirRepository.airMeasurements2());
-        station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
+        station2.setAirMeasurementList(mockAirRepository.airMeasurements1());
+        station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements1());
 
         MeasuringStation station3 = new MeasuringStation();
-        station3.setId(1L);
-        station3.setStationId(3);
-        station3.setStationName("Krakow");
-        station3.setLatitude("15");
-        station3.setLongitude("15");
-        station3.setStreet("Morska");
-        station3.setCity("Krakow");
-        station3.setStationDetails(details.detailsList().get(0));
-        station3.setAirMeasurementsList(mockAirRepository.airMeasurements2());
+        station3.setId(2L);
+        station3.setStationId(2);
+        station3.setStationName("Poznan-Stoleczna");
+        station3.setLatitude("11");
+        station3.setLongitude("123");
+        station3.setStreet("Stoleczna");
+        station3.setCity("Poznan");
+        station3.setStationDetails(details.detailsList().get(1));
+        station3.setAirMeasurementList(mockAirRepository.airMeasurements2());
         station3.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
 
         MeasuringStation station4 = new MeasuringStation();
-        station4.setId(1L);
+        station4.setId(3L);
         station4.setStationId(3);
-        station4.setStationName("Krakow");
-        station4.setLatitude("15");
-        station4.setLongitude("15");
-        station4.setStreet("Morska");
+        station4.setStationName("Krakow-Starowka");
+        station4.setLatitude("23");
+        station4.setLongitude("221");
+        station4.setStreet("Starowka");
         station4.setCity("Krakow");
-        station4.setStationDetails(details.detailsList().get(0));
-        station4.setAirMeasurementsList(mockAirRepository.airMeasurements2());
+        station4.setStationDetails(details.detailsList().get(1));
+        station4.setAirMeasurementList(mockAirRepository.airMeasurements2());
         station4.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
 
         result.add(station1);

@@ -11,42 +11,41 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestClientException;
-import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
+import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
-import pl.testaarosa.airmeasurements.services.MeasuringOnlineServices;
+import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MeasuringOnlineControllerTestSuit {
+public class OnlineMeasurementsControllerTestSuit {
 
     private final MockOnlineRepository mockOnlineRepository = new MockOnlineRepository();
     private final Converter converter = new Converter();
     private final static String MAPPING = "/online";
 
     @InjectMocks
-    private MeasuringOnlineController measuringOnlineController;
+    private OnlineMeasurementsController onlineMeasurementsController;
 
     @Mock
-    private MeasuringOnlineServices measuringOnlineServices;
+    private OnlineMeasurementService measuringOnlineServices;
 
     private MockMvc mockMvc;
 
     @Before
     public void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(measuringOnlineController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(onlineMeasurementsController).build();
     }
 
     @Test
     public void shouldFindAllMeasuringStations() throws Exception {
         //givem
-        List<MeasuringStationOnLine> stationOnLineList = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> stationOnLineList = mockOnlineRepository.measuringStationOnLineList();
         //when
         when(measuringOnlineServices.getAllMeasuringStations()).thenReturn(stationOnLineList);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/all"))
@@ -100,7 +99,7 @@ public class MeasuringOnlineControllerTestSuit {
     @Test
     public void shouldGetGivenCityMeasuringStations() throws Exception {
         //given
-        List<MeasuringStationOnLine> stationOnLines = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> stationOnLines = mockOnlineRepository.measuringStationOnLineList();
         //when
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
                 .thenReturn(stationOnLines);
@@ -173,7 +172,7 @@ public class MeasuringOnlineControllerTestSuit {
     @Test
     public void shouldGetHotestOnlineMeasurement() throws Exception {
         //given
-        MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
+        OnlineMeasurementDto stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
         //when
         when(measuringOnlineServices.getHottestOnlineStation()).thenReturn(stationOnLine);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/hottest"))
@@ -226,7 +225,7 @@ public class MeasuringOnlineControllerTestSuit {
     @Test
     public void shouldGetColdestOnlineMeasurement() throws Exception {
         //given
-        MeasuringStationOnLine stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
+        OnlineMeasurementDto stationOnLine = mockOnlineRepository.measuringStationOnLineList().get(0);
         //when
         when(measuringOnlineServices.getColdestOnlineStation()).thenReturn(stationOnLine);
         mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/stations/coldest"))

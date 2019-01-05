@@ -1,18 +1,15 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.measurementsdto.AirMeasurementsDto;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.LevelDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.LevelDto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class MockAirDtoRepository {
 
-    public List<AirMeasurementsDto> airMeasurementsDtos() {
-        List<AirMeasurementsDto> airMeasurementsDtoList = new ArrayList<>();
+    public List<AirMeasurementDto> airMeasurementsDtos() {
+        List<AirMeasurementDto> airMeasurementDtoList = new ArrayList<>();
 
         LevelDto stIndexLevel = new LevelDto.Builder()
                 .indexLevelName("stILevel")
@@ -54,76 +51,80 @@ public class MockAirDtoRepository {
                 .id(0)
                 .build();
 
-        AirMeasurementsDto airMeasurementsDto1 = new AirMeasurementsDto();
-        airMeasurementsDto1.setStIndexLevel(stIndexLevel);
-        airMeasurementsDto1.setSo2IndexLevel(so2IndexLevel);
-        airMeasurementsDto1.setNo2IndexLevel(no2IndexLevel);
-        airMeasurementsDto1.setCoIndexLevel(coIndexLevel);
-        airMeasurementsDto1.setPm10IndexLevel(pm10IndexLevel);
-        airMeasurementsDto1.setPm25IndexLevel(pm25IndexLevel);
-        airMeasurementsDto1.setO3IndexLevel(o3IndexLevel);
-        airMeasurementsDto1.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementsDto1.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementsDto1.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementsDto1.setStCalcDate("2018-05-05 12:01:05");
-        airMeasurementsDto1.setId(1);
+        AirMeasurementDto airMeasurementDto1 = new AirMeasurementDto();
+        airMeasurementDto1.setStIndexLevel(stIndexLevel);
+        airMeasurementDto1.setSo2IndexLevel(so2IndexLevel);
+        airMeasurementDto1.setNo2IndexLevel(no2IndexLevel);
+        airMeasurementDto1.setCoIndexLevel(coIndexLevel);
+        airMeasurementDto1.setPm10IndexLevel(pm10IndexLevel);
+        airMeasurementDto1.setPm25IndexLevel(pm25IndexLevel);
+        airMeasurementDto1.setO3IndexLevel(o3IndexLevel);
+        airMeasurementDto1.setC6h6IndexLevel(c6h6IndexLevel);
+        airMeasurementDto1.setStCalcDate("2018-05-12 12:05:01:05");
+        airMeasurementDto1.setSo2SourceDataDate("2018-05-05 12:01:05");
+        airMeasurementDto1.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto1.setId(1);
 
-        AirMeasurementsDto airMeasurementsDto = new AirMeasurementsDto();
-        airMeasurementsDto.setStIndexLevel(stIndexLevel);
-        airMeasurementsDto.setSo2IndexLevel(so2IndexLevel);
-        airMeasurementsDto.setNo2IndexLevel(no2IndexLevel);
-        airMeasurementsDto.setCoIndexLevel(coIndexLevel);
-        airMeasurementsDto.setPm10IndexLevel(pm10IndexLevel);
-        airMeasurementsDto.setPm25IndexLevel(pm25IndexLevel);
-        airMeasurementsDto.setO3IndexLevel(o3IndexLevel);
-        airMeasurementsDto.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementsDto.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementsDto.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementsDto.setStCalcDate("2018-05-05 12:01:05");
-        airMeasurementsDto.setId(1);
+        AirMeasurementDto airMeasurementDto = new AirMeasurementDto();
+        airMeasurementDto.setStIndexLevel(stIndexLevel);
+        airMeasurementDto.setSo2IndexLevel(so2IndexLevel);
+        airMeasurementDto.setNo2IndexLevel(no2IndexLevel);
+        airMeasurementDto.setCoIndexLevel(coIndexLevel);
+        airMeasurementDto.setPm10IndexLevel(pm10IndexLevel);
+        airMeasurementDto.setPm25IndexLevel(pm25IndexLevel);
+        airMeasurementDto.setO3IndexLevel(o3IndexLevel);
+        airMeasurementDto.setC6h6IndexLevel(c6h6IndexLevel);
+        airMeasurementDto.setStCalcDate("2018-05-12 12:05:01:05");
+        airMeasurementDto.setSo2SourceDataDate("2018-05-05 12:01:05");
+        airMeasurementDto.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto.setId(1);
 
-        AirMeasurementsDto airMeasurementsDto2 = new AirMeasurementsDto();
-        airMeasurementsDto2.setStIndexLevel(stIndexLevel);
-        airMeasurementsDto2.setSo2IndexLevel(so2IndexLevel);
-        airMeasurementsDto2.setNo2IndexLevel(no2IndexLevel);
-        airMeasurementsDto2.setCoIndexLevel(coIndexLevel);
-        airMeasurementsDto2.setPm10IndexLevel(pm10IndexLevel);
-        airMeasurementsDto2.setPm25IndexLevel(pm25IndexLevel);
-        airMeasurementsDto2.setO3IndexLevel(o3IndexLevel);
-        airMeasurementsDto2.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementsDto2.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementsDto2.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementsDto2.setStCalcDate("2018-05-05 12:01:05");
-        airMeasurementsDto2.setId(2);
+        AirMeasurementDto airMeasurementDto2 = new AirMeasurementDto();
+        airMeasurementDto2.setStIndexLevel(stIndexLevel);
+        airMeasurementDto2.setSo2IndexLevel(so2IndexLevel);
+        airMeasurementDto2.setNo2IndexLevel(no2IndexLevel);
+        airMeasurementDto2.setCoIndexLevel(coIndexLevel);
+        airMeasurementDto2.setPm10IndexLevel(pm10IndexLevel);
+        airMeasurementDto2.setPm25IndexLevel(pm25IndexLevel);
+        airMeasurementDto2.setO3IndexLevel(o3IndexLevel);
+        airMeasurementDto2.setC6h6IndexLevel(c6h6IndexLevel);
+        airMeasurementDto2.setStCalcDate("2018-05-12 12:05:01:05");
+        airMeasurementDto2.setSo2SourceDataDate("2018-05-05 12:01:05");
+        airMeasurementDto2.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto2.setId(2);
 
-        AirMeasurementsDto airMeasurementsDto3 = new AirMeasurementsDto();
-        airMeasurementsDto3.setStIndexLevel(stIndexLevel);
-        airMeasurementsDto3.setSo2IndexLevel(so2IndexLevel);
-        airMeasurementsDto3.setNo2IndexLevel(no2IndexLevel);
-        airMeasurementsDto3.setCoIndexLevel(coIndexLevel);
-        airMeasurementsDto3.setPm10IndexLevel(pm10IndexLevel);
-        airMeasurementsDto3.setPm25IndexLevel(pm25IndexLevel);
-        airMeasurementsDto3.setO3IndexLevel(o3IndexLevel);
-        airMeasurementsDto3.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementsDto3.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementsDto3.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementsDto3.setStCalcDate("2018-05-05 12:01:05");
-        airMeasurementsDto3.setId(3);
+        AirMeasurementDto airMeasurementDto3 = new AirMeasurementDto();
+        airMeasurementDto3.setStIndexLevel(stIndexLevel);
+        airMeasurementDto3.setSo2IndexLevel(so2IndexLevel);
+        airMeasurementDto3.setNo2IndexLevel(no2IndexLevel);
+        airMeasurementDto3.setCoIndexLevel(coIndexLevel);
+        airMeasurementDto3.setPm10IndexLevel(pm10IndexLevel);
+        airMeasurementDto3.setPm25IndexLevel(pm25IndexLevel);
+        airMeasurementDto3.setO3IndexLevel(o3IndexLevel);
+        airMeasurementDto3.setC6h6IndexLevel(c6h6IndexLevel);
+        airMeasurementDto3.setStCalcDate("2018-05-12 12:05:01:05");
+        airMeasurementDto3.setSo2SourceDataDate("2018-05-05 12:01:05");
+        airMeasurementDto3.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto3.setId(3);
 
-        airMeasurementsDtoList.add(airMeasurementsDto);
-        airMeasurementsDtoList.add(airMeasurementsDto1);
-        airMeasurementsDtoList.add(airMeasurementsDto2);
-        airMeasurementsDtoList.add(airMeasurementsDto3);
-        return airMeasurementsDtoList;
+        airMeasurementDtoList.add(airMeasurementDto);
+        airMeasurementDtoList.add(airMeasurementDto1);
+        airMeasurementDtoList.add(airMeasurementDto2);
+        airMeasurementDtoList.add(airMeasurementDto3);
+        return airMeasurementDtoList;
     }
-
-    public Map<Integer, AirMeasurementsDto> measurementsDtoMap(){
-        Map<Integer, AirMeasurementsDto> map = new TreeMap<>();
+//TODO do poprawienia
+    public Map<Integer, AirMeasurementDto> measurementsDtoMap(){
+        Map<Integer, AirMeasurementDto> map = new HashMap<>();
         int i =0;
-        for (AirMeasurementsDto airMeasurementsDto : airMeasurementsDtos()) {
-            map.put(i, airMeasurementsDto);
+        for (AirMeasurementDto airMeasurementDto : airMeasurementsDtos()) {
+            map.put(i, airMeasurementDto);
             i++;
         }
         return map;
+    }
+
+    public CompletableFuture<AirMeasurementDto> airMeasurementsDtosMapCF() {
+        return CompletableFuture.completedFuture(Optional.ofNullable(airMeasurementsDtos().get(0)).orElse(new AirMeasurementDto()));
     }
 }

@@ -1,6 +1,6 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurements;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import java.util.List;
 
 public class MockSynopticRepository {
 
-    public List<SynopticMeasurements> synopticMeasurements1(){
+    public List<SynopticMeasurement> synopticMeasurements1(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01).withNano(0);
-        SynopticMeasurements synopticMeasurements = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(1L)
                 .foreignId(11)
                 .city("Warszawa")
@@ -21,7 +21,7 @@ public class MockSynopticRepository {
                 .pressure(999)
                 .build();
 
-        SynopticMeasurements synopticMeasurements1 = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement1 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(2L)
                 .foreignId(1)
                 .city("Warszawa")
@@ -32,7 +32,7 @@ public class MockSynopticRepository {
                 .pressure(1001)
                 .build();
 
-        SynopticMeasurements synopticMeasurements2 = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement2 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(3L)
                 .foreignId(130)
                 .city("Warszawa")
@@ -43,16 +43,16 @@ public class MockSynopticRepository {
                 .pressure(999)
                 .build();
 
-        List<SynopticMeasurements> synopticMeasurementsList = new ArrayList<>();
-        synopticMeasurementsList.add(synopticMeasurements);
-        synopticMeasurementsList.add(synopticMeasurements1);
-        synopticMeasurementsList.add(synopticMeasurements2);
-        return synopticMeasurementsList;
+        List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
+        synopticMeasurementList.add(synopticMeasurement);
+        synopticMeasurementList.add(synopticMeasurement1);
+        synopticMeasurementList.add(synopticMeasurement2);
+        return synopticMeasurementList;
     }
 
-    public List<SynopticMeasurements> synopticMeasurements2(){
+    public List<SynopticMeasurement> synopticMeasurements2(){
         LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
-        SynopticMeasurements synopticMeasurements = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(11L)
                 .foreignId(111)
                 .city("Szczecien1")
@@ -63,7 +63,7 @@ public class MockSynopticRepository {
                 .pressure(1001)
                 .build();
 
-        SynopticMeasurements synopticMeasurements1 = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement1 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(12L)
                 .foreignId(112)
                 .city("Szczecin2")
@@ -74,7 +74,7 @@ public class MockSynopticRepository {
                 .pressure(999)
                 .build();
 
-        SynopticMeasurements synopticMeasurements2 = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement2 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(3L)
                 .foreignId(133)
                 .city("Szczecin3")
@@ -85,7 +85,7 @@ public class MockSynopticRepository {
                 .pressure(999)
                 .build();
 
-        SynopticMeasurements synopticMeasurements3 = new SynopticMeasurements.SynopticMeasurementsBuilder()
+        SynopticMeasurement synopticMeasurement3 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(3L)
                 .foreignId(133)
                 .city("Szczecin3")
@@ -96,11 +96,11 @@ public class MockSynopticRepository {
                 .pressure(999)
                 .build();
 
-        List<SynopticMeasurements> synopticMeasurementsList = new ArrayList<>();
-        synopticMeasurementsList.add(synopticMeasurements);
-        synopticMeasurementsList.add(synopticMeasurements1);
-        synopticMeasurementsList.add(synopticMeasurements2);
-        synopticMeasurementsList.add(synopticMeasurements3);
-        return synopticMeasurementsList;
+        List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
+        synopticMeasurementList.add(synopticMeasurement);
+        synopticMeasurementList.add(synopticMeasurement1);
+        synopticMeasurementList.add(synopticMeasurement2);
+        synopticMeasurementList.add(synopticMeasurement3);
+        return synopticMeasurementList;
     }
 }

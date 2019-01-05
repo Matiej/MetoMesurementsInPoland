@@ -52,13 +52,13 @@ public class AddMeasurementsControllerTestSuit {
         //given
         MeasuringStation measuringStation = measuringStationList.get(0);
         //when
-        Mockito.when(measurementsService.addOne(2)).thenReturn(measuringStation);
+        Mockito.when(measurementsService.addOneStationMeasurement(2)).thenReturn(measuringStation);
         mockMvc.perform(get(MAPPING+"/station")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(201))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(measuringStation)));
         //then
-        verify(measurementsService, times(1)).addOne(2);
+        verify(measurementsService, times(1)).addOneStationMeasurement(2);
         verifyNoMoreInteractions(measurementsService);
     }
 
@@ -66,14 +66,14 @@ public class AddMeasurementsControllerTestSuit {
     public void shouldAddOneMeasurementAndThrowsNoSuchElementException() throws Exception {
         //given
         //when
-        Mockito.when(measurementsService.addOne(2))
+        Mockito.when(measurementsService.addOneStationMeasurement(2))
                 .thenThrow(new NoSuchElementException("Add measurements to given station, throws NoSuchElementException, return status 400"));
         mockMvc.perform(get(MAPPING+"/station")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
-        verify(measurementsService, times(1)).addOne(2);
+        verify(measurementsService, times(1)).addOneStationMeasurement(2);
         verifyNoMoreInteractions(measurementsService);
     }
 
@@ -86,7 +86,7 @@ public class AddMeasurementsControllerTestSuit {
                 .andExpect(status().is(404))
                 .andReturn();
         //then
-        verify(measurementsService,times(0)).addOne(2);
+        verify(measurementsService,times(0)).addOneStationMeasurement(2);
         verifyNoMoreInteractions(measurementsService);
     }
 
@@ -94,14 +94,14 @@ public class AddMeasurementsControllerTestSuit {
     public void shouldAddOneMeasurementAndThrowsRestClientException() throws Exception {
         //given
         //when
-        Mockito.when(measurementsService.addOne(2))
+        Mockito.when(measurementsService.addOneStationMeasurement(2))
                 .thenThrow(new RestClientException("Add measurements to given station, throws RestClientException, return status 500"));
         mockMvc.perform(get(MAPPING+"/station")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(500))
                 .andReturn();
         //then
-        verify(measurementsService, times(1)).addOne(2);
+        verify(measurementsService, times(1)).addOneStationMeasurement(2);
         verifyNoMoreInteractions(measurementsService);
     }
 
@@ -109,14 +109,14 @@ public class AddMeasurementsControllerTestSuit {
     public void shouldAddOneMeasurementAndThrowsHibernateException() throws Exception {
         //given
         //when
-        Mockito.when(measurementsService.addOne(2))
+        Mockito.when(measurementsService.addOneStationMeasurement(2))
                 .thenThrow(new HibernateException("Add measurements to given station, throws HibernateException, return status 500"));
         mockMvc.perform(get(MAPPING+"/station")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(503))
                 .andReturn();
         //then
-        verify(measurementsService, times(1)).addOne(2);
+        verify(measurementsService, times(1)).addOneStationMeasurement(2);
         verifyNoMoreInteractions(measurementsService);
     }
 

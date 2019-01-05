@@ -1,6 +1,6 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.measurementsdto.CityRegionDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.CityRegionDto;
 
 import java.util.ArrayList;
 import java.util.List;

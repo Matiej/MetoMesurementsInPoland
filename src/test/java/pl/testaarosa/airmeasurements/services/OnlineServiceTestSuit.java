@@ -5,33 +5,33 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import pl.testaarosa.airmeasurements.domain.MeasuringStationOnLine;
+import org.mockito.junit.MockitoJUnitRunner;
+import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
-import pl.testaarosa.airmeasurements.services.MeasurementStationProcessor;
-import pl.testaarosa.airmeasurements.services.MeasuringOnlineServicesImpl;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OnlineServicesTestSuit {
+public class OnlineServiceTestSuit {
     private final MockOnlineRepository mockOnlineRepository = new MockOnlineRepository();
     @InjectMocks
-    private MeasuringOnlineServicesImpl service;
+    private OnlineMeasurementServiceImpl service;
 
     @Mock
-    private MeasurementStationProcessor msProcessor;
+    private OnlineMeasurementProcessor msProcessor;
 
     @Before
     public void init() throws ExecutionException, InterruptedException {
-        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(mockOnlineRepository.measuringStationOnLineList());
+        when(msProcessor.fillMeasuringStationListStructure())
+                .thenReturn(mockOnlineRepository.measuringStationOnLineList());
     }
 
     @Test
-    public void testGetAllMeasuringStations() throws ExecutionException, InterruptedException {
+    public void testGetAllMeasuringStations() {
         int result = service.getAllMeasuringStations().size();
         int expect = 4;
         assertEquals(expect, result);
@@ -39,7 +39,7 @@ public class OnlineServicesTestSuit {
     }
 
     @Test
-    public void getGivenCityMeasuringStationsWithSynopticData() throws ExecutionException, InterruptedException {
+    public void getGivenCityMeasuringStationsWithSynopticData() {
         int result = service.getGivenCityMeasuringStationsWithSynopticData("Warsz").size();
         int expect = 2;
         assertEquals(expect, result);
@@ -47,22 +47,22 @@ public class OnlineServicesTestSuit {
 
     @Test
     public void testgetHotestOnlineStation() throws ExecutionException, InterruptedException {
-        MeasuringStationOnLine result = service.getHottestOnlineStation();
-        MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(1);
+        OnlineMeasurementDto result = service.getHottestOnlineStation();
+        OnlineMeasurementDto expect = mockOnlineRepository.measuringStationOnLineList().get(1);
         assertEquals(expect, result);
     }
 
     @Test
     public void testgetHotestOnlineStation1() throws ExecutionException, InterruptedException {
-        MeasuringStationOnLine result = service.getHottestOnlineStation();
-        MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(1);
+        OnlineMeasurementDto result = service.getHottestOnlineStation();
+        OnlineMeasurementDto expect = mockOnlineRepository.measuringStationOnLineList().get(1);
         assertTrue(result.getStationName().contains(expect.getStationName()));
     }
 
     @Test
     public void testgetColdestOnlineStation() throws ExecutionException, InterruptedException {
-        MeasuringStationOnLine result = service.getColdestOnlineStation();
-        MeasuringStationOnLine expect = mockOnlineRepository.measuringStationOnLineList().get(0);
+        OnlineMeasurementDto result = service.getColdestOnlineStation();
+        OnlineMeasurementDto expect = mockOnlineRepository.measuringStationOnLineList().get(0);
         assertEquals(expect, result);
     }
 }

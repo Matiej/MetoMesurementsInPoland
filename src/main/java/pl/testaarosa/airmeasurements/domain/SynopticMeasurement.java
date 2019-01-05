@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class SynopticMeasurements {
+public class SynopticMeasurement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +30,10 @@ public class SynopticMeasurements {
     @JoinColumn(name = "STATION_ID")
     private MeasuringStation measuringStation;
 
-    public SynopticMeasurements() {
+    public SynopticMeasurement() {
     }
 
-    private SynopticMeasurements(SynopticMeasurementsBuilder builder) {
+    private SynopticMeasurement(SynopticMeasurementsBuilder builder) {
         this.foreignId = builder.foreignId;
         this.city = builder.city;
         this.saveDate = builder.saveDate;
@@ -51,6 +51,7 @@ public class SynopticMeasurements {
         this.saveDate = saveDate;
     }
 
+    @JsonIgnore
     public Long getId() {
         return id;
     }
@@ -104,7 +105,7 @@ public class SynopticMeasurements {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SynopticMeasurements that = (SynopticMeasurements) o;
+        SynopticMeasurement that = (SynopticMeasurement) o;
         return foreignId == that.foreignId &&
                 Double.compare(that.temperature, temperature) == 0 &&
                 Double.compare(that.windSpeed, windSpeed) == 0 &&
@@ -197,8 +198,8 @@ public class SynopticMeasurements {
             return this;
         }
 
-        public SynopticMeasurements build() {
-            return new SynopticMeasurements(this);
+        public SynopticMeasurement build() {
+            return new SynopticMeasurement(this);
         }
     }
 }

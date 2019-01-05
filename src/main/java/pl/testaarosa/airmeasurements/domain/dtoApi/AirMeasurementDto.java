@@ -1,11 +1,11 @@
-package pl.testaarosa.airmeasurements.domain.measurementsdto;
+package pl.testaarosa.airmeasurements.domain.dtoApi;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
-public class AirMeasurementsDto {
+public class AirMeasurementDto {
 
     private int id;
     private String stCalcDate;
@@ -137,10 +137,10 @@ public class AirMeasurementsDto {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AirMeasurementsDto)) {
+        if (!(o instanceof AirMeasurementDto)) {
             return false;
         }
-        AirMeasurementsDto that = (AirMeasurementsDto) o;
+        AirMeasurementDto that = (AirMeasurementDto) o;
         return getId() == that.getId() && Objects.equals(getStCalcDate(), that.getStCalcDate()) && Objects.equals(
                 getStIndexLevel(),
                 that.getStIndexLevel()) && Objects.equals(getSo2IndexLevel(),

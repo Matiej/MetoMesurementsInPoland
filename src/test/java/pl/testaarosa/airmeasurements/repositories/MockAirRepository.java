@@ -1,19 +1,21 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.AirMeasurements;
-import pl.testaarosa.airmeasurements.domain.MeasurementsAirLevel;
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class MockAirRepository {
 
-    public List<AirMeasurements> airMeasurements1(){
+    public List<AirMeasurement> airMeasurements1(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01,05);
-        List<AirMeasurements> result = new ArrayList<>();
-        AirMeasurements airMeasurements1 = new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.GOOD)
+        List<AirMeasurement> result = new ArrayList<>();
+        AirMeasurement airMeasurement1 = new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.GOOD)
                 .stIndexLevel("stILevel")
                 .c6h6IndexLevel("c6hLEVEL")
                 .coIndexLevel("coLEVEL")
@@ -27,8 +29,8 @@ public class MockAirRepository {
                 .saveDate(date)
                 .build();
 
-        AirMeasurements airMeasurements2 = new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.MODERATE)
+        AirMeasurement airMeasurement2 = new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.MODERATE)
                 .c6h6IndexLevel("c6hLEVEL")
                 .coIndexLevel("coLEVEL")
                 .no2IndexLevel("noLEVEL")
@@ -40,16 +42,16 @@ public class MockAirRepository {
                 .measurementDate(date)
                 .saveDate(date)
                 .build();
-        result.add(airMeasurements1);
-        result.add(airMeasurements2);
+        result.add(airMeasurement1);
+        result.add(airMeasurement2);
         return result;
     }
 
-    public List<AirMeasurements> airMeasurements2(){
+    public List<AirMeasurement> airMeasurements2(){
         LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
-        List<AirMeasurements> result = new ArrayList<>();
-        AirMeasurements airMeasurements3 = new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.SUFFICIENT)
+        List<AirMeasurement> result = new ArrayList<>();
+        AirMeasurement airMeasurement3 = new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.SUFFICIENT)
                 .c6h6IndexLevel("c6hLEVEL")
                 .coIndexLevel("coLEVEL")
                 .no2IndexLevel("noLEVEL")
@@ -62,8 +64,8 @@ public class MockAirRepository {
                 .saveDate(date)
                 .build();
 
-        AirMeasurements airMeasurements4 = new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.BAD)
+        AirMeasurement airMeasurement4 = new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.BAD)
                 .c6h6IndexLevel("c6hLEVEL2")
                 .coIndexLevel("coLEVEL2")
                 .no2IndexLevel("noLEVEL2")
@@ -75,8 +77,8 @@ public class MockAirRepository {
                 .measurementDate(date)
                 .saveDate(date)
                 .build();
-        AirMeasurements airMeasurements5 = new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.BAD)
+        AirMeasurement airMeasurement5 = new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.BAD)
                 .c6h6IndexLevel("c6hLEVEL2")
                 .coIndexLevel("coLEVEL2")
                 .no2IndexLevel("noLEVEL2")
@@ -88,17 +90,17 @@ public class MockAirRepository {
                 .measurementDate(date)
                 .saveDate(date)
                 .build();
-        result.add(airMeasurements3);
-        result.add(airMeasurements4);
-        result.add(airMeasurements5);
+        result.add(airMeasurement3);
+        result.add(airMeasurement4);
+        result.add(airMeasurement5);
         return result;
     }
 
-    public AirMeasurements airMeasurement(){
+    public AirMeasurement airMeasurement(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01,05);
         LocalDateTime currentDate = LocalDateTime.now();
-        return new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.GOOD)
+        return new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.GOOD)
                 .stIndexLevel("stILevel")
                 .c6h6IndexLevel("c6hLEVEL")
                 .coIndexLevel("coLEVEL")
@@ -113,11 +115,11 @@ public class MockAirRepository {
                 .build();
     }
 
-    public AirMeasurements airMeasurement1(){
+    public AirMeasurement airMeasurement1(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01,05);
         LocalDateTime currentDate = LocalDateTime.now();
-        return new AirMeasurements.AirMaesurementsBuilder()
-                .airQuality(MeasurementsAirLevel.GOOD)
+        return new AirMeasurement.AirMaesurementsBuilder()
+                .airQuality(AirMeasurementLevel.GOOD)
                 .stIndexLevel("stILevel")
                 .c6h6IndexLevel("c6hLEVEL")
                 .coIndexLevel("coLEVEL")
@@ -130,5 +132,9 @@ public class MockAirRepository {
                 .measurementDate(date)
                 .saveDate(currentDate.withNano(0))
                 .build();
+    }
+
+    public CompletableFuture<AirMeasurement> airMeasurementCF() {
+        return CompletableFuture.completedFuture(Optional.ofNullable(airMeasurements1().get(0)).orElse(new AirMeasurement()));
     }
 }

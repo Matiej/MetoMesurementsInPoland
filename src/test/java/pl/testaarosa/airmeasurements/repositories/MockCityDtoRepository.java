@@ -1,6 +1,6 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.measurementsdto.CityDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.CityDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +34,6 @@ public class MockCityDtoRepository {
         cityDtos.add(cityDto2);
         cityDtos.add(cityDto3);
         cityDtos.add(cityDto4);
-
-
         return cityDtos;
     }
 }

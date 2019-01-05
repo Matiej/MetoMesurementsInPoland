@@ -1,7 +1,7 @@
 package pl.testaarosa.airmeasurements.services;
 
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.measurementsdto.MeasuringStationDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 
 import java.util.List;
 

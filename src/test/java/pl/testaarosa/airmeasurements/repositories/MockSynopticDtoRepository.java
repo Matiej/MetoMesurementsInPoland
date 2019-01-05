@@ -1,11 +1,11 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.measurementsdto.SynopticMeasurementDto;
+import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+import static java.util.stream.Collectors.toMap;
 
 public class MockSynopticDtoRepository {
 
@@ -61,14 +61,21 @@ public class MockSynopticDtoRepository {
         return measurementDtoList;
 
     }
-    public Map<String, SynopticMeasurementDto> measurementDtoMap(){
 
-        Map<String, SynopticMeasurementDto> map = new HashMap<>();
+    public Map<String, SynopticMeasurementDto> mockSynopticMeasurementsMap(){
+        Map<String, SynopticMeasurementDto>     map = new HashMap<>();
         for(int j = 0; j<mockSynopticDtoRepositories().size(); j++){
             SynopticMeasurementDto dto = mockSynopticDtoRepositories().get(j);
             map.put(dto.getCity(), dto);
         }
-
         return map;
+//        return mockSynopticDtoRepositories()
+//                .stream()
+//                .distinct()
+//                .collect(toMap(SynopticMeasurementDto::getCity, c-> c));
+    }
+
+    public CompletableFuture<Map<String, SynopticMeasurementDto>> mockSynopticMeasurementsMapCF() {
+        return CompletableFuture.completedFuture(Optional.ofNullable(mockSynopticMeasurementsMap()).orElse(new HashMap<>()));
     }
 }
