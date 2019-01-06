@@ -86,7 +86,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
     @Async
     @Override
     public CompletableFuture<Map<Integer, AirMeasurement>> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws RestClientException {
-        String url = MeasuringStationApiSupplier.MEASRURING_STATION_API_URL_BY_ID;
+        String url = MeasuringStationApiSupplier.MEASURING_STATION_API_URL_BY_ID;
         LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS-> \u001B[0m");
         try {
             Map<Integer, AirMeasurement> airMap = new HashMap<>();
@@ -107,7 +107,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
     @Async
     @Override
     public CompletableFuture<AirMeasurement> airMeasurementProcessorById(int stationId) throws RestClientException {
-        String url = MeasuringStationApiSupplier.MEASRURING_STATION_API_URL_BY_ID;
+        String url = MeasuringStationApiSupplier.MEASURING_STATION_API_URL_BY_ID;
         LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS FOR STATION ID-> " + stationId + "\u001B[0m");
         try {
             AirMeasurementDto airMeasurementDto = restTemplate.getForObject(url + stationId, AirMeasurementDto.class);

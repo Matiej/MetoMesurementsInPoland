@@ -35,16 +35,7 @@ public class CityDto {
     }
 
     public void setCityRegionDto(CityRegionDto cityRegionDto) {
-        this.cityRegionDto = Optional.ofNullable(cityRegionDto).orElse(emptyObj());
-    }
-
-    private CityRegionDto emptyObj() {
-        final String noData = "no data";
-        CityRegionDto cityRegionDto = new CityRegionDto();
-        cityRegionDto.setCommuneName(noData);
-        cityRegionDto.setDistrictName(noData);
-        cityRegionDto.setVoivodeship(noData);
-        return  cityRegionDto;
+        this.cityRegionDto = Optional.ofNullable(cityRegionDto).orElse(optionalCityRegionDto());
     }
 
     @Override
@@ -59,12 +50,20 @@ public class CityDto {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(getId(), getCityName(), getCityRegionDto());
     }
 
     @Override
     public String toString() {
         return "*CityDto: \n id= " + id + ", cityName= " + cityName + "\n" + cityRegionDto;
+    }
+
+    private CityRegionDto optionalCityRegionDto() {
+        final String noData = "no data";
+        CityRegionDto cityRegionDto = new CityRegionDto();
+        cityRegionDto.setCommuneName(noData);
+        cityRegionDto.setDistrictName(noData);
+        cityRegionDto.setVoivodeship(noData);
+        return  cityRegionDto;
     }
 }

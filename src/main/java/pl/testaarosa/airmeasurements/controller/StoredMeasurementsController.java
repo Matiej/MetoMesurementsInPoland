@@ -12,34 +12,34 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.services.GetMeasurementsService;
+import pl.testaarosa.airmeasurements.services.StoredMeasurementsService;
 
 import java.time.DateTimeException;
 import java.util.NoSuchElementException;
 
 @Api(description = "Get measurements from database")
 @RestController
-@RequestMapping("/get")
-public class GetMeasurementsController {
+@RequestMapping("/stored")
+public class StoredMeasurementsController {
 
-    private final GetMeasurementsService getMeasurementsService;
+    private final StoredMeasurementsService storedMeasurementsService;
 
     @Autowired
-    public GetMeasurementsController(GetMeasurementsService getMeasurementsService) {
-        this.getMeasurementsService = getMeasurementsService;
+    public StoredMeasurementsController(StoredMeasurementsService storedMeasurementsService) {
+        this.storedMeasurementsService = storedMeasurementsService;
     }
 
-    @ApiOperation(value = "Get all measuring stations with synoptic & air measurements", response = MeasuringStation.class,
+    @ApiOperation(value = "Get all stored synoptic & air measurements for all stations", response = MeasuringStation.class,
     position = 1)
     @ApiResponses(value = {
             @ApiResponse(code = 503, message = "Server error. Can't get measurement stations information."),
             @ApiResponse(code = 200, message = "Measurements for all stations loaded from db successful."),
             @ApiResponse(code = 400, message = "No measuring stations found!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!")})
-    @RequestMapping(value = "/stations/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/allMeasurements", method = RequestMethod.GET)
     public ResponseEntity<Object> findAll() {
         try {
-            return ResponseEntity.ok(getMeasurementsService.findAll());
+            return ResponseEntity.ok(storedMeasurementsService.findAll());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No measuring stations found!");
@@ -57,10 +57,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 400, message = "No air measurements found!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!"),
             @ApiResponse(code = 406, message = "Not Acceptable! Incorrect air level type or wrong enum!")})
-    @RequestMapping(value = "/measurements/air", method = RequestMethod.GET)
+    @RequestMapping(value = "/airMeasurementsQy", method = RequestMethod.GET)
     public ResponseEntity<Object> findPlaceByAirQuality(AirMeasurementLevel airLevel) {
         try {
-            return ResponseEntity.ok(getMeasurementsService.getAirMeasurements(airLevel));
+            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurements(airLevel));
         } catch (NoSuchElementException | ConversionFailedException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No air measurements found for given air level: " + airLevel);
@@ -81,10 +81,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 400, message = "No measurements for given date found."),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
             @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
-    @RequestMapping(value = "/measurements/date", method = RequestMethod.GET)
+    @RequestMapping(value = "/airMeasurementsDate", method = RequestMethod.GET)
     public ResponseEntity<Object> findAllAirMeasurementsByDate(String date) {
         try {
-            return ResponseEntity.ok(getMeasurementsService.getAirMeasurements(date));
+            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurements(date));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(400).body("No measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
@@ -103,10 +103,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 400, message = "No measurements for given date found."),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
             @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
-    @RequestMapping(value = "/measurements/synoptic", method = RequestMethod.GET)
+    @RequestMapping(value = "/synopticMeasurementsDate", method = RequestMethod.GET)
     public ResponseEntity<Object> findAllSynopticMeasurementsByDate(String date) {
         try {
-            return ResponseEntity.ok(getMeasurementsService.getSynopticMeasuremets(date));
+            return ResponseEntity.ok(storedMeasurementsService.getSynopticMeasuremets(date));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(400).body("No measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
@@ -126,10 +126,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 400, message = "No hottest measurements found!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!"),
             @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
-    @RequestMapping(value = "/measurements/hottest", method = RequestMethod.GET)
+    @RequestMapping(value = "/hottestDate", method = RequestMethod.GET)
     public ResponseEntity<Object> findAHottestPlaceByDate(String date) {
         try {
-            return ResponseEntity.ok().body(getMeasurementsService.getHottestPlaceGivenDate(date));
+            return ResponseEntity.ok().body(storedMeasurementsService.getHottestPlaceGivenDate(date));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");
@@ -152,10 +152,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 400, message = "No measurements for given date found."),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
             @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
-    @RequestMapping(value = "/measurements/coldest", method = RequestMethod.GET)
+    @RequestMapping(value = "coldestDate", method = RequestMethod.GET)
     public ResponseEntity<Object> findColdestPlaceByDate(String date) {
         try {
-            return ResponseEntity.ok(getMeasurementsService.getColdestPlaceGivenDate(date));
+            return ResponseEntity.ok(storedMeasurementsService.getColdestPlaceGivenDate(date));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");
@@ -174,10 +174,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 200, message = "Hottest top measurements for all stations loaded from db successful."),
             @ApiResponse(code = 400, message = "No hottest measurements found!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!")})
-    @RequestMapping(value = "/measurements/hottestTop", method = RequestMethod.GET)
+    @RequestMapping(value = "/hottestTop", method = RequestMethod.GET)
     public ResponseEntity<Object> findHottestPlaces() {
         try {
-            return ResponseEntity.ok(getMeasurementsService.getHottestPlaces());
+            return ResponseEntity.ok(storedMeasurementsService.getHottestPlaces());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No coldest measurements found!");
@@ -192,10 +192,10 @@ public class GetMeasurementsController {
             @ApiResponse(code = 200, message = "Coldest top measurements for all stations loaded from db successful."),
             @ApiResponse(code = 400, message = "No coldest measurements found!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!")})
-    @RequestMapping(value = "/measurements/coldestTop", method = RequestMethod.GET)
+    @RequestMapping(value = "/coldestTop", method = RequestMethod.GET)
     public ResponseEntity<Object> findColdestPlaces() {
         try {
-            return ResponseEntity.ok(getMeasurementsService.getColdestPlaces());
+            return ResponseEntity.ok(storedMeasurementsService.getColdestPlaces());
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No coldest measurements found!");

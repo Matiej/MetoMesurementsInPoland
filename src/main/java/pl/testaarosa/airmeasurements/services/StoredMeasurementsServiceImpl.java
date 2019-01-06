@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GetMeasurementsServiceImpl implements GetMeasurementsService {
+public class StoredMeasurementsServiceImpl implements StoredMeasurementsService {
 
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -27,7 +27,7 @@ public class GetMeasurementsServiceImpl implements GetMeasurementsService {
     private final SynopticMeasurementRepository synopticRepository;
 
     @Autowired
-    public GetMeasurementsServiceImpl(MeasuringStationRepository stationRepository, AirMeasurementRepository airRepository, SynopticMeasurementRepository synopticRepository) {
+    public StoredMeasurementsServiceImpl(MeasuringStationRepository stationRepository, AirMeasurementRepository airRepository, SynopticMeasurementRepository synopticRepository) {
         this.stationRepository = stationRepository;
         this.airRepository = airRepository;
         this.synopticRepository = synopticRepository;

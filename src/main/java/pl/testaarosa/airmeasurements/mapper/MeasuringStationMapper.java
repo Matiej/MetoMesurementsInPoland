@@ -6,6 +6,8 @@ import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 import pl.testaarosa.airmeasurements.domain.dtoApi.CityRegionDto;
 import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 
+import java.util.Optional;
+
 @Component
 public class MeasuringStationMapper {
 

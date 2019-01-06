@@ -19,7 +19,7 @@ import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockAirRepository;
 import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;
-import pl.testaarosa.airmeasurements.services.GetMeasurementsService;
+import pl.testaarosa.airmeasurements.services.StoredMeasurementsService;
 
 import java.time.DateTimeException;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetMeasurementsControllerTestSuit {
+public class StoredMeasurementsControllerTestSuit {
     private final MockStationRepository mockStationRepository = new MockStationRepository();
     private final MockAirRepository mockAirRepository = new MockAirRepository();
     private final MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();
@@ -40,10 +40,10 @@ public class GetMeasurementsControllerTestSuit {
     private final static String MAPPING = "/get";
 
     @InjectMocks
-    private GetMeasurementsController controller;
+    private StoredMeasurementsController controller;
 
     @Mock
-    private GetMeasurementsService service;
+    private StoredMeasurementsService service;
 
     private MockMvc mockMvc;
 

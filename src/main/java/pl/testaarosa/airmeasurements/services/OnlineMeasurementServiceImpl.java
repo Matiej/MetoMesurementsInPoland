@@ -7,7 +7,6 @@ import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -15,7 +14,6 @@ import static java.util.stream.Collectors.toList;
 //@Scope(scopeName = "prototype")
 public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
 
-    @Autowired
     private final OnlineMeasurementProcessor msProc;
 
     @Autowired

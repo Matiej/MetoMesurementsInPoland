@@ -26,7 +26,7 @@ public class AddMeasurementsController {
         this.measurementsService = measurementsService;
     }
 
-    @RequestMapping(value = "/station", method = RequestMethod.GET)
+    @RequestMapping(value = "/oneSt", method = RequestMethod.GET)
     @ApiOperation(value = "Add measurements from selected station", response = MeasuringStation.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Measurement saved successful"),
@@ -60,7 +60,7 @@ public class AddMeasurementsController {
             @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! No measuring station found for given ID"),
             @ApiResponse(code = 500, message = "External REST API server error. Can't add measurements"),
             @ApiResponse(code = 503, message = "Server error. Can't add measurements.")})
-    @RequestMapping(value = "/station/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/allSt", method = RequestMethod.GET)
     public ResponseEntity<Object> allMeasurements() {
         try {
             return ResponseEntity.status(201).body(measurementsService.addMeasurementsAllStations());

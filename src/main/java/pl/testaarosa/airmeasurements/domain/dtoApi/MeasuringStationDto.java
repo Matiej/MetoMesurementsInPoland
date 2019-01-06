@@ -3,6 +3,7 @@ package pl.testaarosa.airmeasurements.domain.dtoApi;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class MeasuringStationDto {
     private int id;
@@ -61,7 +62,7 @@ public class MeasuringStationDto {
     }
 
     public void setCityDto(CityDto cityDto) {
-        this.cityDto = cityDto;
+        this.cityDto = Optional.ofNullable(cityDto).orElse(optionalObjCity());
     }
 
     @Override
@@ -86,6 +87,17 @@ public class MeasuringStationDto {
     @Override
     public String toString() {
         return "MeasuringStationDto: " + "id: " + id + "\n" + "  stationName: " + stationName + "\n" + "  geographic latitude: " + gegrLat + '\'' + "  geographic longitude: " + gegrLon + "\n" + "  addressStreet: " + addressStreet + "\n" + cityDto + "\n";
+    }
+
+    private CityDto optionalObjCity() {
+        CityDto optionalCityDto = new CityDto();
+        CityRegionDto optionalCityRegionDto = new CityRegionDto();
+        optionalCityRegionDto.setCommuneName("");
+        optionalCityRegionDto.setDistrictName("");
+        optionalCityRegionDto.setVoivodeship("");
+        optionalCityDto.setCityName("");
+        optionalCityDto.setCityRegionDto(optionalCityRegionDto);
+        return optionalCityDto;
     }
 }
 

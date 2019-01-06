@@ -10,7 +10,7 @@ import java.time.DateTimeException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public interface GetMeasurementsService {
+public interface StoredMeasurementsService {
     List<MeasuringStation> findAll() throws NoSuchElementException, HibernateException;
 
     List<AirMeasurement> getAirMeasurements(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
