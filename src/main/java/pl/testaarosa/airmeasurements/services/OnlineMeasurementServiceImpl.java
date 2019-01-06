@@ -46,6 +46,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
                 onlineMeasurementDtoList = msProc.fillMeasuringStationListStructure()
                         .stream()
                         .parallel()
+                        .filter(o -> Optional.ofNullable(o.getStationCity()).isPresent())
                         .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
                         .collect(toList());
                 if (onlineMeasurementDtoList.isEmpty()) {
