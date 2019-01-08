@@ -7,17 +7,15 @@ import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public interface ApiSupplierRetriever {
 
-    CompletableFuture<List<MeasuringStation>> measuringStationApiProcessor() throws RestClientException;
+    List<MeasuringStation> measuringStationApiProcessor() throws RestClientException;
 
-    CompletableFuture<Map<String, SynopticMeasurement>> synopticMeasurementProcessor() throws RestClientException;
+    Map<String, SynopticMeasurement> synopticMeasurementProcessor() throws RestClientException;
 
-    CompletableFuture<Map<Integer, AirMeasurement>> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws ExecutionException,
-            InterruptedException, RestClientException;
+    Map<Integer, AirMeasurement> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws RestClientException;
 
-    CompletableFuture<AirMeasurement> airMeasurementProcessorById(int stationId) throws RestClientException;
+    AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException;
 }

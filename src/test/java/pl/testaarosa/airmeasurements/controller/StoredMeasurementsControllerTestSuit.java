@@ -113,13 +113,13 @@ public class StoredMeasurementsControllerTestSuit {
         //given
         List<AirMeasurement> airMeasurementList = mockAirRepository.airMeasurements1();
         //when
-        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD)).thenReturn(airMeasurementList);
+        Mockito.when(service.getAirMeasurementsByLevel(AirMeasurementLevel.BAD)).thenReturn(airMeasurementList);
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(converter.jsonInString(airMeasurementList)));
         //then
-        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
+        verify(service, times(1)).getAirMeasurementsByLevel(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -127,14 +127,14 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindPlaceByAirQualityAndThrowsNoSuchElementException() throws Exception {
         //givem
         //when
-        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD))
+        Mockito.when(service.getAirMeasurementsByLevel(AirMeasurementLevel.BAD))
                 .thenThrow(new NoSuchElementException("Find all air measurements by given air quality level, throws NoSuchElementException and return status 400"));
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
+        verify(service, times(1)).getAirMeasurementsByLevel(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -147,7 +147,7 @@ public class StoredMeasurementsControllerTestSuit {
                 .andExpect(status().is(404))
                 .andReturn();
         //then
-        verify(service, times(0)).getAirMeasurements(AirMeasurementLevel.BAD);
+        verify(service, times(0)).getAirMeasurementsByLevel(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -155,14 +155,14 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindPlaceByAirQualityAndThrowsIllegalArgumentException() throws Exception {
         //given
         //when
-        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD))
+        Mockito.when(service.getAirMeasurementsByLevel(AirMeasurementLevel.BAD))
                 .thenThrow(new IllegalArgumentException("Find all air measurements by given air quality level, throws NoSuchElementException and return status 406"));
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().is(406))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
+        verify(service, times(1)).getAirMeasurementsByLevel(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -170,14 +170,14 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindPlaceByAirQualityAndThrowsHibernateException() throws Exception {
         //given
         //when
-        Mockito.when(service.getAirMeasurements(AirMeasurementLevel.BAD))
+        Mockito.when(service.getAirMeasurementsByLevel(AirMeasurementLevel.BAD))
                 .thenThrow(new HibernateException("Find all air measurements by given air quality level, throws NoSuchElementException and return status 503"));
         mockMvc.perform(get(MAPPING + "/measurements/air")
                 .param("airLevel", "BAD"))
                 .andExpect(status().is(503))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements(AirMeasurementLevel.BAD);
+        verify(service, times(1)).getAirMeasurementsByLevel(AirMeasurementLevel.BAD);
         verifyNoMoreInteractions(service);
     }
 
@@ -186,14 +186,14 @@ public class StoredMeasurementsControllerTestSuit {
         //given
         List<AirMeasurement> airMeasurementList = mockAirRepository.airMeasurements1();
         //when
-        Mockito.when((service.getAirMeasurements("2018-05-05"))).thenReturn(airMeasurementList);
+        Mockito.when((service.getAirMeasurementsByDate("2018-05-05"))).thenReturn(airMeasurementList);
         String jsonContent = converter.jsonInString(airMeasurementList);
         mockMvc.perform(get(MAPPING + "/measurements/date")
                 .param("date", "2018-05-05"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(jsonContent));
         //then
-        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verify(service, times(1)).getAirMeasurementsByDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -201,14 +201,14 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindAllAirMeasurementsByDateAndThrowsNoSuchElementException() throws Exception {
         //given
         //when
-        Mockito.when((service.getAirMeasurements("2018-05-05"))).
+        Mockito.when((service.getAirMeasurementsByDate("2018-05-05"))).
                 thenThrow(new NoSuchElementException("Find all air measurements by given date, throws NoSuchElementException and return status 400"));
         mockMvc.perform(get(MAPPING + "/measurements/date")
                 .param("date", "2018-05-05"))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verify(service, times(1)).getAirMeasurementsByDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -221,7 +221,7 @@ public class StoredMeasurementsControllerTestSuit {
                 .andExpect(status().is(404))
                 .andReturn();
         //then
-        verify(service, times(0)).getAirMeasurements("2018-05-05");
+        verify(service, times(0)).getAirMeasurementsByDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -229,14 +229,14 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindAllAirMeasurementsByDateAndThrowsDateTimeException() throws Exception {
         //given
         //when
-        Mockito.when((service.getAirMeasurements("2018-05-05"))).
+        Mockito.when((service.getAirMeasurementsByDate("2018-05-05"))).
                 thenThrow(new DateTimeException("Find all air measurements by given date, throws NoSuchElementException and return status 406"));
         mockMvc.perform(get(MAPPING + "/measurements/date")
                 .param("date", "2018-05-05"))
                 .andExpect(status().is(406))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verify(service, times(1)).getAirMeasurementsByDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 
@@ -244,14 +244,14 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindAllAirMeasurementsByDateAndThrowsHibernateException() throws Exception {
         //given
         //when
-        Mockito.when((service.getAirMeasurements("2018-05-05"))).
+        Mockito.when((service.getAirMeasurementsByDate("2018-05-05"))).
                 thenThrow(new HibernateException("Find all air measurements by given date, throws HibernateExceptionand return status 406"));
         mockMvc.perform(get(MAPPING + "/measurements/date")
                 .param("date", "2018-05-05"))
                 .andExpect(status().is(503))
                 .andReturn();
         //then
-        verify(service, times(1)).getAirMeasurements("2018-05-05");
+        verify(service, times(1)).getAirMeasurementsByDate("2018-05-05");
         verifyNoMoreInteractions(service);
     }
 

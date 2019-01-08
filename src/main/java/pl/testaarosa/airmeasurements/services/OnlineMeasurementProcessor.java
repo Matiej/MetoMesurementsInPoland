@@ -27,12 +27,9 @@ public class OnlineMeasurementProcessor {
     }
 
     public List<OnlineMeasurementDto> fillMeasuringStationListStructure() throws ExecutionException, InterruptedException {
-        CompletableFuture<List<MeasuringStation>> listCompletableFuture = apiSupplierRetriever.measuringStationApiProcessor();
-        CompletableFuture<Map<String, SynopticMeasurement>> mapCompletableFuture = apiSupplierRetriever.synopticMeasurementProcessor();
-        CompletableFuture<Map<Integer, AirMeasurement>> mapCompletableFuture1 = apiSupplierRetriever.airMeasurementsProcessor( new ArrayList<>(listCompletableFuture.join()));
-        List<MeasuringStation> measuringStList = listCompletableFuture.get();
-        Map<String, SynopticMeasurement> synoptic = mapCompletableFuture.get();
-        Map<Integer, AirMeasurement> air = mapCompletableFuture1.get();
-        return measuringStationMapper.mapToOnlineMeasurementDtoList(measuringStList, air, synoptic);
+        List<MeasuringStation> mStList = apiSupplierRetriever.measuringStationApiProcessor();
+        Map<Integer, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsProcessor(mStList);
+        Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();
+        return measuringStationMapper.mapToOnlineMeasurementDtoList(mStList, airMeasurementMap, synopticMeasurementMap);
     }
 }

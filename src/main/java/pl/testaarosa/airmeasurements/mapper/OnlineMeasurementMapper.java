@@ -35,7 +35,7 @@ public class OnlineMeasurementMapper {
                                                                     Map<Integer, AirMeasurement> airMap,
                                                                     Map<String, SynopticMeasurement> synMap) {
         List<OnlineMeasurementDto> onlineMeasurementDtoList = new ArrayList<>();
-        measuringStationList.parallelStream()
+        measuringStationList
                 .forEach(m -> onlineMeasurementDtoList.add(mapToOnlineMeasurementDto(m, airMap.get(m.getStationId()), synMap.get(m.getCity()))));
 
         return onlineMeasurementDtoList;

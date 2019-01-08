@@ -1,7 +1,12 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.hibernate.HibernateException;
+import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
@@ -11,6 +16,7 @@ import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 
+import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +40,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     }
 
     @Override
-    public List<MeasuringStation> findAll() throws NoSuchElementException, HibernateException {
+    public List<MeasuringStation> findAll() throws NoSuchElementException, DataIntegrityViolationException {
         try {
             List<MeasuringStation> measuringStationList = stationRepository.findAll();
             if (measuringStationList.isEmpty()) {
@@ -42,23 +48,23 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
             } else {
                 return measuringStationList;
             }
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("There is some db problem: " + e.getMessage());
         }
     }
 
     @Override
-    public List<AirMeasurement> getAirMeasurements(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
-            NoSuchElementException, HibernateException {
+    public List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
+            NoSuchElementException, DataIntegrityViolationException {
         List<AirMeasurement> allByAirQuality;
         if (isMeasurementLevelValid(airMeasurementLevel)) {
             try {
                 allByAirQuality = airRepository.findAllByAirQuality(airMeasurementLevel);
-            } catch (HibernateException e) {
+            } catch (DataIntegrityViolationException e) {
                 throw new RuntimeException("There is some db problem: " + e.getMessage());
             }
         } else {
-            throw new IllegalArgumentException("Not recognized enum: " + airMeasurementLevel);
+            throw new IllegalArgumentException("No enum constant " + airMeasurementLevel);
         }
         if (allByAirQuality.isEmpty()) {
             throw new NoSuchElementException("There are no measurements for given air level: " + airMeasurementLevel);
@@ -67,7 +73,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     }
 
     @Override
-    public List<AirMeasurement> getAirMeasurements(String date) throws DateTimeException, NoSuchElementException, HibernateException {
+    public List<AirMeasurement> getAirMeasurementsByDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
         List<AirMeasurement> airMeasurementList = new ArrayList<>();
         if (isValidDate(date)) {
             try {
@@ -76,7 +82,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                         .stream()
                         .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
                         .collect(Collectors.toList());
-            } catch (HibernateException e) {
+            } catch (DataIntegrityViolationException e) {
                 e.printStackTrace();
                 throw new RuntimeException("There is some db connection problem: " + e.getMessage());
             }
@@ -91,7 +97,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
 
     @Override
     public List<SynopticMeasurement> getSynopticMeasuremets(String date) throws DateTimeException, NoSuchElementException,
-            HibernateException {
+            DataIntegrityViolationException {
         List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
         if (isValidDate(date)) {
             try {
@@ -99,7 +105,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                 synopticMeasurementList = synopticRepository.findAll().stream()
                         .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
                         .collect(Collectors.toList());
-            } catch (HibernateException e) {
+            } catch (DataIntegrityViolationException e) {
                 e.printStackTrace();
                 throw new RuntimeException("There is some db connection problem: " + e.getMessage());
             }
@@ -115,12 +121,13 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
 
     @Override
     public SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
-            HibernateException {
+            DataIntegrityViolationException {
         SynopticMeasurement synopticMeasurement = new SynopticMeasurement();
         if (isValidDate(date)) {
             try {
                 LocalDate localDate = LocalDate.parse(date, formatter);
                 synopticMeasurement = synopticRepository.findAll()
+                        //TODO spradzić to filtrowanie czy aby potrzebne
                         .stream()
                         .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
                                 .toLocalDate()
@@ -131,7 +138,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                                 .thenComparing(SynopticMeasurement::getWindSpeed)
                                 .reversed())
                         .orElse(null);
-            } catch (HibernateException e) {
+            } catch (DataIntegrityViolationException e) {
                 throw new RuntimeException("There is some db problem: " + e.getMessage());
             }
         } else {
@@ -145,7 +152,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
 
     @Override
     public SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
-            HibernateException {
+            DataIntegrityViolationException {
         SynopticMeasurement synopticColdestMeasurement = new SynopticMeasurement();
         if (isValidDate(date)) {
             try {
@@ -160,7 +167,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                                 .thenComparing(SynopticMeasurement::getWindSpeed)
                                 .reversed())
                         .orElse(null);
-            } catch (HibernateException e) {
+            } catch (DataIntegrityViolationException e) {
                 e.printStackTrace();
                 throw new RuntimeException("There is some db problem: " + e.getMessage());
             }
@@ -174,7 +181,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     }
 
     @Override
-    public List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, HibernateException {
+    public List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, DataIntegrityViolationException {
         List<SynopticMeasurement> measurementsList = new ArrayList<>();
         try {
             measurementsList = synopticRepository.findAll()
@@ -185,7 +192,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                             .thenComparing(SynopticMeasurement::getAirHumidity)
                             .thenComparing(SynopticMeasurement::getWindSpeed))
                     .collect(Collectors.toList());
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw new RuntimeException("There is some db problem: " + e.getMessage());
         }
@@ -210,7 +217,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                             .reversed())
                     .limit(10)
                     .collect(Collectors.toList());
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw new RuntimeException("There is some db problem: " + e.getMessage());
         }
@@ -220,7 +227,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
             return synopticMeasurementList;
         }
     }
-
+//TODO poprawić upościc
     private boolean isValidDate(String date) {
         if (date.isEmpty() || !date.matches("\\d{4}-\\d{2}-\\d{2}")) {
             return false;
@@ -236,7 +243,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     }
 
     private boolean isMeasurementLevelValid(AirMeasurementLevel airMeasurementLevel) {
-        return Arrays.stream(AirMeasurementLevel.values()).anyMatch(m -> m.equals(airMeasurementLevel));
+        return Arrays.asList(AirMeasurementLevel.values()).contains(airMeasurementLevel);
     }
 }
 

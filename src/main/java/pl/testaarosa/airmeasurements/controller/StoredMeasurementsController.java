@@ -4,6 +4,8 @@ import io.swagger.annotations.*;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +16,7 @@ import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.services.StoredMeasurementsService;
 
+import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.util.NoSuchElementException;
 
@@ -60,14 +63,14 @@ public class StoredMeasurementsController {
     @RequestMapping(value = "/airMeasurementsQy", method = RequestMethod.GET)
     public ResponseEntity<Object> findPlaceByAirQuality(AirMeasurementLevel airLevel) {
         try {
-            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurements(airLevel));
+            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurementsByLevel(airLevel));
         } catch (NoSuchElementException | ConversionFailedException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No air measurements found for given air level: " + airLevel);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect air level type or wrong enum like: " + airLevel);
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(503).body("Data base server error. Can't get air measurements information.");
         }
     }
@@ -84,12 +87,12 @@ public class StoredMeasurementsController {
     @RequestMapping(value = "/airMeasurementsDate", method = RequestMethod.GET)
     public ResponseEntity<Object> findAllAirMeasurementsByDate(String date) {
         try {
-            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurements(date));
+            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurementsByDate(date));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(400).body("No measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(503).body("Data base server error. Can't get air measurements information.");
         }
     }
@@ -111,7 +114,7 @@ public class StoredMeasurementsController {
             return ResponseEntity.status(400).body("No measurements for date: " + date + " found.");
         } catch (DateTimeException e) {
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(503).body("Data base server error. Can't get air synoptic information.");
         }
     }
@@ -136,7 +139,7 @@ public class StoredMeasurementsController {
         } catch (DateTimeException e) {
             e.printStackTrace();
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
@@ -162,7 +165,7 @@ public class StoredMeasurementsController {
         } catch (DateTimeException e) {
             e.printStackTrace();
             return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
@@ -181,7 +184,7 @@ public class StoredMeasurementsController {
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No coldest measurements found!");
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
     }
@@ -199,7 +202,7 @@ public class StoredMeasurementsController {
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No coldest measurements found!");
-        } catch (HibernateException e) {
+        } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
     }

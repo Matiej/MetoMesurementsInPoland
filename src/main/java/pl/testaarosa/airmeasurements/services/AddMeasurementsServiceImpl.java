@@ -75,33 +75,19 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             LOGGER.error("StationID -> " + stationId + " is empty or format is incorrect!");
             throw new NumberFormatException("StationID -> " + stationId + " is empty or format is incorrect!");
         }
-        try {
-            saveAllStations();
-            if (!isStationIdInDb(stationId)) {
-                throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationId + " in data base!" + ANSI_RESET);
-            }
-            CompletableFuture<Map<String, SynopticMeasurement>> mapCompletableFuture = apiSupplierRetriever.synopticMeasurementProcessor();
-            CompletableFuture.allOf(mapCompletableFuture).join();
-            synopticMeasurementsMap.putAll(mapCompletableFuture.get());
-
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RestClientException("Can't add measurements for station-> " + stationId + " because of REST API error");
+        saveAllStations();
+        if (!isStationIdInDb(stationId)) {
+            throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationId + " in data base!" + ANSI_RESET);
         }
+        synopticMeasurementsMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
         measuringStationRepository.findAll().stream().filter(m -> m.getStationId() == stationId).forEach(station -> {
+            AirMeasurement airMeasurement = apiSupplierRetriever.airMeasurementProcessorById(station.getStationId());
             try {
-                CompletableFuture<AirMeasurement> airMeasurementsDtoCompletableFuture = apiSupplierRetriever.airMeasurementProcessorById(station.getStationId());
-                CompletableFuture.allOf(airMeasurementsDtoCompletableFuture).join();
-                AirMeasurement airMeasurement = airMeasurementsDtoCompletableFuture.get();
-                try {
-                    saveMeasuremets(synopticMeasurementsMap, station, airMeasurement);
-                    measuringStation.set(measuringStationRepository.save(station));
-                } catch (HibernateException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("There is some db problem: " + e.getMessage());
-                }
-            } catch (ExecutionException | InterruptedException e) {
+                saveMeasuremets(synopticMeasurementsMap, station, airMeasurement);
+                measuringStation.set(measuringStationRepository.save(station));
+            } catch (HibernateException e) {
                 e.printStackTrace();
-                throw new RestClientException("Can't add measurements for station-> " + stationId + " because of REST API error");
+                throw new RuntimeException("There is some db problem: " + e.getMessage());
             }
         });
 
@@ -116,36 +102,24 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         long startTime1 = System.currentTimeMillis();
         List<MeasuringStation> mSList = new ArrayList<>();
         Map<String, SynopticMeasurement> synopticMeasurementsDtoMap = new HashMap<>();
-        try {
-            saveAllStations();
-            synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor().get());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            throw new RestClientException(e.getMessage());
-        }
+        saveAllStations();
+        //TODO moze po prostu zamiast new -> wydajność?
+        synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
         AtomicInteger counterAir = new AtomicInteger();
         AtomicInteger counterSynoptic = new AtomicInteger();
         AtomicInteger counterMeas = new AtomicInteger();
         measuringStationRepository.findAll().forEach(measuringStation -> {
+            AirMeasurement airMeasurement = apiSupplierRetriever.airMeasurementProcessorById(measuringStation.getStationId());
             try {
-                CompletableFuture<AirMeasurement> airMeasurementsDtoCompletableFuture = apiSupplierRetriever.airMeasurementProcessorById(measuringStation.getStationId());
-                CompletableFuture.allOf(airMeasurementsDtoCompletableFuture).join();
-                AirMeasurement airMeasurement = airMeasurementsDtoCompletableFuture.get();
-                try {
-                    int[] counter = saveMeasuremets(synopticMeasurementsDtoMap, measuringStation, airMeasurement);
-                    counterAir.getAndAdd(counter[0]);
-                    counterSynoptic.getAndAdd(counter[1]);
-                    mSList.add(measuringStationRepository.save(measuringStation));
-                } catch (HibernateException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("There is some db problem: " + e.getMessage());
-                }
-                counterMeas.getAndIncrement();
-            } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error(ANSI_RED + "Error, cant add all measurements!" + ANSI_RESET);
+                int[] counter = saveMeasuremets(synopticMeasurementsDtoMap, measuringStation, airMeasurement);
+                counterAir.getAndAdd(counter[0]);
+                counterSynoptic.getAndAdd(counter[1]);
+                mSList.add(measuringStationRepository.save(measuringStation));
+            } catch (HibernateException e) {
                 e.printStackTrace();
-                throw new RestClientException("Can'measuringStation find any measuring stations because of REST API error-> " + e.getMessage());
+                throw new RuntimeException("There is some db problem: " + e.getMessage());
             }
+            counterMeas.getAndIncrement();
         });
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         String[] shortMess = {counterAir.toString(), counterMeas.toString(), counterSynoptic.toString(), timeer};
@@ -155,6 +129,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         return mSList;
     }
 
+    @Transactional
     private int[] saveMeasuremets(Map<String, SynopticMeasurement> synopticMeasurementsDtoMap,
                                   MeasuringStation measuringStation, AirMeasurement airMeasurement) {
         int[] counters = new int[2];
@@ -178,24 +153,20 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
     @Transactional
     //TODO poprawić moze fora zlikwidować jaoś czy
-    private List<MeasuringStation> saveAllStations() throws RestClientException {
+    private List<MeasuringStation> saveAllStations() throws HibernateException {
         List<MeasuringStation> measuringStationList = new LinkedList<>();
-        try {
-            for (MeasuringStation measuringStation : apiSupplierRetriever.measuringStationApiProcessor().get()) {
-                measuringStationList.add(measuringStation);
-                int id = measuringStation.getStationId();
-                if (!measuringStationRepository.existsAllByStationId(id)) {
-                    try {
-                        MeasuringStationDetails stDetails = measuringStation.getStationDetails();
-                        measuringStation.setStationDetails(stDetails);
-                        measuringStationRepository.save(measuringStation);
-                    } catch (HibernateException e) {
-                        throw new RuntimeException("External data base server ERROR! Cant' add any measuring station to data base " + e.getMessage());
-                    }
+        for (MeasuringStation measuringStation : apiSupplierRetriever.measuringStationApiProcessor()) {
+            measuringStationList.add(measuringStation);
+            int id = measuringStation.getStationId();
+            if (!measuringStationRepository.existsAllByStationId(id)) {
+                try {
+                    MeasuringStationDetails stDetails = measuringStation.getStationDetails();
+                    measuringStation.setStationDetails(stDetails);
+                    measuringStationRepository.save(measuringStation);
+                } catch (HibernateException e) {
+                    throw new RuntimeException("External data base server ERROR! Cant' add any measuring station to data base " + e.getMessage());
                 }
             }
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RestClientException(" " + e.getMessage());
         }
         return measuringStationList;
     }
