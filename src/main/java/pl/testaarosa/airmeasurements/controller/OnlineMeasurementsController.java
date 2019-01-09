@@ -46,7 +46,6 @@ public class OnlineMeasurementsController {
     @ApiOperation(value = "Get all online measurements for given city name", response = OnlineMeasurementDto.class)
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
     @ApiResponses(value = {
-
             @ApiResponse(code = 200, message = "Measuring stations for given city found successful"),
             @ApiResponse(code = 400, message = "Can't get measuring stations for given city."),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI!  Measuring stations for given city NOT found!"),

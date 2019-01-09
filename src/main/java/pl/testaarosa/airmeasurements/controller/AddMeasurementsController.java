@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,7 @@ public class AddMeasurementsController {
         this.measurementsService = measurementsService;
     }
 
-    @RequestMapping(value = "/oneSt", method = RequestMethod.GET)
+    @RequestMapping(value = "/oneSt", method = RequestMethod.POST)
     @ApiOperation(value = "Add measurements from selected station", response = MeasuringStation.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Measurement saved successful"),
@@ -60,7 +61,7 @@ public class AddMeasurementsController {
             @ApiResponse(code = 404, message = "Server has not found antything matching the requested URI! No measuring station found for given ID"),
             @ApiResponse(code = 500, message = "External REST API server error. Can't add measurements"),
             @ApiResponse(code = 503, message = "Server error. Can't add measurements.")})
-    @RequestMapping(value = "/allSt", method = RequestMethod.GET)
+    @RequestMapping(value = "/allSt", method = RequestMethod.POST)
     public ResponseEntity<Object> allMeasurements() {
         try {
             return ResponseEntity.status(201).body(measurementsService.addMeasurementsAllStations());

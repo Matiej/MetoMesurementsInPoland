@@ -53,7 +53,7 @@ public class AddMeasurementsControllerTestSuit {
         MeasuringStation measuringStation = measuringStationList.get(0);
         //when
         Mockito.when(measurementsService.addOneStationMeasurement(2)).thenReturn(measuringStation);
-        mockMvc.perform(get(MAPPING+"/station")
+        mockMvc.perform(get(MAPPING+"/oneSt")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(201))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(measuringStation)));
@@ -68,7 +68,7 @@ public class AddMeasurementsControllerTestSuit {
         //when
         Mockito.when(measurementsService.addOneStationMeasurement(2))
                 .thenThrow(new NoSuchElementException("Add measurements to given station, throws NoSuchElementException, return status 400"));
-        mockMvc.perform(get(MAPPING+"/station")
+        mockMvc.perform(get(MAPPING+"/oneSt")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(400))
                 .andReturn();
@@ -81,7 +81,7 @@ public class AddMeasurementsControllerTestSuit {
     public void shouldAddOneMeasurementWrongURL() throws Exception {
         //given
         //when
-        mockMvc.perform(get(MAPPING+"/station/worngURL")
+        mockMvc.perform(get(MAPPING+"/oneSt/worngURL")
                 .param("id",String.valueOf(2)))
                 .andExpect(status().is(404))
                 .andReturn();
@@ -96,7 +96,7 @@ public class AddMeasurementsControllerTestSuit {
         //when
         Mockito.when(measurementsService.addOneStationMeasurement(2))
                 .thenThrow(new RestClientException("Add measurements to given station, throws RestClientException, return status 500"));
-        mockMvc.perform(get(MAPPING+"/station")
+        mockMvc.perform(get(MAPPING+"/oneSt")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(500))
                 .andReturn();
@@ -111,7 +111,7 @@ public class AddMeasurementsControllerTestSuit {
         //when
         Mockito.when(measurementsService.addOneStationMeasurement(2))
                 .thenThrow(new HibernateException("Add measurements to given station, throws HibernateException, return status 500"));
-        mockMvc.perform(get(MAPPING+"/station")
+        mockMvc.perform(get(MAPPING+"/oneSt")
                 .param("stationId",String.valueOf(2)))
                 .andExpect(status().is(503))
                 .andReturn();
@@ -125,7 +125,7 @@ public class AddMeasurementsControllerTestSuit {
         //given
         //when
         Mockito.when(measurementsService.addMeasurementsAllStations()).thenReturn(measuringStationList);
-        mockMvc.perform(get(MAPPING+"/station/all"))
+        mockMvc.perform(get(MAPPING+"/allSt"))
                 .andExpect(status().is(201))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(measuringStationList)));
         //then
@@ -151,7 +151,7 @@ public class AddMeasurementsControllerTestSuit {
         //when
         Mockito.when(measurementsService.addMeasurementsAllStations())
                 .thenThrow(new RestClientException("Add measurements for all stations, throws RestClientException, return status 500"));
-        mockMvc.perform(get(MAPPING+"/station/all"))
+        mockMvc.perform(get(MAPPING+"/allSt"))
                 .andExpect(status().is(500));
         //then
         verify(measurementsService, times(1)).addMeasurementsAllStations();
@@ -164,7 +164,7 @@ public class AddMeasurementsControllerTestSuit {
         //when
         Mockito.when(measurementsService.addMeasurementsAllStations())
                 .thenThrow(new HibernateException("Add measurements for all stations, throws HibernateException, return status 503"));
-        mockMvc.perform(get(MAPPING+"/station/all"))
+        mockMvc.perform(get(MAPPING+"/allSt"))
                 .andExpect(status().is(503))
                 .andReturn();
         //then

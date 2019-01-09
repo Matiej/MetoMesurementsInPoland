@@ -40,4 +40,11 @@ public class OnlineMeasurementMapper {
 
         return onlineMeasurementDtoList;
     }
+
+    public List<OnlineMeasurementDto> mapToOnlneMsDtoList(Map<MeasuringStation, AirMeasurement> measurementMap,
+                                                          Map<String, SynopticMeasurement> synMap) {
+        return  measurementMap.entrySet().stream()
+                .map(t -> mapToOnlineMeasurementDto(t.getKey(), t.getValue(), synMap.get(t.getKey().getCity())))
+                .collect(Collectors.toList());
+    }
 }

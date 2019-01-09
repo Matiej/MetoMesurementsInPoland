@@ -17,5 +17,7 @@ public interface ApiSupplierRetriever {
 
     Map<Integer, AirMeasurement> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws RestClientException;
 
+    Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException;
+
     AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException;
 }
