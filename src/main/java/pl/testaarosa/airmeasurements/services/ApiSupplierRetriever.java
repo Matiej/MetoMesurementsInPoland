@@ -15,8 +15,6 @@ public interface ApiSupplierRetriever {
 
     Map<String, SynopticMeasurement> synopticMeasurementProcessor() throws RestClientException;
 
-    Map<Integer, AirMeasurement> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws RestClientException;
-
     Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException;
 
     AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException;

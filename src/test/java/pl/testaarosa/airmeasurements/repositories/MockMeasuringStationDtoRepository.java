@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.util.Optional.ofNullable;
 
-public class MockMeasuringStationDtoRepository {
+public class    MockMeasuringStationDtoRepository {
 
     private final MockCityDtoRepository mockCityDtoRepository = new MockCityDtoRepository();
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MockSynopticRepository {
 
-    public List<SynopticMeasurement> synopticMeasurements1(){
+    public List<SynopticMeasurement> synopticMeasurementsOrderColdest(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01).withNano(0);
         SynopticMeasurement synopticMeasurement = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(1L)
@@ -50,7 +50,7 @@ public class MockSynopticRepository {
         return synopticMeasurementList;
     }
 
-    public List<SynopticMeasurement> synopticMeasurements2(){
+    public List<SynopticMeasurement> synopticMeasurementsOrderHottest(){
         LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
         SynopticMeasurement synopticMeasurement = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(11L)

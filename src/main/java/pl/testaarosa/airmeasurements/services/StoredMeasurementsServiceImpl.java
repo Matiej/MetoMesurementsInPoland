@@ -130,6 +130,7 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
                             .reversed()
                             .thenComparing(SynopticMeasurement::getAirHumidity)
                             .thenComparing(SynopticMeasurement::getWindSpeed))
+                    .limit(10)
                     .collect(Collectors.toList());
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();

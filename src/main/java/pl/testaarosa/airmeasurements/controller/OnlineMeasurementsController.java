@@ -93,7 +93,7 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 200, message = "Coldest measuring stations for given city found"),
             @ApiResponse(code = 400, message = "Can't find coldest online measurement!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! Can't get coldest measuring stations.")})
-    @RequestMapping(value = "/coldest", method = RequestMethod.GET)
+        @RequestMapping(value = "/coldest", method = RequestMethod.GET)
     public ResponseEntity<Object> getColdestOnlineStation() {
         try {
             return ResponseEntity.ok(measuringOnlineServices.getColdestOnlineStation());

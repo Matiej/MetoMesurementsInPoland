@@ -1,6 +1,5 @@
 package pl.testaarosa.airmeasurements.controller;
 
-import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,7 +111,7 @@ public class StoredMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsByDate() throws Exception {
         //given
-        List<SynopticMeasurement> synopticMeasurements = mockSynopticRepository.synopticMeasurements2();
+        List<SynopticMeasurement> synopticMeasurements = mockSynopticRepository.synopticMeasurementsOrderHottest();
         //when
         Mockito.when((service.getSynopticMeasuremets("2018-05-11"))).thenReturn(synopticMeasurements);
         mockMvc.perform(get(MAPPING +"/synopticMeasurementsDate")
@@ -336,10 +335,10 @@ public class StoredMeasurementsControllerTestSuit {
     @Test
     public void shouldFindTopTenHottestPlaces() throws Exception {
         //given
-        List<SynopticMeasurement> measurementsList = mockSynopticRepository.synopticMeasurements2();
+        List<SynopticMeasurement> measurementsList = mockSynopticRepository.synopticMeasurementsOrderHottest();
         //when
         Mockito.when(service.getHottestPlaces()).thenReturn(measurementsList);
-        mockMvc.perform(get(MAPPING + "/measurements/hottestTop"))
+        mockMvc.perform(get(MAPPING +"/hottestTop"))
                 .andExpect(status().is(200))
                 .andExpect(content().json(converter.jsonInString(measurementsList)));
         //then
@@ -353,7 +352,7 @@ public class StoredMeasurementsControllerTestSuit {
         //when
         Mockito.when(service.getHottestPlaces())
                 .thenThrow(new NoSuchElementException("Find top ten hottest measurements by given date, throws NoSuchElementException and return status 400"));
-        mockMvc.perform(get(MAPPING + "/measurements/hottestTop"))
+        mockMvc.perform(get(MAPPING +"/hottestTop"))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
@@ -365,7 +364,7 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindTopTenHottestPlacesAndWrongURL() throws Exception {
         //given
         //when
-        mockMvc.perform(get(MAPPING + "/measurements/hottestTop404"))
+        mockMvc.perform(get(MAPPING + "/hottestTop404"))
                 .andExpect(status().is(404))
                 .andReturn();
         //then
@@ -374,12 +373,12 @@ public class StoredMeasurementsControllerTestSuit {
     }
 
     @Test
-    public void shouldFindTopTenHottestPlacesAndThrowsHibernateException() throws Exception {
+    public void shouldFindTopTenHottestPlacesAndThrowsDataIntegrityViolationException() throws Exception {
         //given
         //when
         Mockito.when(service.getHottestPlaces())
-                .thenThrow(new HibernateException("Find top ten hottest measurements by given date, throws NoSuchElementException and return status 400"));
-        mockMvc.perform(get(MAPPING + "/measurements/hottestTop"))
+                .thenThrow(new DataIntegrityViolationException("Find top ten hottest measurements by given date, throws DataIntegrityViolationException and return status 400"));
+        mockMvc.perform(get(MAPPING + "/hottestTop"))
                 .andExpect(status().is(503))
                 .andReturn();
         //then
@@ -390,10 +389,10 @@ public class StoredMeasurementsControllerTestSuit {
     @Test
     public void shouldFindTopTenColdestPlaces() throws Exception {
         //given
-        List<SynopticMeasurement> measurementsList = mockSynopticRepository.synopticMeasurements2();
+        List<SynopticMeasurement> measurementsList = mockSynopticRepository.synopticMeasurementsOrderHottest();
         //when
         when(service.getColdestPlaces()).thenReturn(measurementsList);
-        mockMvc.perform(get(MAPPING + "/measurements/coldestTop"))
+        mockMvc.perform(get(MAPPING +"/coldestTop"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(converter.jsonInString(measurementsList)));
         //then
@@ -407,7 +406,7 @@ public class StoredMeasurementsControllerTestSuit {
         //when
         when(service.getColdestPlaces())
                 .thenThrow(new NoSuchElementException("Find top ten coldest measurements by given date, throws NoSuchElementException and return status 400"));
-        mockMvc.perform(get(MAPPING + "/measurements/coldestTop"))
+        mockMvc.perform(get(MAPPING +"/coldestTop"))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
@@ -419,7 +418,7 @@ public class StoredMeasurementsControllerTestSuit {
     public void shouldFindTopTenColdestPlacesAndWrongURL() throws Exception {
         //given
         //when
-        mockMvc.perform(get(MAPPING + "/measurements/coldestTop404"))
+        mockMvc.perform(get(MAPPING + "coldestTop404"))
                 .andExpect(status().is(404))
                 .andReturn();
         //then
@@ -428,12 +427,12 @@ public class StoredMeasurementsControllerTestSuit {
     }
 
     @Test
-    public void shouldFindTopTenColdestPlacesAndThrowsHibernateException() throws Exception {
+    public void shouldFindTopTenColdestPlacesAndThrowsDataIntegrityViolationException() throws Exception {
         //given
         //when
         when(service.getColdestPlaces())
-                .thenThrow(new HibernateException("Find top ten coldest measurements by given date, throws HibernateException and return status 503"));
-        mockMvc.perform(get(MAPPING + "/measurements/coldestTop"))
+                .thenThrow(new DataIntegrityViolationException("Find top ten coldest measurements by given date, throws DataIntegrityViolationException and return status 503"));
+        mockMvc.perform(get(MAPPING + "/coldestTop"))
                 .andExpect(status().is(503))
                 .andReturn();
         //then
@@ -444,7 +443,7 @@ public class StoredMeasurementsControllerTestSuit {
     @Test
     public void shouldFindAHottestPlaceByDate() throws Exception {
         //given
-        SynopticMeasurement synopticMeasurement = mockSynopticRepository.synopticMeasurements1().get(0);
+        SynopticMeasurement synopticMeasurement = mockSynopticRepository.synopticMeasurementsOrderColdest().get(0);
         //when
         Mockito.when(service.getHottestPlaceGivenDate("2018-05-05")).thenReturn(synopticMeasurement);
         mockMvc.perform(get(MAPPING +"/hottestDate")
@@ -517,7 +516,7 @@ public class StoredMeasurementsControllerTestSuit {
     @Test
     public void shouldFindColdestPlaceByDate() throws Exception {
         //given
-        SynopticMeasurement synopticMeasurement = mockSynopticRepository.synopticMeasurements2().get(0);
+        SynopticMeasurement synopticMeasurement = mockSynopticRepository.synopticMeasurementsOrderHottest().get(0);
         //when
         Mockito.when(service.getColdestPlaceGivenDate("2018-05-05")).thenReturn(synopticMeasurement);
         mockMvc.perform(get(MAPPING +"/coldestDate")

@@ -23,7 +23,7 @@ public class MockStationRepository {
         station1.setCity("Warszawa");
         station1.setStationDetails(details.detailsList().get(0));
         station1.setAirMeasurementList(mockAirRepository.airMeasurements1());
-        station1.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements1());
+        station1.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderColdest());
 
         MeasuringStation station2 = new MeasuringStation();
         station2.setId(1L);
@@ -35,7 +35,7 @@ public class MockStationRepository {
         station2.setCity("Warszawa");
         station2.setStationDetails(details.detailsList().get(0));
         station2.setAirMeasurementList(mockAirRepository.airMeasurements1());
-        station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements1());
+        station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderColdest());
 
         MeasuringStation station3 = new MeasuringStation();
         station3.setId(2L);
@@ -47,7 +47,7 @@ public class MockStationRepository {
         station3.setCity("Poznan");
         station3.setStationDetails(details.detailsList().get(1));
         station3.setAirMeasurementList(mockAirRepository.airMeasurements2());
-        station3.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
+        station3.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderHottest());
 
         MeasuringStation station4 = new MeasuringStation();
         station4.setId(3L);
@@ -59,7 +59,7 @@ public class MockStationRepository {
         station4.setCity("Krakow");
         station4.setStationDetails(details.detailsList().get(1));
         station4.setAirMeasurementList(mockAirRepository.airMeasurements2());
-        station4.setSynopticMeasurements(mockSynopticRepository.synopticMeasurements2());
+        station4.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderHottest());
 
         result.add(station1);
         result.add(station2);

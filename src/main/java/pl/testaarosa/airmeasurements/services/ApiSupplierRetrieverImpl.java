@@ -83,31 +83,6 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
         }
     }
 
-    //    @Async
-    @Override
-    public Map<Integer, AirMeasurement> airMeasurementsProcessor(List<MeasuringStation> measuringStationList) throws RestClientException {
-        String url = MeasuringStationApiSupplier.MEASURING_STATION_API_URL_BY_ID;
-        LOGGER.info("\u001B[34mLOOOKING FOR AIR MEASUREMENTS-> \u001B[0m");
-        List<MeasuringStation> measuringStationLists = measuringStationApiProcessor();
-        ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 5);
-        try {
-            Map<Integer, AirMeasurement> airMap = new HashMap<>();
-            forkJoinPool.submit(() -> measuringStationList
-                    .parallelStream()
-                    .forEach(a -> {
-                        int stationId = a.getStationId();
-                        AirMeasurementDto obj = restTemplate.getForObject(url + stationId, AirMeasurementDto.class);
-                        airMap.put(stationId, airMeasurementMapper.mapToAirMeasurements(obj));
-                    }));
-            return airMap;
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Can't find any measurement because of REST API error-> " + e.getMessage());
-        } finally {
-            forkJoinPool.shutdown();
-        }
-    }
-
     @Override
     public Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException {
         String url = MeasuringStationApiSupplier.MEASURING_STATION_API_URL_BY_ID;

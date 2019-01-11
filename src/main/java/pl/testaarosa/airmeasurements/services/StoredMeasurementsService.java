@@ -1,14 +1,11 @@
 package pl.testaarosa.airmeasurements.services;
 
-import org.hibernate.HibernateException;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
-import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.util.List;
 import java.util.NoSuchElementException;
