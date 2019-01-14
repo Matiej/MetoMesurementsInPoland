@@ -37,30 +37,21 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final static Logger LOGGER = LoggerFactory.getLogger(AddMeasurementsServiceImpl.class);
     private final ApiSupplierRetriever apiSupplierRetriever;
     private final MeasuringStationRepository measuringStationRepository;
-    private final AirMeasurementMapper airMapper;
-    private final SynopticMeasurementMapper synopticMapper;
     private final SynopticMeasurementRepository synopticRepository;
     private final AirMeasurementRepository airRepository;
     private final EmailNotifierService emailNotifierService;
-    private final MeasuringStationMapper stMapper;
-    private final MeasuringStationDetailsMapper staDetMapper;
+    @Autowired
+    private AddMeasurementRaportGenerator raportGenerator;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
-                                      AirMeasurementMapper airMapper, SynopticMeasurementMapper synopticMapper,
-                                      SynopticMeasurementRepository synopticRepository,
-                                      AirMeasurementRepository airRepository,
-                                      EmailNotifierService emailNotifierService,
-                                      MeasuringStationMapper stMapper, MeasuringStationDetailsMapper staDetMapper) {
+                                      SynopticMeasurementRepository synopticRepository, AirMeasurementRepository airRepository,
+                                      EmailNotifierService emailNotifierService) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
-        this.airMapper = airMapper;
-        this.synopticMapper = synopticMapper;
         this.synopticRepository = synopticRepository;
         this.airRepository = airRepository;
         this.emailNotifierService = emailNotifierService;
-        this.stMapper = stMapper;
-        this.staDetMapper = staDetMapper;
     }
 
 
@@ -75,6 +66,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             LOGGER.error("StationID -> " + stationId + " is empty or format is incorrect!");
             throw new NumberFormatException("StationID -> " + stationId + " is empty or format is incorrect!");
         }
+        //TODO uprościć. Mapę Station, SynopticMeasurement a nie String
         saveAllStations();
         if (!isStationIdInDb(stationId)) {
             throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationId + " in data base!" + ANSI_RESET);
@@ -124,6 +116,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         String[] shortMess = {counterAir.toString(), counterMeas.toString(), counterSynoptic.toString(), timeer};
         String report = emailNotifierService.sendEmailAfterDownloadMeasurementsN(mSList, shortMess);
+        raportGenerator.createXMLReport(mSList);
         LOGGER.info("SAVED TOTAL MESUREMENTS FOR STATIONS-> " + counterMeas + " \nAIRMEASUREMENTS ->" + counterAir +
                 " \nSYNOPTIC MEASUREMENTS-> " + counterSynoptic + " \n TOTAL TIME: " + timeer);
         return mSList;

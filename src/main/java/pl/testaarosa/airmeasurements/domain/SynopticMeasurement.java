@@ -126,7 +126,7 @@ public class SynopticMeasurement {
 
     @Override
     public String toString() {
-        return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure
+        return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", city " + city + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure
                 + "\n measurement date; " + measurementDate + "\n hour: " + measurementHour + "\n" + "_____________________________" + "\n";
     }
 
