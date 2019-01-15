@@ -133,8 +133,4 @@ public class MockAirRepository {
                 .saveDate(currentDate.withNano(0))
                 .build();
     }
-
-    public CompletableFuture<AirMeasurement> airMeasurementCF() {
-        return CompletableFuture.completedFuture(Optional.ofNullable(airMeasurements1().get(0)).orElse(new AirMeasurement()));
-    }
 }

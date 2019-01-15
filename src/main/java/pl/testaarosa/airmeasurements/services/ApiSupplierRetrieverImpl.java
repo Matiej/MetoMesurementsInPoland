@@ -76,7 +76,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
             SynopticMeasurementDto[] measurementDtos = responseEntity.getBody();
             LOGGER.info("\u001B[32mLOOOKING FOR SYNOPTIC MEASUREMENTES. GOT => " + measurementDtos.length + " \u001B[0m");
             return Arrays.stream(measurementDtos)
-                    .collect(Collectors.toMap(SynopticMeasurementDto::getCity, synopticMeasurementMapper::maptToSynopticMeasurement));
+                    .collect(Collectors.toMap(SynopticMeasurementDto::getCity, synopticMeasurementMapper::maptToSynopticMeasurement,(o,n)->n, LinkedHashMap::new));
         } catch (RestClientException e) {
             e.printStackTrace();
             throw new RuntimeException("Can't find any synoptic measurement because of REST API error-> " + e.getMessage());
@@ -90,7 +90,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
         List<MeasuringStation> measuringStationLists = measuringStationApiProcessor();
         ForkJoinPool forkJoinPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 5);
         try {
-            Map<MeasuringStation, AirMeasurement> measurementMap = new HashMap<>();
+            LinkedHashMap<MeasuringStation, AirMeasurement> measurementMap = new LinkedHashMap<>();
             forkJoinPool.submit(() -> measuringStationLists
                     .parallelStream()
                     .forEach(st -> {

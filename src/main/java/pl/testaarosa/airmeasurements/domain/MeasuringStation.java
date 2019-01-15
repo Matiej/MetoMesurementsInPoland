@@ -114,24 +114,23 @@ public class MeasuringStation {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MeasuringStation)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         MeasuringStation that = (MeasuringStation) o;
-        return getStationId() == that.getStationId() &&
-                Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getStationName(), that.getStationName()) &&
-                Objects.equals(getLatitude(), that.getLatitude()) &&
-                Objects.equals(getLongitude(), that.getLongitude()) &&
-                Objects.equals(getStreet(), that.getStreet()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getStationDetails(), that.getStationDetails()) &&
-                Objects.equals(getAirMeasurementList(), that.getAirMeasurementList()) &&
-                Objects.equals(getSynopticMeasurements(), that.getSynopticMeasurements());
+        return stationId == that.stationId &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(stationName, that.stationName) &&
+                Objects.equals(latitude, that.latitude) &&
+                Objects.equals(longitude, that.longitude) &&
+                Objects.equals(street, that.street) &&
+                Objects.equals(city, that.city) &&
+                Objects.equals(stationDetails, that.stationDetails) &&
+                Objects.equals(airMeasurementList, that.airMeasurementList) &&
+                Objects.equals(synopticMeasurements, that.synopticMeasurements);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(getId(), getStationId(), getStationName(), getLatitude(), getLongitude(), getStreet(), getCity(), getStationDetails(), getAirMeasurementList(), getSynopticMeasurements());
+        return Objects.hash(id, stationId, stationName, latitude, longitude, street, city, stationDetails, airMeasurementList, synopticMeasurements);
     }
 
     @Override

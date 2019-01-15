@@ -113,7 +113,7 @@ public class MockAirDtoRepository {
         airMeasurementDtoList.add(airMeasurementDto3);
         return airMeasurementDtoList;
     }
-//TODO do poprawienia
+//TODO do poprawienia dla testów retrivera
     public Map<Integer, AirMeasurementDto> measurementsDtoMap(){
         Map<Integer, AirMeasurementDto> map = new HashMap<>();
         int i =0;
@@ -122,9 +122,5 @@ public class MockAirDtoRepository {
             i++;
         }
         return map;
-    }
-
-    public CompletableFuture<AirMeasurementDto> airMeasurementsDtosMapCF() {
-        return CompletableFuture.completedFuture(Optional.ofNullable(airMeasurementsDtos().get(0)).orElse(new AirMeasurementDto()));
     }
 }

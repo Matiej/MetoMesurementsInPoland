@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -19,7 +20,6 @@ import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.hamcrest.Matchers.hasItem;
@@ -235,9 +235,9 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindAllAirMeasurementsGivenDate() {
         //given
-        List<AirMeasurement> airMeasurements = mockAirRepository.airMeasurements1();
+        List<AirMeasurement> expected = mockAirRepository.airMeasurements1();
         //when
-        when(airRepository.findAll()).thenReturn(airMeasurements);
+        when(airRepository.findAll()).thenReturn(expected);
         //then
         List<AirMeasurement> result = new ArrayList<>();
         try {
@@ -245,7 +245,7 @@ public class StoredMeasurementsServiceImplTestSuit {
         } catch (NoSuchElementException | DateTimeException | DataIntegrityViolationException e) {
             assertEquals("Ignored exceptoion message", e.getMessage());
         }
-        assertEquals(airRepository, result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -516,16 +516,102 @@ public class StoredMeasurementsServiceImplTestSuit {
         }
     }
 
-
     @Test
-    public void getColdestPlaceGivenDate() {
-        when(synopticRepository.findAll()).thenReturn(mockSynopticRepository.synopticMeasurementsOrderColdest());
-        assertEquals(mockSynopticRepository.synopticMeasurementsOrderColdest().get(0), service.getColdestPlaceGivenDate("2018-05-05"));
+    public void shouldFindColdestPlaceGivenDate() {
+        //given
+        List<SynopticMeasurement> givenRepo = mockSynopticRepository.synopticMeasurementsOrderColdest();
+        SynopticMeasurement expected = givenRepo.get(0);
+        String date = "2018-05-05";
+        //when
+        when(synopticRepository.findAll()).thenReturn(givenRepo);
+        //then
+        SynopticMeasurement result = new SynopticMeasurement();
+        try {
+            result = service.getColdestPlaceGivenDate(date);
+        } catch (DateTimeException | NoSuchElementException | DataIntegrityViolationException e) {
+            assertEquals("some wrong message", e.getMessage());
+        }
+        assertNotNull(result);
+        assertEquals(expected, result);
+        Assertions.assertNotSame(givenRepo.get(2), result);
+        assertNotEquals(givenRepo.get(1), result);
+        assertThat(givenRepo, hasItems(result));
     }
 
     @Test
-    public void getColdestPlaceGivenDate1() {
-        when(synopticRepository.findAll()).thenReturn(mockSynopticRepository.synopticMeasurementsOrderColdest());
-        assertThat(mockSynopticRepository.synopticMeasurementsOrderColdest(), hasItem(service.getColdestPlaceGivenDate("2018-05-05")));
+    public void shouldFindColdestPlaceGivenDateAndThrowsDataIntegrityViolationException() {
+        //given
+        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        String date = "2018-05-05";
+        //when
+        exception.expect(RuntimeException.class);
+        exception.expectMessage("There is some db problem: null");
+        //then
+        SynopticMeasurement result = service.getColdestPlaceGivenDate(date);
+        assertNull(result);
     }
+
+    @Test
+    public void shouldFindColdestPlaceGivenDateAndThrowsDataIntegrityViolationExceptionJU5() {
+        //give
+        String expectMessage = "There is some db problem: null";
+        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        String date = "2018-05-05";
+        //when
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> service.getColdestPlaceGivenDate(date));
+        //then
+        assertEquals(expectMessage, exception.getMessage());
+    }
+
+    @Test
+    public void shouldFindColdestPlaceGivenWrongDateAndThrowsDateTimeException() {
+        //given
+        String expectMessage = "Wrong date format!";
+        String wrongDate = "2018-44-05";
+        //when
+        exception.expect(DateTimeException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        service.getColdestPlaceGivenDate(wrongDate);
+    }
+
+    @Test
+    public void shouldFindColdestPlaceGivenWrongDateFormatAndThrowsDateTimeException() {
+        //given
+        String expectMessage = "Wrong date format!";
+        String wrongDate = "2018/04/05";
+        //when
+        exception.expect(DateTimeException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        service.getColdestPlaceGivenDate(wrongDate);
+    }
+
+    @Test
+    public void shouldFindColdestPlaceGivenDateAndThrowsNoSuchElementException() {
+        //given
+        String date = "2018-11-01";
+        String expectMessage = "Cant't find any synoptic measurements for date: " + date;
+        //when
+        exception.expect(NoSuchElementException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        service.getColdestPlaceGivenDate(date);
+    }
+
+    @Test
+    public void shouldFindColdestPlaceGivenDateAndThrowsNoSuchElementExceptionJUvintage() {
+        //given
+        String date = "2018-11-01";
+        String expectMessage = "Cant't find any synoptic measurements for date: " + date;
+        //when
+        SynopticMeasurement result = new SynopticMeasurement();
+        //then
+        try {
+            result = service.getColdestPlaceGivenDate(date);
+        } catch (NoSuchElementException e) {
+            assertEquals(expectMessage, e.getMessage());
+        }
+    }
+
 }

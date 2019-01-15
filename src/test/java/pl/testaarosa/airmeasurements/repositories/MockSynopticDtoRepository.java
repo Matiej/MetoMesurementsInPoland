@@ -5,8 +5,6 @@ import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static java.util.stream.Collectors.toMap;
-
 public class MockSynopticDtoRepository {
 
     public List<SynopticMeasurementDto> mockSynopticDtoRepositories() {
@@ -14,7 +12,7 @@ public class MockSynopticDtoRepository {
 
         SynopticMeasurementDto synopticMeasurementDto = new SynopticMeasurementDto();
         synopticMeasurementDto.setId(1);
-        synopticMeasurementDto.setCity("City1");
+        synopticMeasurementDto.setCity("Warszawa");
         synopticMeasurementDto.setTemperature(11);
         synopticMeasurementDto.setWindSpeed(50);
         synopticMeasurementDto.setAirHumidity(77);
@@ -44,22 +42,11 @@ public class MockSynopticDtoRepository {
         synopticMeasurementDto3.setAirHumidity(77);
         synopticMeasurementDto3.setPressure(1001);
 
-        SynopticMeasurementDto synopticMeasurementDto4 = new SynopticMeasurementDto();
-        synopticMeasurementDto4.setId(1);
-        synopticMeasurementDto4.setCity("City1");
-        synopticMeasurementDto4.setTemperature(11);
-        synopticMeasurementDto4.setWindSpeed(50);
-        synopticMeasurementDto4.setAirHumidity(77);
-        synopticMeasurementDto4.setPressure(1001);
-
         measurementDtoList.add(synopticMeasurementDto);
         measurementDtoList.add(synopticMeasurementDto1);
         measurementDtoList.add(synopticMeasurementDto2);
         measurementDtoList.add(synopticMeasurementDto3);
-        measurementDtoList.add(synopticMeasurementDto4);
-
         return measurementDtoList;
-
     }
 
     public Map<String, SynopticMeasurementDto> mockSynopticMeasurementsMap(){
@@ -69,13 +56,5 @@ public class MockSynopticDtoRepository {
             map.put(dto.getCity(), dto);
         }
         return map;
-//        return mockSynopticDtoRepositories()
-//                .stream()
-//                .distinct()
-//                .collect(toMap(SynopticMeasurementDto::getCity, c-> c));
-    }
-
-    public CompletableFuture<Map<String, SynopticMeasurementDto>> mockSynopticMeasurementsMapCF() {
-        return CompletableFuture.completedFuture(Optional.ofNullable(mockSynopticMeasurementsMap()).orElse(new HashMap<>()));
     }
 }

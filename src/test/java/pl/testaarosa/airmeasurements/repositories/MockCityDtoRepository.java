@@ -13,7 +13,7 @@ public class MockCityDtoRepository {
         CityDto cityDto1 = new CityDto();
         cityDto1.setCityName("Warszawa");
         cityDto1.setId(1);
-        cityDto1.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(1));
+        cityDto1.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(0));
 
         CityDto cityDto2 = new CityDto();
         cityDto2.setCityName("Warszawa");
@@ -23,12 +23,12 @@ public class MockCityDtoRepository {
         CityDto cityDto3 = new CityDto();
         cityDto3.setCityName("Poznan");
         cityDto3.setId(2);
-        cityDto3.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(1));
+        cityDto3.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(2));
 
         CityDto cityDto4 = new CityDto();
         cityDto4.setCityName("Krakow");
         cityDto4.setId(3);
-        cityDto4.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(1));
+        cityDto4.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(3));
 
         cityDtos.add(cityDto1);
         cityDtos.add(cityDto2);

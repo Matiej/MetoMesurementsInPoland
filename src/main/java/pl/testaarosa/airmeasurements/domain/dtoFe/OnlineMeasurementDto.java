@@ -111,8 +111,6 @@ public class OnlineMeasurementDto {
         private String stationVoivodeship;
         private AirMeasurement airMs;
         private SynopticMeasurement synopticMs;
-        private AirMeasurementDto air;
-        private SynopticMeasurementDto synoptics;
 
         public OnlineMeasurementBuilder id(int id) {
             this.id = id;
@@ -161,16 +159,6 @@ public class OnlineMeasurementDto {
 
         public OnlineMeasurementBuilder synopticMs(SynopticMeasurement synopticMs) {
             this.synopticMs = synopticMs;
-            return this;
-        }
-
-        public OnlineMeasurementBuilder air(AirMeasurementDto air) {
-            this.air = air;
-            return this;
-        }
-
-        public OnlineMeasurementBuilder synoptics(SynopticMeasurementDto synoptics) {
-            this.synoptics = synoptics;
             return this;
         }
 

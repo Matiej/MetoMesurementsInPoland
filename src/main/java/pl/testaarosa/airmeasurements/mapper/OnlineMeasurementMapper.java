@@ -31,16 +31,6 @@ public class OnlineMeasurementMapper {
                 .build();
     }
 
-    public List<OnlineMeasurementDto> mapToOnlineMeasurementDtoList(List<MeasuringStation> measuringStationList,
-                                                                    Map<Integer, AirMeasurement> airMap,
-                                                                    Map<String, SynopticMeasurement> synMap) {
-        List<OnlineMeasurementDto> onlineMeasurementDtoList = new ArrayList<>();
-        measuringStationList
-                .forEach(m -> onlineMeasurementDtoList.add(mapToOnlineMeasurementDto(m, airMap.get(m.getStationId()), synMap.get(m.getCity()))));
-
-        return onlineMeasurementDtoList;
-    }
-
     public List<OnlineMeasurementDto> mapToOnlneMsDtoList(Map<MeasuringStation, AirMeasurement> measurementMap,
                                                           Map<String, SynopticMeasurement> synMap) {
         return  measurementMap.entrySet().stream()

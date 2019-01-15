@@ -57,7 +57,7 @@ public class MockStationRepository {
         station4.setLongitude("221");
         station4.setStreet("Starowka");
         station4.setCity("Krakow");
-        station4.setStationDetails(details.detailsList().get(1));
+        station4.setStationDetails(details.detailsList().get(2));
         station4.setAirMeasurementList(mockAirRepository.airMeasurements2());
         station4.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderHottest());
 
@@ -66,17 +66,5 @@ public class MockStationRepository {
         result.add(station3);
         result.add(station4);
         return result;
-    }
-
-    public MeasuringStation stationForMapperTest(){
-        MeasuringStation station1 = new MeasuringStation();
-        station1.setStationId(1);
-        station1.setStationName("Wawrszawa-Centrum");
-        station1.setLatitude("15");
-        station1.setLongitude("15");
-        station1.setStreet("Piekna");
-        station1.setCity("Warszawa");
-
-        return station1;
     }
 }
