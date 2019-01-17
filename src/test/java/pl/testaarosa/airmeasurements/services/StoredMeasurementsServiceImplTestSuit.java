@@ -199,6 +199,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     public void shouldFindMeasurementsByAirQualityAndThrowsDataIntegrityViolationExceptionVintageJU() {
         //given
         given(airRepository.findAllByAirQuality(AirMeasurementLevel.BAD)).willThrow(DataIntegrityViolationException.class);
+        //when then
         try {
             service.getAirMeasurementsByLevel(AirMeasurementLevel.BAD);
         } catch (RuntimeException e) {
@@ -373,7 +374,7 @@ public class StoredMeasurementsServiceImplTestSuit {
         //then
         assertNotNull(result);
         assertEquals(expect, result);
-        assertEquals(3, result.size());
+        assertEquals(4, result.size());
     }
 
     @Test
@@ -534,7 +535,7 @@ public class StoredMeasurementsServiceImplTestSuit {
         assertNotNull(result);
         assertEquals(expected, result);
         Assertions.assertNotSame(givenRepo.get(2), result);
-        assertNotEquals(givenRepo.get(1), result);
+        assertNotEquals(givenRepo.get(2), result);
         assertThat(givenRepo, hasItems(result));
     }
 
@@ -612,6 +613,7 @@ public class StoredMeasurementsServiceImplTestSuit {
         } catch (NoSuchElementException e) {
             assertEquals(expectMessage, e.getMessage());
         }
+        assertNull(result.getId());
     }
 
 }

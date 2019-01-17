@@ -33,8 +33,8 @@ public class MockSynopticRepository {
                 .build();
 
         SynopticMeasurement synopticMeasurement3 = new SynopticMeasurement.SynopticMeasurementsBuilder()
-                .id(3L)
-                .foreignId(130)
+                .id(2L)
+                .foreignId(2)
                 .city("Poznan")
                 .saveDate(date)
                 .temperature(12)
@@ -45,7 +45,7 @@ public class MockSynopticRepository {
 
         SynopticMeasurement synopticMeasurement4 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(3L)
-                .foreignId(130)
+                .foreignId(3)
                 .city("Krakow")
                 .saveDate(date)
                 .temperature(15)

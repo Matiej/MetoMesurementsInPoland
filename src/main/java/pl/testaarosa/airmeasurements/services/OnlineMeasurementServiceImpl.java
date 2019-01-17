@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
 
 import java.util.*;
@@ -38,7 +39,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
             }
             LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
             return onlineMeasurementDtos;
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (RestClientResponseException e) {
             e.printStackTrace();
             throw new RestClientException("External REST API server error! Can't get online measurements for all stations.-> " + e.getMessage());
         }
@@ -61,9 +62,9 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
                 if (onlineMeasurementDtoList.isEmpty()) {
                     throw new NoSuchElementException("Cant't find any stations for city: " + stationCity);
                 }
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (RestClientResponseException e) {
                 e.printStackTrace();
-                throw new RestClientException(e.getMessage());
+                throw new RestClientException("External REST API server error! Can't get online measurements for all stations.-> " + e.getMessage());
             }
         }
         LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
@@ -84,9 +85,9 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
             }
             LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()- start) + ANSI_RESET);
             return onlineMeasurementDto;
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (RestClientResponseException e) {
             e.printStackTrace();
-            throw new RestClientException(e.getMessage());
+            throw new RestClientException("External REST API server error! Can't get online measurements for all stations.-> " + e.getMessage());
         }
     }
 
@@ -104,7 +105,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
             }
             LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
             return onlineMeasurementDto;
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
             throw new RestClientException("External REST API server error! Can't get coldest measurement online for station "
                     + " -> " + e.getMessage());

@@ -7,6 +7,7 @@ import pl.testaarosa.airmeasurements.repositories.MockSynopticDtoRepository;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticRepository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class SynopticMeasurementMapperTestsuit {
     private final MockSynopticDtoRepository dtoRepository = new MockSynopticDtoRepository();
@@ -14,11 +15,35 @@ public class SynopticMeasurementMapperTestsuit {
     private final MockSynopticRepository synopticRepository = new MockSynopticRepository();
 
     @Test
-    public void testMaptToSynopticMeasurement(){
-        SynopticMeasurementDto synopticMeasurementDto = dtoRepository.mockSynopticDtoRepositories().get(1);
-        SynopticMeasurement result = mapper.maptToSynopticMeasurement(synopticMeasurementDto);
+    public void shouldMaptToSynopticMeasurement(){
+        //given
+        SynopticMeasurementDto mockRepo = dtoRepository.mockSynopticDtoRepositories().get(1);
         SynopticMeasurement expect = synopticRepository.synopticMeasurementsOrderColdest().get(1);
+        //when
+        SynopticMeasurement result = mapper.maptToSynopticMeasurement(mockRepo);
         result.setSaveDate(expect.getSaveDate());
         assertEquals(expect,result);
+    }
+
+    @Test
+    public void shouldMaptToSynopticMeasurement2(){
+        //given
+        SynopticMeasurementDto mockRepo = dtoRepository.mockSynopticDtoRepositories().get(3);
+        SynopticMeasurement expect = synopticRepository.synopticMeasurementsOrderColdest().get(3);
+        //when
+        SynopticMeasurement result = mapper.maptToSynopticMeasurement(mockRepo);
+        result.setSaveDate(expect.getSaveDate());
+        assertEquals(expect,result);
+    }
+
+    @Test
+    public void shouldNotMaptToSynopticMeasurement(){
+        //given
+        SynopticMeasurementDto mockRepo = dtoRepository.mockSynopticDtoRepositories().get(1);
+        SynopticMeasurement expect = synopticRepository.synopticMeasurementsOrderColdest().get(3);
+        //when
+        SynopticMeasurement result = mapper.maptToSynopticMeasurement(mockRepo);
+        result.setSaveDate(expect.getSaveDate());
+        assertNotEquals(expect,result);
     }
 }

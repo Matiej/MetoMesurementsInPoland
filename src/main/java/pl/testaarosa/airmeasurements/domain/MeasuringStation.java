@@ -25,7 +25,7 @@ public class MeasuringStation {
     @OneToOne(cascade = CascadeType.ALL)
     private MeasuringStationDetails stationDetails;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
+    @OneToMany(cascade = CascadeType.DETACH, mappedBy = "measuringStation")
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")

@@ -1,62 +1,239 @@
 package pl.testaarosa.airmeasurements.services;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineServiceTestSuit {
     private final MockOnlineRepository mockOnlineRepository = new MockOnlineRepository();
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @InjectMocks
     private OnlineMeasurementServiceImpl service;
 
     @Mock
     private OnlineMeasurementProcessor msProcessor;
 
-    @Before
+/*    @Before
     public void init() throws ExecutionException, InterruptedException {
         when(msProcessor.fillMeasuringStationListStructure())
                 .thenReturn(mockOnlineRepository.measuringStationOnLineList());
-    }
+    }*/
 
     @Test
-    public void testGetAllMeasuringStations() {
-        int result = service.getAllMeasuringStations().size();
-        int expect = 4;
+    public void shouldGetAllMeasuringStations() {
+        //given
+        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        int expectsize = 4;
+        //when
+        when(msProcessor.fillMeasuringStationListStructure())
+                .thenReturn(mockOnlineRepository.measuringStationOnLineList());
+        int resultsize = service.getAllMeasuringStations().size();
+        List<OnlineMeasurementDto> result = service.getAllMeasuringStations();
+        //then
         assertEquals(expect, result);
-        assertEquals(mockOnlineRepository.measuringStationOnLineList(),service.getAllMeasuringStations());
+        assertEquals(expectsize, resultsize);
     }
 
     @Test
-    public void getGivenCityMeasuringStationsWithSynopticData() {
-        int result = service.getGivenCityMeasuringStationsWithSynopticData("Warsz").size();
-        int expect = 2;
+    public void shouldGetAllMeasuringStationsAndThrowsNoSuchElementException() {
+        //given
+        //when
+        exception.expect(NoSuchElementException.class);
+        exception.expectMessage("Can't find any online measuring stations");
+        //then
+        service.getAllMeasuringStations();
+    }
+
+    @Test
+    public void shouldGetAllMeasuringStationsAndThrowsNoSuchElementExceptionJUvintage() {
+        //given
+        String expectedMessage = "Can't find any online measuring stations";
+        //when
+        List<OnlineMeasurementDto> result = null;
+        try {
+            result = service.getAllMeasuringStations();
+        } catch (NoSuchElementException e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
+        //then
+        assertNull(result);
+    }
+
+    @Test
+    public void shouldGetAllMeasuringStationsAndThrowsRestClientException() {
+        //given
+        String expectedMessage = "External REST API server error! Can't get online measurements for all stations.-> ";
+        //when
+        exception.expect(RestClientException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getAllMeasuringStations();
+    }
+
+    @Test
+    public void shouldFindWarszawaCityMeasuringStationsWithSynopticData() throws ExecutionException, InterruptedException {
+        //given
+        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        expect.remove(3);
+        expect.remove(2);
+        int expectSize = 2;
+        //when
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(expect);
+        List<OnlineMeasurementDto> result = service.getGivenCityMeasuringStationsWithSynopticData("Warsz");
+        int resultSize = result.size();
+        //then
+        assertNotNull(result);
+        assertEquals(expect, result);
+        assertEquals(expectSize, resultSize);
+    }
+
+    @Test
+    public void shouldFindKrakowCityMeasuringStationsWithSynopticData() throws ExecutionException, InterruptedException {
+        //given
+        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        expect.remove(0);
+        expect.remove(0);
+        expect.remove(0);
+        int expectSize = 1;
+        //when
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(expect);
+        List<OnlineMeasurementDto> result = service.getGivenCityMeasuringStationsWithSynopticData("krA");
+        int resultSize = result.size();
+        //then
+        assertNotNull(result);
+        assertEquals(expect, result);
+        assertEquals(expectSize, resultSize);
+    }
+
+    @Test
+    public void shouldFindGivenCityMeasuringStationsWithSynopticDataAndThrowsIllegalArgumentException() {
+        //given
+        String expectedMessage = "City name can't be empty!";
+        //when
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getGivenCityMeasuringStationsWithSynopticData("");
+    }
+
+    @Test
+    public void shouldFindGivenCityMeasuringStationsWithSynopticDataAndThrowsNoSuchElementException() {
+        //given
+        String stationCity = "Radom";
+        String expectedMessage = "Cant't find any stations for city: " + stationCity;
+        //when
+        exception.expect(NoSuchElementException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getGivenCityMeasuringStationsWithSynopticData(stationCity);
+    }
+
+    @Test
+    public void shouldFindGivenCityMeasuringStationsWithSynopticDataAndThrowsNoSuchElementExceptionJUVintage() throws ExecutionException, InterruptedException {
+        //given
+        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        String stationCity = "Radom";
+        String expectedMessage = "Cant't find any stations for city: " + stationCity;
+        //when
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(expect);
+        //then
+        List<OnlineMeasurementDto> result = null;
+        try {
+            result = service.getGivenCityMeasuringStationsWithSynopticData(stationCity);
+        } catch (NoSuchElementException e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
+        assertNull(result);
+    }
+
+    @Test
+    public void shouldFindGivenCityMeasuringStationsWithSynopticDataAndThrowsRestClientException() throws ExecutionException, InterruptedException {
+        //given
+        given(msProcessor.fillMeasuringStationListStructure()).willThrow(RestClientResponseException.class);
+        String expectedMessage = "External REST API server error! Can't get online measurements for all stations.-> null";
+        String stationCity = "Warsz";
+        //when
+        exception.expect(RestClientException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getGivenCityMeasuringStationsWithSynopticData(stationCity);
+    }
+
+
+    @Test
+    public void shouldFindHotestOnlineStation() {
+        //given
+        List<OnlineMeasurementDto> repository = mockOnlineRepository.measuringStationOnLineList();
+        OnlineMeasurementDto expect = repository.get(2);
+        //when
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(repository);
+        //then
+        OnlineMeasurementDto result = null;
+        try {
+            result = service.getHottestOnlineStation();
+        } catch (RestClientException | NoSuchElementException e) {
+            assertEquals("some not importat message", e.getMessage());
+        }
+        assertNotNull(result);
         assertEquals(expect, result);
     }
 
     @Test
-    public void testgetHotestOnlineStation() throws ExecutionException, InterruptedException {
-        OnlineMeasurementDto result = service.getHottestOnlineStation();
-        OnlineMeasurementDto expect = mockOnlineRepository.measuringStationOnLineList().get(1);
-        assertEquals(expect, result);
+    public void shouldFindHotestOnlineStationAndThrowsNoSuchElementException() {
+        //given
+        String expectedMessage = "Can't find hottest measurement online";
+        //when
+        exception.expect(NoSuchElementException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getHottestOnlineStation();
     }
 
     @Test
-    public void testgetHotestOnlineStation1() throws ExecutionException, InterruptedException {
-        OnlineMeasurementDto result = service.getHottestOnlineStation();
-        OnlineMeasurementDto expect = mockOnlineRepository.measuringStationOnLineList().get(1);
-        assertTrue(result.getStationName().contains(expect.getStationName()));
+    public void shouldFindHotestOnlineStationAndThrowsNoSuchElementExceptionJUVintage() {
+        //given
+        String expectedMessage = "Can't find hottest measurement online";
+        //when
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(new ArrayList<>());
+        //then
+        try {
+            service.getHottestOnlineStation();
+        } catch (NoSuchElementException e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldFindHotestOnlineStationAndThrowsRestClientException() {
+        //given
+        given(msProcessor.fillMeasuringStationListStructure()).willThrow(RestClientResponseException.class);
+        String expectedMessage = "External REST API server error! Can't get online measurements for all stations.-> null";
+        //when
+        exception.expect(RestClientException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getHottestOnlineStation();
     }
 
     @Test

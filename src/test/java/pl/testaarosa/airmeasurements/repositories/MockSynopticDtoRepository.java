@@ -13,34 +13,34 @@ public class MockSynopticDtoRepository {
         SynopticMeasurementDto synopticMeasurementDto = new SynopticMeasurementDto();
         synopticMeasurementDto.setId(1);
         synopticMeasurementDto.setCity("Warszawa");
-        synopticMeasurementDto.setTemperature(11);
-        synopticMeasurementDto.setWindSpeed(50);
+        synopticMeasurementDto.setTemperature(6);
+        synopticMeasurementDto.setWindSpeed(35);
         synopticMeasurementDto.setAirHumidity(77);
-        synopticMeasurementDto.setPressure(1001);
+        synopticMeasurementDto.setPressure(999);
 
         SynopticMeasurementDto synopticMeasurementDto1 = new SynopticMeasurementDto();
         synopticMeasurementDto1.setId(1);
         synopticMeasurementDto1.setCity("Warszawa");
-        synopticMeasurementDto1.setTemperature(11);
-        synopticMeasurementDto1.setWindSpeed(50);
+        synopticMeasurementDto1.setTemperature(6);
+        synopticMeasurementDto1.setWindSpeed(35);
         synopticMeasurementDto1.setAirHumidity(77);
-        synopticMeasurementDto1.setPressure(1001);
+        synopticMeasurementDto1.setPressure(999);
 
         SynopticMeasurementDto synopticMeasurementDto2 = new SynopticMeasurementDto();
         synopticMeasurementDto2.setId(2);
         synopticMeasurementDto2.setCity("Poznan");
-        synopticMeasurementDto2.setTemperature(2);
-        synopticMeasurementDto2.setWindSpeed(77);
-        synopticMeasurementDto2.setAirHumidity(88);
-        synopticMeasurementDto2.setPressure(1001);
+        synopticMeasurementDto2.setTemperature(12);
+        synopticMeasurementDto2.setWindSpeed(35);
+        synopticMeasurementDto2.setAirHumidity(66);
+        synopticMeasurementDto2.setPressure(999);
 
         SynopticMeasurementDto synopticMeasurementDto3 = new SynopticMeasurementDto();
         synopticMeasurementDto3.setId(3);
         synopticMeasurementDto3.setCity("Krakow");
-        synopticMeasurementDto3.setTemperature(25);
-        synopticMeasurementDto3.setWindSpeed(50);
-        synopticMeasurementDto3.setAirHumidity(77);
-        synopticMeasurementDto3.setPressure(1001);
+        synopticMeasurementDto3.setTemperature(15);
+        synopticMeasurementDto3.setWindSpeed(35);
+        synopticMeasurementDto3.setAirHumidity(66);
+        synopticMeasurementDto3.setPressure(999);
 
         measurementDtoList.add(synopticMeasurementDto);
         measurementDtoList.add(synopticMeasurementDto1);

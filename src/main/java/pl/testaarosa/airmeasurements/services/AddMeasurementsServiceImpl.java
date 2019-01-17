@@ -129,14 +129,14 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         if (airMeasurement.getForeignId() == measuringStation.getStationId()) {
             airMeasurement.setMeasuringStation(measuringStation);
             airRepository.save(airMeasurement);
-            measuringStation.getAirMeasurementList().add(airMeasurement);
+//            measuringStation.getAirMeasurementList().add(airMeasurement);
             LOGGER.info(ANSI_WHITE + "SAVED AIR MEASUREMENT FOR STATION ID -> " + measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
             counters[0]++;
         }
         if (synopticMeasurementsDtoMap.keySet().contains(measuringStation.getCity())) {
             SynopticMeasurement synopticMeasurement = synopticMeasurementsDtoMap.get(measuringStation.getCity());
             synopticMeasurement.setMeasuringStation(measuringStation);
-            measuringStation.getSynopticMeasurements().add(synopticMeasurement);
+//            measuringStation.getSynopticMeasurements().add(synopticMeasurement);
             synopticRepository.save(synopticMeasurement);
             LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT FOR STATION ID -> " + measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
             counters[1]++;

@@ -30,7 +30,7 @@ public class MeasuringStationDetailsMapperTestSuit {
     public void shouldNotMapToAirMeasurements(){
         //given
         MeasuringStationDetails expect = mockDetails.detailsList().get(0);
-        MeasuringStationDto stationDto = mockMStationDtoRepo.measuringStationDtoList().get(1);
+        MeasuringStationDto stationDto = mockMStationDtoRepo.measuringStationDtoList().get(3);
         //when
         MeasuringStationDetails result = mapper.mapToStationDetails(stationDto);
         //then
