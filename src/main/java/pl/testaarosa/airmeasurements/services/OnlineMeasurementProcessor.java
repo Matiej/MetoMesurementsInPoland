@@ -26,13 +26,6 @@ public class OnlineMeasurementProcessor {
         this.measuringStationMapper = measuringStationMapper;
     }
 
-//    public List<OnlineMeasurementDto> fillMeasuringStationListStructure() throws ExecutionException, InterruptedException {
-//        List<MeasuringStation> mStList = apiSupplierRetriever.measuringStationApiProcessor();
-//        Map<Integer, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsProcessor(mStList);
-//        Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();
-//        return measuringStationMapper.mapToOnlineMeasurementDtoList(mStList, airMeasurementMap, synopticMeasurementMap);
-//    }
-
     public List<OnlineMeasurementDto> fillMeasuringStationListStructure() {
         Map<MeasuringStation, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsAndStProcessor();
         Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();

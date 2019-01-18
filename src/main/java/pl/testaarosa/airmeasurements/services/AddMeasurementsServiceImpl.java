@@ -6,17 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
-import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
-import pl.testaarosa.airmeasurements.mapper.MeasuringStationDetailsMapper;
-import pl.testaarosa.airmeasurements.mapper.MeasuringStationMapper;
-import pl.testaarosa.airmeasurements.mapper.SynopticMeasurementMapper;
 import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
@@ -24,8 +18,6 @@ import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 import javax.transaction.Transactional;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,20 +32,19 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final SynopticMeasurementRepository synopticRepository;
     private final AirMeasurementRepository airRepository;
     private final EmailNotifierService emailNotifierService;
-    @Autowired
-    private AddMeasurementRaportGenerator raportGenerator;
+    private final AddMeasurementRaportGenerator raportGenerator;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
                                       SynopticMeasurementRepository synopticRepository, AirMeasurementRepository airRepository,
-                                      EmailNotifierService emailNotifierService) {
+                                      EmailNotifierService emailNotifierService, AddMeasurementRaportGenerator raportGenerator) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
         this.synopticRepository = synopticRepository;
         this.airRepository = airRepository;
         this.emailNotifierService = emailNotifierService;
+        this.raportGenerator = raportGenerator;
     }
-
 
     @Transactional
     @Override
@@ -62,27 +53,30 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         long startTime1 = System.currentTimeMillis();
         AtomicReference<MeasuringStation> measuringStation = new AtomicReference<>();
         Map<String, SynopticMeasurement> synopticMeasurementsMap = new HashMap<>();
-        if (!Optional.ofNullable(stationId).isPresent() && stationId.toString().matches("^[0-9]*$")) {
+        if (!Optional.ofNullable(stationId).isPresent() || !stationId.toString().matches("^[0-9]*$")) {
             LOGGER.error("StationID -> " + stationId + " is empty or format is incorrect!");
             throw new NumberFormatException("StationID -> " + stationId + " is empty or format is incorrect!");
         }
-        //TODO uprościć. Mapę Station, SynopticMeasurement a nie String
         saveAllStations();
         if (!isStationIdInDb(stationId)) {
             throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationId + " in data base!" + ANSI_RESET);
         }
-        synopticMeasurementsMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
-        measuringStationRepository.findAll().stream().filter(m -> m.getStationId() == stationId).forEach(station -> {
-            AirMeasurement airMeasurement = apiSupplierRetriever.airMeasurementProcessorById(station.getStationId());
-            try {
-                saveMeasuremets(synopticMeasurementsMap, station, airMeasurement);
-                measuringStation.set(measuringStationRepository.save(station));
-            } catch (HibernateException e) {
-                e.printStackTrace();
-                throw new RuntimeException("There is some db problem: " + e.getMessage());
-            }
-        });
+        try {
+            synopticMeasurementsMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
+            measuringStationRepository.findAll().stream().filter(m -> m.getStationId() == stationId).forEach(station -> {
+                AirMeasurement airMeasurement = apiSupplierRetriever.airMeasurementProcessorById(station.getStationId());
+                try {
+                    saveMeasuremets(synopticMeasurementsMap, station, airMeasurement);
+                    measuringStation.set(measuringStationRepository.save(station));
+                } catch (HibernateException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("There is some db problem: " + e.getMessage());
+                }
+            });
+        } catch (RestClientResponseException e) {
+            throw new RestClientException("Can't find any air measurement for stationID: " + stationId + " because of REST API error-> " + e.getMessage());
 
+        }
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         LOGGER.info("Measurement execution time: " + timeer);
         return measuringStation.get();
@@ -93,25 +87,28 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     public List<MeasuringStation> addMeasurementsAllStations() throws RestClientException, HibernateException {
         long startTime1 = System.currentTimeMillis();
         List<MeasuringStation> mSList = new ArrayList<>();
-        Map<String, SynopticMeasurement> synopticMeasurementsDtoMap = new HashMap<>();
+        Map<String, SynopticMeasurement> synopticMeasurementMap = new HashMap<>();
         saveAllStations();
-        //TODO moze po prostu zamiast new -> wydajność?
-        synopticMeasurementsDtoMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
+        synopticMeasurementMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
         AtomicInteger counterAir = new AtomicInteger();
         AtomicInteger counterSynoptic = new AtomicInteger();
         AtomicInteger counterMeas = new AtomicInteger();
         measuringStationRepository.findAll().forEach(measuringStation -> {
-            AirMeasurement airMeasurement = apiSupplierRetriever.airMeasurementProcessorById(measuringStation.getStationId());
             try {
-                int[] counter = saveMeasuremets(synopticMeasurementsDtoMap, measuringStation, airMeasurement);
-                counterAir.getAndAdd(counter[0]);
-                counterSynoptic.getAndAdd(counter[1]);
-                mSList.add(measuringStationRepository.save(measuringStation));
-            } catch (HibernateException e) {
-                e.printStackTrace();
-                throw new RuntimeException("There is some db problem: " + e.getMessage());
+                AirMeasurement airMeasurement = apiSupplierRetriever.airMeasurementProcessorById(measuringStation.getStationId());
+                try {
+                    int[] counter = saveMeasuremets(synopticMeasurementMap, measuringStation, airMeasurement);
+                    counterAir.getAndAdd(counter[0]);
+                    counterSynoptic.getAndAdd(counter[1]);
+                    mSList.add(measuringStationRepository.save(measuringStation));
+                } catch (HibernateException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("There is some db problem: " + e.getMessage());
+                }
+                counterMeas.getAndIncrement();
+            } catch (RestClientResponseException e) {
+                throw new RestClientException("Can't find any air measurement for stationID: " + measuringStation.getStationId() + " because of REST API error-> " + e.getMessage());
             }
-            counterMeas.getAndIncrement();
         });
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         String[] shortMess = {counterAir.toString(), counterMeas.toString(), counterSynoptic.toString(), timeer};

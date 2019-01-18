@@ -114,23 +114,4 @@ public class MockAirRepository {
                 .saveDate(currentDate.withNano(0))
                 .build();
     }
-
-    public AirMeasurement airMeasurement1(){
-        LocalDateTime date = LocalDateTime.of(2018,05,05,12,01,05);
-        LocalDateTime currentDate = LocalDateTime.now();
-        return new AirMeasurement.AirMaesurementsBuilder()
-                .airQuality(AirMeasurementLevel.GOOD)
-                .stIndexLevel("stILevel")
-                .c6h6IndexLevel("c6hLEVEL")
-                .coIndexLevel("coLEVEL")
-                .no2IndexLevel("noLEVEL")
-                .o3IndexLevel("o3LEVEL")
-                .pm10IndexLevel("pm10LEVEL")
-                .pm25IndexLevel("pm25LEVEL")
-                .so2IndexLevel("so2LEVEL")
-                .foreignId(1)
-                .measurementDate(date)
-                .saveDate(currentDate.withNano(0))
-                .build();
-    }
 }

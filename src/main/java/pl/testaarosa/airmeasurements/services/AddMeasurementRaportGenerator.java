@@ -69,11 +69,12 @@ public class AddMeasurementRaportGenerator {
                     });
             sheetCellFill(stationStyle,ordinaryStyle,statioonsSheet,stationMap);
             workbook.write(out);
-            LOGGER.info("Report created and saved successful -> " + file);
+            LOGGER.info(ANSI_BLUE+ "Report saved successful in => " + ANSI_PURPLE +file + ANSI_RESET);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        //TODO zwrocić w zależnosci co będzie potrzebował mail. Może ścieżkę lub cały obiekt. A
+        // TODO go nie zapisywac do pliku tylko prosto do załącznika.
         return "";
     }
 
@@ -125,7 +126,7 @@ public class AddMeasurementRaportGenerator {
         } else {
             LOGGER.warn(ANSI_PURPLE + "File " + meteoRaportFile.getName() + " exist in path " + meteoRaportFile.getPath() + ANSI_RESET);
         }
-        LOGGER.info(ANSI_WHITE + " File " + meteoRaportFile + ANSI_BLUE + " created successful" + ANSI_RESET);
+        LOGGER.info(ANSI_WHITE + " File " + meteoRaportFile.getName() + ANSI_BLUE + " created successful" + ANSI_RESET);
         return meteoRaportFile;
     }
 

@@ -7,7 +7,6 @@ import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public interface ApiSupplierRetriever {
 
@@ -17,5 +16,5 @@ public interface ApiSupplierRetriever {
 
     Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException;
 
-    AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException;
+    AirMeasurement airMeasurementProcessorById(int stationId) throws RuntimeException;
 }

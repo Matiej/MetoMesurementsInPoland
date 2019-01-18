@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.services;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -23,7 +24,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineServiceTestSuit {
-    private final MockOnlineRepository mockOnlineRepository = new MockOnlineRepository();
+
+    private MockOnlineRepository mockOnlineRepository;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -34,11 +36,10 @@ public class OnlineServiceTestSuit {
     @Mock
     private OnlineMeasurementProcessor msProcessor;
 
-/*    @Before
-    public void init() throws ExecutionException, InterruptedException {
-        when(msProcessor.fillMeasuringStationListStructure())
-                .thenReturn(mockOnlineRepository.measuringStationOnLineList());
-    }*/
+    @Before
+    public void init() {
+        mockOnlineRepository = new MockOnlineRepository();
+    }
 
     @Test
     public void shouldGetAllMeasuringStations() {
@@ -83,6 +84,7 @@ public class OnlineServiceTestSuit {
     @Test
     public void shouldGetAllMeasuringStationsAndThrowsRestClientException() {
         //given
+        given(msProcessor.fillMeasuringStationListStructure()).willThrow(RestClientResponseException.class);
         String expectedMessage = "External REST API server error! Can't get online measurements for all stations.-> ";
         //when
         exception.expect(RestClientException.class);
@@ -193,7 +195,7 @@ public class OnlineServiceTestSuit {
         try {
             result = service.getHottestOnlineStation();
         } catch (RestClientException | NoSuchElementException e) {
-            assertEquals("some not importat message", e.getMessage());
+            assertEquals("some not important message", e.getMessage());
         }
         assertNotNull(result);
         assertEquals(expect, result);
@@ -237,9 +239,58 @@ public class OnlineServiceTestSuit {
     }
 
     @Test
-    public void testgetColdestOnlineStation() throws ExecutionException, InterruptedException {
-        OnlineMeasurementDto result = service.getColdestOnlineStation();
-        OnlineMeasurementDto expect = mockOnlineRepository.measuringStationOnLineList().get(0);
+    public void shouldfindColdestOnlineStation() {
+        //given
+        List<OnlineMeasurementDto> repository = mockOnlineRepository.measuringStationOnLineList();
+        OnlineMeasurementDto expect = repository.get(0);
+        //when
+        when(msProcessor.fillMeasuringStationListStructure()).thenReturn(repository);
+        //then
+        OnlineMeasurementDto result = null;
+        try {
+            result = service.getColdestOnlineStation();
+        } catch (RestClientException | NoSuchElementException e) {
+            assertEquals("some not important message", e.getMessage());
+        }
+        assertNotNull(result);
         assertEquals(expect, result);
+    }
+
+    @Test
+    public void shouldfindColdestOnlineStationAndThrowsNoSuchElementException() {
+        //given
+        String expectedMessage = "Can't find coldest measurement online";
+        //when
+        exception.expect(NoSuchElementException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getColdestOnlineStation();
+    }
+
+    @Test
+    public void shouldfindColdestOnlineStationAndThrowsNoSuchElementExceptionJUvintage() {
+        //given
+        String expectedMessage = "Can't find coldest measurement online";
+        given(msProcessor.fillMeasuringStationListStructure()).willReturn(new ArrayList<>());
+        //when
+        OnlineMeasurementDto coldestOnlineStation = null;
+        try {
+            coldestOnlineStation = service.getColdestOnlineStation();
+        } catch (NoSuchElementException e) {
+            assertEquals(expectedMessage, e.getMessage());
+        }
+        assertNull(coldestOnlineStation);
+    }
+
+    @Test
+    public void shouldfindColdestOnlineStationAndThrowsRestClientException() {
+        //given
+        given(msProcessor.fillMeasuringStationListStructure()).willThrow(RestClientResponseException.class);
+        String expectedMessage = "External REST API server error! Can't get coldest measurement online for station";
+        //when
+        exception.expect(RestClientException.class);
+        exception.expectMessage(expectedMessage);
+        //then
+        service.getColdestOnlineStation();
     }
 }

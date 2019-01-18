@@ -1,11 +1,11 @@
 package pl.testaarosa.airmeasurements.services;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,9 +30,9 @@ import static org.mockito.BDDMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StoredMeasurementsServiceImplTestSuit {
-    private final MockStationRepository mockStationRepository = new MockStationRepository();
-    private final MockAirRepository mockAirRepository = new MockAirRepository();
-    private final MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();
+    private MockStationRepository mockStationRepository;
+    private MockAirRepository mockAirRepository;
+    private MockSynopticRepository mockSynopticRepository;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -49,6 +48,13 @@ public class StoredMeasurementsServiceImplTestSuit {
 
     @Mock
     private SynopticMeasurementRepository synopticRepository;
+
+    @Before
+    public void init() {
+        mockStationRepository = new MockStationRepository();
+        mockAirRepository = new MockAirRepository();
+        mockSynopticRepository = new MockSynopticRepository();
+    }
 
     @Test
     public void shouldFindAllStoredMeasurements() {

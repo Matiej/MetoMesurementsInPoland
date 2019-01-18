@@ -105,9 +105,9 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
             }
             LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
             return onlineMeasurementDto;
-        } catch (RuntimeException e) {
+        } catch (RestClientResponseException e) {
             e.printStackTrace();
-            throw new RestClientException("External REST API server error! Can't get coldest measurement online for station "
+            throw new RestClientException("External REST API server error! Can't get coldest measurement online for station"
                     + " -> " + e.getMessage());
         }
     }

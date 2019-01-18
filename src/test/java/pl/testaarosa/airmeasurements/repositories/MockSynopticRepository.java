@@ -4,7 +4,9 @@ import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MockSynopticRepository {
 
@@ -114,5 +116,12 @@ public class MockSynopticRepository {
         synopticMeasurementList.add(synopticMeasurement3);
         synopticMeasurementList.add(synopticMeasurement4);
         return synopticMeasurementList;
+    }
+
+    public Map<String, SynopticMeasurement> measurementMap() {
+        LinkedHashMap<String, SynopticMeasurement> measurementLinkedHashMap = new LinkedHashMap<>();
+        synopticMeasurementsOrderHottest().forEach(t-> measurementLinkedHashMap.put(t.getCity(), t));
+        synopticMeasurementsOrderColdest().forEach(t-> measurementLinkedHashMap.put(t.getCity(), t));
+        return measurementLinkedHashMap;
     }
 }
