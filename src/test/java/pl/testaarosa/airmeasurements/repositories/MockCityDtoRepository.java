@@ -18,7 +18,7 @@ public class MockCityDtoRepository {
         CityDto cityDto2 = new CityDto();
         cityDto2.setCityName("Warszawa");
         cityDto2.setId(1);
-        cityDto2.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(1));
+        cityDto2.setCityRegionDto(mockCityRegionDtoRepository.cityRegionDtos().get(0));
 
         CityDto cityDto3 = new CityDto();
         cityDto3.setCityName("Poznan");

@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
-import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
 import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_RED;

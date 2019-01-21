@@ -1,10 +1,11 @@
 package pl.testaarosa.airmeasurements.mapper;
 
+import org.junit.Before;
 import org.junit.Test;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationDtoRepository;
-import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
+import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationRepository;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,14 +14,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class MeasuringStationMapperTestSuit {
-    private final MockMeasuringStationDtoRepository mockMStationDtoRepo = new MockMeasuringStationDtoRepository();
-    private final MeasuringStationMapper mapper = new MeasuringStationMapper();
-    private final MockStationRepository mockStationRepository = new MockStationRepository();
+    private MockMeasuringStationDtoRepository mockMStationDtoRepo;
+    private MeasuringStationMapper mapper;
+    private MockMeasuringStationRepository mockMeasuringStationRepository;
+
+    @Before
+    public void init() {
+        mockMStationDtoRepo = new MockMeasuringStationDtoRepository();
+        mapper = new MeasuringStationMapper();
+        mockMeasuringStationRepository = new MockMeasuringStationRepository();
+    }
 
     @Test
     public void shouldMapToAirMeasurements() throws IllegalAccessException {
         //given
-        MeasuringStation expect = mockStationRepository.stations().get(0);
+        MeasuringStation expect = mockMeasuringStationRepository.stations().get(0);
         Field[] fields = MeasuringStation.class.getDeclaredFields();
         fields[0].setAccessible(true);
         fields[0].set(expect, null);
@@ -38,7 +46,7 @@ public class MeasuringStationMapperTestSuit {
     @Test
     public void shouldNotMapToAirMeasurements() throws IllegalAccessException {
         //given
-        MeasuringStation expect = mockStationRepository.stations().get(0);
+        MeasuringStation expect = mockMeasuringStationRepository.stations().get(0);
         Field[] fields = MeasuringStation.class.getDeclaredFields();
         MeasuringStationDto stationDto = mockMStationDtoRepo.measuringStationDtoList().get(0);
         //when

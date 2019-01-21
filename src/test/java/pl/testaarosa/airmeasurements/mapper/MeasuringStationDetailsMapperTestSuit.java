@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.mapper;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
@@ -11,9 +12,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class MeasuringStationDetailsMapperTestSuit {
-    private final MockMeasuringStationDtoRepository mockMStationDtoRepo = new MockMeasuringStationDtoRepository();
-    private final MockMeasuringStationDetailsRepository mockDetails = new MockMeasuringStationDetailsRepository();
-    private final MeasuringStationDetailsMapper mapper = new MeasuringStationDetailsMapper();
+    private MockMeasuringStationDtoRepository mockMStationDtoRepo ;
+    private MockMeasuringStationDetailsRepository mockDetails;
+    private MeasuringStationDetailsMapper mapper ;
+
+    @Before
+    public void init() {
+        mockMStationDtoRepo = new MockMeasuringStationDtoRepository();
+        mockDetails = new MockMeasuringStationDetailsRepository();
+        mapper = new MeasuringStationDetailsMapper();
+    }
 
     @Test
     public void shouldMapToAirMeasurements(){

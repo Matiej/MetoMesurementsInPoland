@@ -3,11 +3,12 @@ package pl.testaarosa.airmeasurements.controller;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
-import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
 import java.util.NoSuchElementException;
@@ -15,6 +16,7 @@ import java.util.NoSuchElementException;
 @Api(description = "Online measurements directly from API")
 @RestController
 @RequestMapping("/online")
+@CrossOrigin(origins = "http://localhost:4200")
 public class OnlineMeasurementsController {
 
     private final OnlineMeasurementService measuringOnlineServices;
@@ -24,14 +26,14 @@ public class OnlineMeasurementsController {
         this.measuringOnlineServices = measuringOnlineServices;
     }
 
-    @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = OnlineMeasurementDto.class)
+    @ApiOperation(value = "Get all measuring stations olocalizations, address etc.", response = OnlineMeasurementDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Measuring stations found successful"),
             @ApiResponse(code = 400, message = "Can not find any online measuring stations!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
             @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for all stations")})
     @RequestMapping(value = "/allSt", method = RequestMethod.GET)
-    public ResponseEntity<Object> getAllMeasuringStationsWithSynopticDataController() {
+    public ResponseEntity<Object> getAllOnlineMeasuringStationsController() {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.getAllMeasuringStations());
         } catch (NoSuchElementException e) {
@@ -52,7 +54,7 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 406, message = "Not Acceptable! City name for measurement stations can not be empty!"),
             @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for given station.")})
     @RequestMapping(value = "/citySt", method = RequestMethod.GET)
-    public ResponseEntity<Object> getGivenCityMeasuringStationsWithSynopticDataController(String city) {
+    public ResponseEntity<Object> getGivenCityMeasuringOnlineStationsController(String city) {
         try {
             return ResponseEntity.status(200).body(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city));
         } catch (NoSuchElementException e) {
@@ -76,7 +78,7 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 400, message = "Can't find hottest online measurement!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! Can't get hottest measuring stations.")})
     @RequestMapping(value = "/hottest", method = RequestMethod.GET)
-    public ResponseEntity<Object> getHottestOnlineStation() {
+    public ResponseEntity<Object> getHottestOnlineMeasuringStation() {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.getHottestOnlineStation());
         } catch (NoSuchElementException e) {
@@ -94,7 +96,7 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 400, message = "Can't find coldest online measurement!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! Can't get coldest measuring stations.")})
         @RequestMapping(value = "/coldest", method = RequestMethod.GET)
-    public ResponseEntity<Object> getColdestOnlineStation() {
+    public ResponseEntity<Object> getColdestOnlineMeasuringStation() {
         try {
             return ResponseEntity.ok(measuringOnlineServices.getColdestOnlineStation());
         } catch (NoSuchElementException e) {

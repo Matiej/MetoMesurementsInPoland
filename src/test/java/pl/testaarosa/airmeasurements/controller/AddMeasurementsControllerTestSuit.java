@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestClientException;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.repositories.Converter;
-import pl.testaarosa.airmeasurements.repositories.MockStationRepository;
+import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationRepository;
 import pl.testaarosa.airmeasurements.services.AddMeasurementsService;
 
 import java.util.List;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AddMeasurementsControllerTestSuit {
 
     private MockMvc mockMvc;
-    private MockStationRepository mockStationRepository;
+    private MockMeasuringStationRepository mockMeasuringStationRepository;
     private List<MeasuringStation> measuringStationList;
     private Converter converter;
     private final static String MAPPING = "/add";
@@ -43,8 +43,8 @@ public class AddMeasurementsControllerTestSuit {
     @Before
     public void init() {
         converter = new Converter();
-        mockStationRepository = new MockStationRepository();
-        measuringStationList = mockStationRepository.stations();
+        mockMeasuringStationRepository = new MockMeasuringStationRepository();
+        measuringStationList = mockMeasuringStationRepository.stations();
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 

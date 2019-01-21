@@ -1,7 +1,7 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.springframework.web.client.RestClientException;
-import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.List;
 import java.util.NoSuchElementException;

@@ -5,9 +5,9 @@ import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockStationRepository {
-    private final MockAirRepository mockAirRepository = new MockAirRepository();
-    private final MockSynopticRepository mockSynopticRepository = new MockSynopticRepository();
+public class MockMeasuringStationRepository {
+    private final MockAirMeasurementRepository mockAirMeasurementRepository = new MockAirMeasurementRepository();
+    private final MockSynopticMeasurementRepository mockSynopticMeasurementRepository = new MockSynopticMeasurementRepository();
     private final MockMeasuringStationDetailsRepository details = new MockMeasuringStationDetailsRepository();
 
     public List<MeasuringStation> stations() {
@@ -22,8 +22,8 @@ public class MockStationRepository {
         station1.setStreet("Piekna");
         station1.setCity("Warszawa");
         station1.setStationDetails(details.detailsList().get(0));
-        station1.setAirMeasurementList(mockAirRepository.airMeasurements1());
-        station1.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderColdest());
+        station1.setAirMeasurementList(mockAirMeasurementRepository.airMeasurements1());
+        station1.setSynopticMeasurements(mockSynopticMeasurementRepository.synopticMeasurementsOrderColdest());
 
         MeasuringStation station2 = new MeasuringStation();
         station2.setId(1L);
@@ -34,8 +34,8 @@ public class MockStationRepository {
         station2.setStreet("Piekna");
         station2.setCity("Warszawa");
         station2.setStationDetails(details.detailsList().get(0));
-        station2.setAirMeasurementList(mockAirRepository.airMeasurements1());
-        station2.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderColdest());
+        station2.setAirMeasurementList(mockAirMeasurementRepository.airMeasurements1());
+        station2.setSynopticMeasurements(mockSynopticMeasurementRepository.synopticMeasurementsOrderColdest());
 
         MeasuringStation station3 = new MeasuringStation();
         station3.setId(2L);
@@ -46,8 +46,8 @@ public class MockStationRepository {
         station3.setStreet("Stoleczna");
         station3.setCity("Poznan");
         station3.setStationDetails(details.detailsList().get(1));
-        station3.setAirMeasurementList(mockAirRepository.airMeasurements2());
-        station3.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderHottest());
+        station3.setAirMeasurementList(mockAirMeasurementRepository.airMeasurements2());
+        station3.setSynopticMeasurements(mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest());
 
         MeasuringStation station4 = new MeasuringStation();
         station4.setId(3L);
@@ -58,8 +58,8 @@ public class MockStationRepository {
         station4.setStreet("Starowka");
         station4.setCity("Krakow");
         station4.setStationDetails(details.detailsList().get(2));
-        station4.setAirMeasurementList(mockAirRepository.airMeasurements2());
-        station4.setSynopticMeasurements(mockSynopticRepository.synopticMeasurementsOrderHottest());
+        station4.setAirMeasurementList(mockAirMeasurementRepository.airMeasurements2());
+        station4.setSynopticMeasurements(mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest());
 
         result.add(station1);
         result.add(station2);

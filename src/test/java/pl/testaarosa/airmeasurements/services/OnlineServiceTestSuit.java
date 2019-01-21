@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
-import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
-import pl.testaarosa.airmeasurements.repositories.MockOnlineRepository;
+import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.repositories.MockOnlineMeasurementRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineServiceTestSuit {
 
-    private MockOnlineRepository mockOnlineRepository;
+    private MockOnlineMeasurementRepository mockOnlineMeasurementRepository;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -38,17 +38,17 @@ public class OnlineServiceTestSuit {
 
     @Before
     public void init() {
-        mockOnlineRepository = new MockOnlineRepository();
+        mockOnlineMeasurementRepository = new MockOnlineMeasurementRepository();
     }
 
     @Test
     public void shouldGetAllMeasuringStations() {
         //given
-        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> expect = mockOnlineMeasurementRepository.measuringStationOnLineList();
         int expectsize = 4;
         //when
         when(msProcessor.fillMeasuringStationListStructure())
-                .thenReturn(mockOnlineRepository.measuringStationOnLineList());
+                .thenReturn(mockOnlineMeasurementRepository.measuringStationOnLineList());
         int resultsize = service.getAllMeasuringStations().size();
         List<OnlineMeasurementDto> result = service.getAllMeasuringStations();
         //then
@@ -96,7 +96,7 @@ public class OnlineServiceTestSuit {
     @Test
     public void shouldFindWarszawaCityMeasuringStationsWithSynopticData() throws ExecutionException, InterruptedException {
         //given
-        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> expect = mockOnlineMeasurementRepository.measuringStationOnLineList();
         expect.remove(3);
         expect.remove(2);
         int expectSize = 2;
@@ -113,7 +113,7 @@ public class OnlineServiceTestSuit {
     @Test
     public void shouldFindKrakowCityMeasuringStationsWithSynopticData() throws ExecutionException, InterruptedException {
         //given
-        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> expect = mockOnlineMeasurementRepository.measuringStationOnLineList();
         expect.remove(0);
         expect.remove(0);
         expect.remove(0);
@@ -154,7 +154,7 @@ public class OnlineServiceTestSuit {
     @Test
     public void shouldFindGivenCityMeasuringStationsWithSynopticDataAndThrowsNoSuchElementExceptionJUVintage() throws ExecutionException, InterruptedException {
         //given
-        List<OnlineMeasurementDto> expect = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> expect = mockOnlineMeasurementRepository.measuringStationOnLineList();
         String stationCity = "Radom";
         String expectedMessage = "Cant't find any stations for city: " + stationCity;
         //when
@@ -186,7 +186,7 @@ public class OnlineServiceTestSuit {
     @Test
     public void shouldFindHotestOnlineStation() {
         //given
-        List<OnlineMeasurementDto> repository = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> repository = mockOnlineMeasurementRepository.measuringStationOnLineList();
         OnlineMeasurementDto expect = repository.get(2);
         //when
         when(msProcessor.fillMeasuringStationListStructure()).thenReturn(repository);
@@ -241,7 +241,7 @@ public class OnlineServiceTestSuit {
     @Test
     public void shouldfindColdestOnlineStation() {
         //given
-        List<OnlineMeasurementDto> repository = mockOnlineRepository.measuringStationOnLineList();
+        List<OnlineMeasurementDto> repository = mockOnlineMeasurementRepository.measuringStationOnLineList();
         OnlineMeasurementDto expect = repository.get(0);
         //when
         when(msProcessor.fillMeasuringStationListStructure()).thenReturn(repository);

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class MockAirRepository {
+public class MockAirMeasurementRepository {
 
     public List<AirMeasurement> airMeasurements1(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01,05);

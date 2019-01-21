@@ -1,9 +1,8 @@
-package pl.testaarosa.airmeasurements.domain.dtoFe;
+package pl.testaarosa.airmeasurements.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
 
 import java.util.Objects;
 
@@ -109,7 +108,9 @@ public class OnlineMeasurementDto {
         private String stationCity;
         private String stationDistrict;
         private String stationVoivodeship;
+
         private AirMeasurement airMs;
+
         private SynopticMeasurement synopticMs;
 
         public OnlineMeasurementBuilder id(int id) {

@@ -6,7 +6,7 @@ import pl.testaarosa.airmeasurements.domain.dtoApi.LevelDto;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class MockAirDtoRepository {
+public class MockAirMeasurementDtoRepository {
 
     public List<AirMeasurementDto> airMeasurementsDtos() {
         List<AirMeasurementDto> airMeasurementDtoList = new ArrayList<>();

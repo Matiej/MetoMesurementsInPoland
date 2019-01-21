@@ -5,7 +5,7 @@ import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class MockSynopticDtoRepository {
+public class MockSynopticMeasurementDtoRepository {
 
     public List<SynopticMeasurementDto> mockSynopticDtoRepositories() {
         List<SynopticMeasurementDto> measurementDtoList = new ArrayList<>();

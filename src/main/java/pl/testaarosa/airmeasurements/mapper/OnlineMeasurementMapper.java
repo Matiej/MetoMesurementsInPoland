@@ -4,10 +4,7 @@ import org.springframework.stereotype.Component;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
+import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.*;
 import java.util.stream.Collectors;

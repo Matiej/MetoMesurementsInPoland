@@ -20,14 +20,14 @@ public class MockCityRegionDtoRepository {
         cityRegionDto2.setVoivodeship("mazowieckie");
 
         CityRegionDto cityRegionDto3 = new CityRegionDto();
-        cityRegionDto2.setCommuneName("Commune1");
-        cityRegionDto2.setDistrictName("Dictrict1");
-        cityRegionDto2.setVoivodeship("wielkopolskie");
+        cityRegionDto3.setCommuneName("Commune1");
+        cityRegionDto3.setDistrictName("Dictrict1");
+        cityRegionDto3.setVoivodeship("wielkopolskie");
 
         CityRegionDto cityRegionDto4 = new CityRegionDto();
-        cityRegionDto2.setCommuneName("Commune1");
-        cityRegionDto2.setDistrictName("Dictrict1");
-        cityRegionDto2.setVoivodeship("wielkopolskie");
+        cityRegionDto4.setCommuneName("Commune1");
+        cityRegionDto4.setDistrictName("Dictrict1");
+        cityRegionDto4.setVoivodeship("wielkopolskie");
 
         cityRegionDtoList.add(cityRegionDto1);
         cityRegionDtoList.add(cityRegionDto2);

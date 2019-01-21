@@ -29,9 +29,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AddMeasurementsServicesImplTestSuit {
 
-    private MockStationRepository mockStationRepository;
-    private MockAirRepository mockAirRepository;
-    private MockSynopticRepository mockSynopticRepository;
+    private MockMeasuringStationRepository mockMeasuringStationRepository;
+    private MockAirMeasurementRepository mockAirMeasurementRepository;
+    private MockSynopticMeasurementRepository mockSynopticMeasurementRepository;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -54,29 +54,29 @@ public class AddMeasurementsServicesImplTestSuit {
 
     @Before
     public void init() {
-        mockStationRepository = new MockStationRepository();
-        mockAirRepository = new MockAirRepository();
-        mockSynopticRepository = new MockSynopticRepository();
-        mockStationRepository = new MockStationRepository();
+        mockMeasuringStationRepository = new MockMeasuringStationRepository();
+        mockAirMeasurementRepository = new MockAirMeasurementRepository();
+        mockSynopticMeasurementRepository = new MockSynopticMeasurementRepository();
+        mockMeasuringStationRepository = new MockMeasuringStationRepository();
     }
 
     @Test
     public void shouldAddAllStationMeasurements() {
-        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticRepository.measurementMap();
+        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticMeasurementRepository.measurementMap();
         given(apiSupplierRetriever.synopticMeasurementProcessor()).willReturn(synopticRepoMap);
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         given(measuringStationRepository.findAll()).willReturn(stationsRepo);
         List<MeasuringStation> stationsRepoWrong = new ArrayList<>();
         stationsRepoWrong.addAll(stationsRepo);
         stationsRepoWrong.remove(0);
 
-        AirMeasurement airMeasurement1 = mockAirRepository.airMeasurements1().get(0);
+        AirMeasurement airMeasurement1 = mockAirMeasurementRepository.airMeasurements1().get(0);
         given(apiSupplierRetriever.airMeasurementProcessorById(stationsRepo.get(0).getStationId())).willReturn(airMeasurement1);
-        AirMeasurement airMeasurement2 = mockAirRepository.airMeasurements1().get(1);
+        AirMeasurement airMeasurement2 = mockAirMeasurementRepository.airMeasurements1().get(1);
         given(apiSupplierRetriever.airMeasurementProcessorById(stationsRepo.get(1).getStationId())).willReturn(airMeasurement2);
-        AirMeasurement airMeasurement3 = mockAirRepository.airMeasurements2().get(0);
+        AirMeasurement airMeasurement3 = mockAirMeasurementRepository.airMeasurements2().get(0);
         given(apiSupplierRetriever.airMeasurementProcessorById(stationsRepo.get(2).getStationId())).willReturn(airMeasurement3);
-        AirMeasurement airMeasurement4 = mockAirRepository.airMeasurements2().get(1);
+        AirMeasurement airMeasurement4 = mockAirMeasurementRepository.airMeasurements2().get(1);
         given(apiSupplierRetriever.airMeasurementProcessorById(stationsRepo.get(3).getStationId())).willReturn(airMeasurement4);
 
         //when
@@ -94,7 +94,7 @@ public class AddMeasurementsServicesImplTestSuit {
     @Test
     public void shouldAddAllStationMeasurementsAndThrowsRestClientException() {
         //given
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         int stationId = stationsRepo.get(0).getStationId();
         String expectMessage = "Can't find any air measurement for stationID: " + stationId + " because of REST API error-> null";
         given(apiSupplierRetriever.airMeasurementProcessorById(stationId)).willThrow(RestClientResponseException.class);
@@ -109,7 +109,7 @@ public class AddMeasurementsServicesImplTestSuit {
     @Test
     public void shouldAddAllStationMeasurementsAndThrowsRestClientExceptionAJ() {
         //given
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         int stationId = stationsRepo.get(0).getStationId();
         String expectMessage = "Can't find any air measurement for stationID: " + stationId + " because of REST API error-> null";
         given(apiSupplierRetriever.airMeasurementProcessorById(stationId)).willThrow(RestClientResponseException.class);
@@ -124,11 +124,11 @@ public class AddMeasurementsServicesImplTestSuit {
     @Test
     public void shouldAddAllStationMeasurementsAndThrowsRuntimeException() {
         //given
-        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticRepository.measurementMap();
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticMeasurementRepository.measurementMap();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         int stationId = stationsRepo.get(0).getStationId();
         String expectMessage = "There is some db problem: null";
-        AirMeasurement airMeasurement = mockAirRepository.airMeasurement();
+        AirMeasurement airMeasurement = mockAirMeasurementRepository.airMeasurement();
         given(measuringStationRepository.save(stationsRepo.get(0))).willThrow(HibernateException.class);
         //when
         when(apiSupplierRetriever.synopticMeasurementProcessor()).thenReturn(synopticRepoMap);
@@ -142,12 +142,12 @@ public class AddMeasurementsServicesImplTestSuit {
 
     @Test
     public void shouldAddOneStationMeasurement() {
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         MeasuringStation measuringStation = stationsRepo.get(0);
         MeasuringStation wrongMeasuringStation = stationsRepo.get(2);
         Integer stationID = measuringStation.getStationId();
         given(measuringStationRepository.findAll()).willReturn(stationsRepo);
-        AirMeasurement airMeasurement1 = mockAirRepository.airMeasurements1().get(0);
+        AirMeasurement airMeasurement1 = mockAirMeasurementRepository.airMeasurements1().get(0);
         given(apiSupplierRetriever.airMeasurementProcessorById(measuringStation.getStationId())).willReturn(airMeasurement1);
         //when
         when(measuringStationRepository.save(measuringStation)).thenReturn(measuringStation);
@@ -185,11 +185,11 @@ public class AddMeasurementsServicesImplTestSuit {
     @Test
     public void shouldAddOneStationMeasurementAndThrowsRuntimeException() {
         //given
-        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticRepository.measurementMap();
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticMeasurementRepository.measurementMap();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         int stationId = stationsRepo.get(0).getStationId();
         String expectMessage = "There is some db problem: null";
-        AirMeasurement airMeasurement = mockAirRepository.airMeasurement();
+        AirMeasurement airMeasurement = mockAirMeasurementRepository.airMeasurement();
         given(measuringStationRepository.save(stationsRepo.get(0))).willThrow(HibernateException.class);
         //when
         when(apiSupplierRetriever.synopticMeasurementProcessor()).thenReturn(synopticRepoMap);
@@ -204,11 +204,11 @@ public class AddMeasurementsServicesImplTestSuit {
     @Test
     public void shouldAddOneStationMeasurementAndThrowsRestClientException() {
         //given
-        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticRepository.measurementMap();
-        List<MeasuringStation> stationsRepo = mockStationRepository.stations();
+        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticMeasurementRepository.measurementMap();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         int stationId = stationsRepo.get(0).getStationId();
         String expectMessage = "Can't find any air measurement for stationID: " + stationId + " because of REST API error-> null";
-        AirMeasurement airMeasurement = mockAirRepository.airMeasurement();
+        AirMeasurement airMeasurement = mockAirMeasurementRepository.airMeasurement();
         given(apiSupplierRetriever.airMeasurementProcessorById(stationId)).willThrow(RestClientResponseException.class);
         //when
         when(apiSupplierRetriever.synopticMeasurementProcessor()).thenReturn(synopticRepoMap);

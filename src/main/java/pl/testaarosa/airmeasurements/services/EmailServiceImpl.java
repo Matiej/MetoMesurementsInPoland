@@ -9,8 +9,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.Mail;
 
-import java.util.Date;
-
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 @Service
@@ -40,7 +38,7 @@ public class EmailServiceImpl implements EmailService {
         mailMessage.setSubject(mail.getSubject());
         mailMessage.setText(mail.getMessage());
         mailMessage.setFrom(mail.getFrom());
-        mailMessage.setSentDate(new Date());
+        mailMessage.setSentDate(mail.getSentDate());
         return mailMessage;
     }
 }

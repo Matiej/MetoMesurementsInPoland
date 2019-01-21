@@ -8,6 +8,7 @@ import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,12 +20,13 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
     private String fromMail;
     @Autowired
     private EmailService emailService;
+    private final static Date date = new Date();
 
     @Override
     public void sendEmailBeforAddMeasuremetns(String shortMessage) {
         String subject = "Starting METEO measurements " + LocalDateTime.now();
         String message = "\n Scheduler is starting "+shortMessage +" try to download of measurements for Testaaarosa METO and AIR stations.";
-        emailService.sendEmail(new Mail(notifyMail, subject, message, fromMail));
+        emailService.sendEmail(new Mail(notifyMail, subject, message, fromMail, date));
     }
 
     @Override
@@ -35,7 +37,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
                 " Scheduler will try once again it 10minutes. Below log error report: \n");
         message.append("\n  REPORT -> \n"+error);
 
-        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail));
+        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, date));
     }
 
 
@@ -47,7 +49,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
                 " Scheduler will try once again it 8 hours. Below log error report: \n");
         message.append("\n + REPORT -> \n"+error);
 
-        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail));
+        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, date));
     }
 
     public String sendEmailAfterDownloadMeasurements(List<MeasuringStationDto> mSDtoList, String measurementTime) {
@@ -61,7 +63,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
             messeage.append("name: " + m.getStationName()+", address: " + m.getAddressStreet() + ", city: "
                     + m.getCityDto().getCityName() +"\n");
         });
-        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail));
+        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail, date));
         return messeage.toString();
     }
 
@@ -77,7 +79,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
             messeage.append("name: " + m.getStationName()+", address: " + m.getStreet() + ", city: "
                     + m.getCity() +"\n");
         });
-        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail));
+        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail, date));
         return messeage.toString();
     }
 

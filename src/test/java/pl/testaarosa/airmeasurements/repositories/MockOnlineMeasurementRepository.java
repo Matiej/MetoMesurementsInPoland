@@ -1,13 +1,13 @@
 package pl.testaarosa.airmeasurements.repositories;
 
-import pl.testaarosa.airmeasurements.domain.dtoFe.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class MockOnlineRepository {
-    private final MockAirRepository mockAirDtoRepository = new MockAirRepository();
-    private final MockSynopticRepository mockSynopticDtoRepository = new MockSynopticRepository();
+public class MockOnlineMeasurementRepository {
+    private final MockAirMeasurementRepository mockAirDtoRepository = new MockAirMeasurementRepository();
+    private final MockSynopticMeasurementRepository mockSynopticDtoRepository = new MockSynopticMeasurementRepository();
 
     public List<OnlineMeasurementDto> measuringStationOnLineList(){
         List<OnlineMeasurementDto> onlineMeasurementDtoList = new LinkedList<>();

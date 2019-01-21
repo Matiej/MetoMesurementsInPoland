@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MockSynopticRepository {
+public class MockSynopticMeasurementRepository {
 
     public List<SynopticMeasurement> synopticMeasurementsOrderColdest(){
         LocalDateTime date = LocalDateTime.of(2018,05,05,12,01).withNano(0);
@@ -82,10 +82,10 @@ public class MockSynopticRepository {
                 .foreignId(1)
                 .city("Warszawa")
                 .saveDate(date)
-                .temperature(22)
-                .windSpeed(11)
+                .temperature(28)
+                .windSpeed(15)
                 .airHumidity(16)
-                .pressure(999)
+                .pressure(1001)
                 .build();
 
         SynopticMeasurement synopticMeasurement3 = new SynopticMeasurement.SynopticMeasurementsBuilder()

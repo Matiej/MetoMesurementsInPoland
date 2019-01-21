@@ -30,9 +30,9 @@ import static org.mockito.BDDMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StoredMeasurementsServiceImplTestSuit {
-    private MockStationRepository mockStationRepository;
-    private MockAirRepository mockAirRepository;
-    private MockSynopticRepository mockSynopticRepository;
+    private MockMeasuringStationRepository mockMeasuringStationRepository;
+    private MockAirMeasurementRepository mockAirMeasurementRepository;
+    private MockSynopticMeasurementRepository mockSynopticMeasurementRepository;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -51,15 +51,15 @@ public class StoredMeasurementsServiceImplTestSuit {
 
     @Before
     public void init() {
-        mockStationRepository = new MockStationRepository();
-        mockAirRepository = new MockAirRepository();
-        mockSynopticRepository = new MockSynopticRepository();
+        mockMeasuringStationRepository = new MockMeasuringStationRepository();
+        mockAirMeasurementRepository = new MockAirMeasurementRepository();
+        mockSynopticMeasurementRepository = new MockSynopticMeasurementRepository();
     }
 
     @Test
     public void shouldFindAllStoredMeasurements() {
         //given
-        List<MeasuringStation> expect = mockStationRepository.stations();
+        List<MeasuringStation> expect = mockMeasuringStationRepository.stations();
         //when
         when(stationRepository.findAll()).thenReturn(expect);
         //then
@@ -100,7 +100,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsGivenDate() {
         //given
-        List<SynopticMeasurement> expect = mockSynopticRepository.synopticMeasurementsOrderHottest();
+        List<SynopticMeasurement> expect = mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest();
         //when
         when(synopticRepository.findAll()).thenReturn(expect);
         //then
@@ -164,7 +164,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindMeasurementsByAirQuality() {
         //given
-        List<AirMeasurement> measurementsList = mockAirRepository.airMeasurements1();
+        List<AirMeasurement> measurementsList = mockAirMeasurementRepository.airMeasurements1();
         //when
         when(airRepository.findAllByAirQuality(AirMeasurementLevel.BAD)).thenReturn(measurementsList);
         //then
@@ -242,7 +242,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindAllAirMeasurementsGivenDate() {
         //given
-        List<AirMeasurement> expected = mockAirRepository.airMeasurements1();
+        List<AirMeasurement> expected = mockAirMeasurementRepository.airMeasurements1();
         //when
         when(airRepository.findAll()).thenReturn(expected);
         //then
@@ -315,7 +315,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindHottestTop10Places() {
         //given jUnit vintage ver
-        List<SynopticMeasurement> expected = mockSynopticRepository.synopticMeasurementsOrderHottest();
+        List<SynopticMeasurement> expected = mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest();
         //when
         when(synopticRepository.findAll()).thenReturn(expected);
         //then
@@ -367,7 +367,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindColdestTop10Places() {
         //given
-        List<SynopticMeasurement> expect = mockSynopticRepository.synopticMeasurementsOrderColdest();
+        List<SynopticMeasurement> expect = mockSynopticMeasurementRepository.synopticMeasurementsOrderColdest();
         //when
         when(synopticRepository.findAll()).thenReturn(expect);
         //then
@@ -435,7 +435,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindHottestPlaceGivenDate() {
         //given
-        List<SynopticMeasurement> givenRepo = mockSynopticRepository.synopticMeasurementsOrderHottest();
+        List<SynopticMeasurement> givenRepo = mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest();
         SynopticMeasurement expected = givenRepo.get(0);
         //when
         when(synopticRepository.findAll()).thenReturn(givenRepo);
@@ -449,7 +449,7 @@ public class StoredMeasurementsServiceImplTestSuit {
         assertNotNull(result);
         assertEquals(expected, result);
         Assertions.assertNotSame(givenRepo.get(2), result);
-        assertNotEquals(givenRepo.get(1), result);
+        assertNotEquals(givenRepo.get(3), result);
         assertThat(givenRepo, hasItems(result));
     }
 
@@ -526,7 +526,7 @@ public class StoredMeasurementsServiceImplTestSuit {
     @Test
     public void shouldFindColdestPlaceGivenDate() {
         //given
-        List<SynopticMeasurement> givenRepo = mockSynopticRepository.synopticMeasurementsOrderColdest();
+        List<SynopticMeasurement> givenRepo = mockSynopticMeasurementRepository.synopticMeasurementsOrderColdest();
         SynopticMeasurement expected = givenRepo.get(0);
         String date = "2018-05-05";
         //when
