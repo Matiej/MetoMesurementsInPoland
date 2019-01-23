@@ -1,9 +1,12 @@
 package pl.testaarosa.airmeasurements.repositories;
 
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MockMeasuringStationRepository {
     private final MockAirMeasurementRepository mockAirMeasurementRepository = new MockAirMeasurementRepository();
@@ -66,5 +69,10 @@ public class MockMeasuringStationRepository {
         result.add(station3);
         result.add(station4);
         return result;
+
+    }
+
+    public Map<MeasuringStation, AirMeasurement> measurementMap() {
+        return stations().stream().collect(Collectors.toMap(t->t, t->t.getAirMeasurementList().get(0),(t1,t2)->t1));
     }
 }
