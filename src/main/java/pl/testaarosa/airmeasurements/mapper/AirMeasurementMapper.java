@@ -18,11 +18,7 @@ public class AirMeasurementMapper {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime currentDate = LocalDateTime.now().withNano(0);
         LocalDateTime toSql;
-        if (Optional.ofNullable(airDto).isPresent()) {
-            toSql = LocalDateTime.parse(airDto.getStCalcDate(), formatter);
-        } else {
-            toSql = currentDate;
-        }
+        toSql = LocalDateTime.parse(airDto.getStCalcDate(), formatter);
         return new AirMeasurement.AirMaesurementsBuilder()
                 .foreignId(airDto.getId())
                 .measurementDate(toSql)

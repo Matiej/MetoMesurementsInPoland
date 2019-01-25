@@ -113,14 +113,4 @@ public class MockAirMeasurementDtoRepository {
         airMeasurementDtoList.add(airMeasurementDto3);
         return airMeasurementDtoList;
     }
-//TODO do poprawienia dla testów retrivera
-    public Map<Integer, AirMeasurementDto> measurementsDtoMap(){
-        Map<Integer, AirMeasurementDto> map = new HashMap<>();
-        int i =0;
-        for (AirMeasurementDto airMeasurementDto : airMeasurementsDtos()) {
-            map.put(i, airMeasurementDto);
-            i++;
-        }
-        return map;
-    }
 }

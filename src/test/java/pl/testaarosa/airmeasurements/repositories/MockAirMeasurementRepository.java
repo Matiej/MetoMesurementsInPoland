@@ -111,7 +111,7 @@ public class MockAirMeasurementRepository {
                 .so2IndexLevel("so2LEVEL")
                 .foreignId(1)
                 .measurementDate(date)
-                .saveDate(currentDate.withNano(0))
+                .saveDate(date)
                 .build();
     }
 }

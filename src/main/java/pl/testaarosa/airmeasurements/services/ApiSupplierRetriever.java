@@ -10,11 +10,10 @@ import java.util.Map;
 
 public interface ApiSupplierRetriever {
 
-    List<MeasuringStation> measuringStationApiProcessor() throws RestClientException;
-
     Map<String, SynopticMeasurement> synopticMeasurementProcessor() throws RestClientException;
 
     Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException;
+    Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor(Integer stationID) throws RestClientException;
 
     AirMeasurement airMeasurementProcessorById(int stationId) throws RuntimeException;
 }

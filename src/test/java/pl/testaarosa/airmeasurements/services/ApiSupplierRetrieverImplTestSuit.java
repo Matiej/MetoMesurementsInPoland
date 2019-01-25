@@ -26,13 +26,15 @@ import pl.testaarosa.airmeasurements.mapper.SynopticMeasurementMapper;
 import pl.testaarosa.airmeasurements.repositories.*;
 import pl.testaarosa.airmeasurements.supplier.MeasurementsApiSupplier;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -73,35 +75,6 @@ public class ApiSupplierRetrieverImplTestSuit {
         mockSynopticMeasurementDtoRepository = new MockSynopticMeasurementDtoRepository();
         mockAirMeasurementDtoRepository = new MockAirMeasurementDtoRepository();
         mockAirMeasurementRepository = new MockAirMeasurementRepository();
-    }
-
-    @Test
-    public void shouldGetMeasuringStationFromApiProcessor() {
-        //given
-        List<MeasuringStation> stations = mockMeasuringStationRepository.stations();
-        List<MeasuringStationDto> measuringStationDtos = mockMeasuringStationDtoRepository.measuringStationDtoList();
-        MeasuringStationDto[] responseEntity = measuringStationDtos.toArray(new MeasuringStationDto[measuringStationDtos.size()]);
-        given(restTemplate.getForEntity(msApi.giosApiSupplierAll(), MeasuringStationDto[].class))
-                .willReturn(new ResponseEntity(responseEntity, HttpStatus.OK));
-        //when
-        IntStream.range(0,stations.size())
-                .forEach(s->when(measuringStationMapper.mapToMeasuringSt(measuringStationDtos.get(s))).thenReturn(stations.get(s)));
-        //then
-        List<MeasuringStation> result = apiSupplierRetriever.measuringStationApiProcessor();
-        assertNotNull(result);
-        assertEquals(stations, result);
-    }
-
-    @Test
-    public void shouldGetMeasuringStationFromApiProcessorAndThrowsRe() {
-        //given
-        given(restTemplate.getForEntity(msApi.giosApiSupplierAll(), MeasuringStationDto[].class)).willThrow(RestClientResponseException.class);
-        String expectedMessage = " REST API CONNECTION ERROR-> null";
-        //when
-        exception.expect(RestClientException.class);
-        exception.expectMessage(expectedMessage);
-        //then
-        apiSupplierRetriever.measuringStationApiProcessor();
     }
 
     @Test
@@ -153,7 +126,8 @@ public class ApiSupplierRetrieverImplTestSuit {
         //when
         IntStream.range(0, stations.size()).forEach(s-> {
             when(measuringStationMapper.mapToMeasuringSt(measuringStationDtos.get(s))).thenReturn(stations.get(s));
-            when(restTemplate.getForObject(msApi.giosApiSupplierIndex(100), AirMeasurementDto.class)).thenReturn(airMeasurementDtos.get(s));
+//            when(restTemplate.getForObject(msApi.giosApiSupplierIndex(100), AirMeasurementDto.class)).thenReturn(airMeasurementDtos.get(s));
+            when(restTemplate.getForEntity(msApi.giosApiSupplierIndex(100), AirMeasurementDto.class)).thenReturn(new ResponseEntity(airMeasurementDtos.get(s), HttpStatus.OK));
             when(airMeasurementMapper.mapToAirMeasurements(airMeasurementDtos.get(s))).thenReturn(airMeasurements1.get(0));
         });
         Map<MeasuringStation, AirMeasurement> result = apiSupplierRetriever.airMeasurementsAndStProcessor();
@@ -164,7 +138,21 @@ public class ApiSupplierRetrieverImplTestSuit {
         assertThat(result, IsMapContaining.hasKey(stations.get(0)));
         assertThat(result, IsMapContaining.hasKey(stations.get(1)));
         assertThat(result, IsMapContaining.hasKey(stations.get(2)));
-
     }
+
+    @Test
+    public void shouldGetAirMeasurementsAndStProcessorAndThrowsRestClientExceptionForEntity() {
+        //given
+        String expectedMessage = "Can't find any measurement because of REST API error-> null";
+        String expectedMessage2 = "Error Api connection. Http response status-> ";
+        given(restTemplate.getForEntity(msApi.giosApiSupplierAll(), MeasuringStationDto[].class)).willThrow(RestClientResponseException.class);
+        //when
+        exception.expect(RestClientException.class);
+        exception.expectMessage(expectedMessage);
+        exception.expectMessage(expectedMessage2);
+        //then
+        apiSupplierRetriever.airMeasurementsAndStProcessor();
+    }
+
 
 }
