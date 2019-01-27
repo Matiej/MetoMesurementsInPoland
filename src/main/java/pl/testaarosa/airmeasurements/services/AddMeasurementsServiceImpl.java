@@ -180,27 +180,32 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             if (forAllMeasurements) {
                 synMstMap.forEach((key, value) -> {
                     if (tmpSynList.stream().noneMatch(value::equals)) {
-                        City city = new City();
-                        city.setCityName(value.getCityName());
-                        value.setCity(city);
-                        synopticRepository.save(value);
-                        cityRepository.save(city);
-                        LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT THAT HAVE NO AIR STATION IN THE CITY -> "
-                                + value.getCityName() + ANSI_RESET);
-                    }
-                });
+                        City city = null;
+                        if (!cityRepository.existsAllByCityName(value.getCityName())) {
+                            city = new City();
+                            city.setCityName(value.getCityName());
+                        } else {
+                            city = cityRepository.findOneByCityName(value.getCityName());
+                        }
+                            value.setCity(city);
+                            synopticRepository.save(value);
+                            cityRepository.save(city);
+                            LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT THAT HAVE NO AIR STATION IN THE CITY -> "
+                                    + value.getCityName() + ANSI_RESET);
+                        }
+                    });
+                }
+            } catch(RuntimeException e){
+                e.printStackTrace();
+                throw new HibernateException("Can't save synoptic measurements  because of data base error-> " + e.getMessage());
             }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new HibernateException("Can't save synoptic measurements  because of data base error-> " + e.getMessage());
+            return counters;
         }
-        return counters;
-    }
 
-    private String timeer(Long timeMiliseconds) {
-        DecimalFormat df2 = new DecimalFormat("###.###");
-        return df2.format(timeMiliseconds / 60000.0);
-    }
+        private String timeer (Long timeMiliseconds){
+            DecimalFormat df2 = new DecimalFormat("###.###");
+            return df2.format(timeMiliseconds / 60000.0);
+        }
 
 //    @Transactional
 //    private Map<MeasuringStation, AirMeasurement> saveAirMeasurementSt(Map<MeasuringStation, AirMeasurement> mStMap) throws HibernateException {
@@ -256,4 +261,4 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 //        DecimalFormat df2 = new DecimalFormat("###.###");
 //        return df2.format(timeMiliseconds / 60000.0);
 //    }
-}
+    }
