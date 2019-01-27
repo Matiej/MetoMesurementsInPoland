@@ -25,10 +25,13 @@ public class MeasuringStation {
     @OneToOne(cascade = CascadeType.ALL)
     private MeasuringStationDetails stationDetails;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.DETACH, mappedBy = "measuringStation")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "SYNMST_STATION",
+    joinColumns = {@JoinColumn(name = "MST_ID", referencedColumnName = "ID")},
+    inverseJoinColumns = {@JoinColumn(name = "SYNMST_ID", referencedColumnName = "ID")})
     private List<SynopticMeasurement> synopticMeasurements = new ArrayList<>();
 
     public Long getId() {

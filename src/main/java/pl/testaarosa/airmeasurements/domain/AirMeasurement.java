@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +33,8 @@ public class AirMeasurement {
     @ManyToOne
     @JoinColumn(name = "STATION_ID")
     private MeasuringStation measuringStation;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "airMeasurementList", targetEntity = City.class)
+    private List<City> cityList = new ArrayList<>();
 
     public AirMeasurement() {
     }
@@ -49,6 +53,7 @@ public class AirMeasurement {
         this.o3IndexLevel = builder.o3IndexLevel;
         this.c6h6IndexLevel = builder.c6h6IndexLevel;
         this.measuringStation = builder.measuringStation;
+        this.cityList = new ArrayList<>(builder.cityList);
     }
 
     @JsonIgnore
@@ -104,6 +109,10 @@ public class AirMeasurement {
         return c6h6IndexLevel;
     }
 
+    public List<City> getCityList() {
+        return cityList;
+    }
+
     @JsonIgnore
     public MeasuringStation getMeasuringStation() {
         return measuringStation;
@@ -112,6 +121,7 @@ public class AirMeasurement {
     public void setMeasuringStation(MeasuringStation measuringStation) {
         this.measuringStation = measuringStation;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -161,6 +171,7 @@ public class AirMeasurement {
         private String o3IndexLevel;
         private String c6h6IndexLevel;
         private MeasuringStation measuringStation;
+        private List<City> cityList = new ArrayList<>();
 
         public AirMaesurementsBuilder id(Long id) {
             this.id = id;
@@ -229,6 +240,11 @@ public class AirMeasurement {
 
         public AirMaesurementsBuilder measuringStation(MeasuringStation measuringStation) {
             this.measuringStation = measuringStation;
+            return this;
+        }
+
+        public AirMaesurementsBuilder cityList(List<City> cityList) {
+            this.cityList.addAll(cityList);
             return this;
         }
 

@@ -120,8 +120,8 @@ public class MockSynopticMeasurementRepository {
 
     public Map<String, SynopticMeasurement> measurementMap() {
         LinkedHashMap<String, SynopticMeasurement> measurementLinkedHashMap = new LinkedHashMap<>();
-        synopticMeasurementsOrderHottest().forEach(t-> measurementLinkedHashMap.put(t.getCity(), t));
-        synopticMeasurementsOrderColdest().forEach(t-> measurementLinkedHashMap.put(t.getCity(), t));
+        synopticMeasurementsOrderHottest().forEach(t-> measurementLinkedHashMap.put(t.getCityName(), t));
+        synopticMeasurementsOrderColdest().forEach(t-> measurementLinkedHashMap.put(t.getCityName(), t));
         return measurementLinkedHashMap;
     }
 }

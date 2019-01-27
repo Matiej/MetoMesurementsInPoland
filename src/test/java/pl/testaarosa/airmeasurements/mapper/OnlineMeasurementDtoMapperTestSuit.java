@@ -109,10 +109,10 @@ public class OnlineMeasurementDtoMapperTestSuit {
         List<SynopticMeasurement> sMsc = synopticRepository.synopticMeasurementsOrderColdest();
         List<SynopticMeasurement> sMsh = synopticRepository.synopticMeasurementsOrderHottest();
         LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap = new LinkedHashMap<>();
-        synopticMeasurementMap.put(sMsc.get(0).getCity(), sMsc.get(0));
-        synopticMeasurementMap.put(sMsc.get(1).getCity(), sMsc.get(0));
-        synopticMeasurementMap.put(sMsh.get(2).getCity(), sMsh.get(2));
-        synopticMeasurementMap.put(sMsh.get(3).getCity(), sMsh.get(3));
+        synopticMeasurementMap.put(sMsc.get(0).getCityName(), sMsc.get(0));
+        synopticMeasurementMap.put(sMsc.get(1).getCityName(), sMsc.get(0));
+        synopticMeasurementMap.put(sMsh.get(2).getCityName(), sMsh.get(2));
+        synopticMeasurementMap.put(sMsh.get(3).getCityName(), sMsh.get(3));
         return synopticMeasurementMap;
     }
 

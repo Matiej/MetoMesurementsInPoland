@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +16,7 @@ public class SynopticMeasurement {
     private Long id;
     @Column(name = "FOREIGN_ID")
     private int foreignId;
-    private String city;
+    private String cityName;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime saveDate;
     private double temperature;
@@ -26,24 +28,27 @@ public class SynopticMeasurement {
     private String measurementDate;
     private String measurementHour;
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "STATION_ID")
-    private MeasuringStation measuringStation;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "synopticMeasurements", targetEntity = MeasuringStation.class)
+    private List<MeasuringStation> measuringStation = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "CITY_ID")
+    private City city;
 
     public SynopticMeasurement() {
     }
 
     private SynopticMeasurement(SynopticMeasurementsBuilder builder) {
         this.foreignId = builder.foreignId;
-        this.city = builder.city;
+        this.cityName = builder.cityName;
         this.saveDate = builder.saveDate;
         this.temperature = builder.temperature;
         this.windSpeed = builder.windSpeed;
         this.airHumidity = builder.airHumidity;
         this.pressure = builder.pressure;
-        this.measuringStation = builder.measuringStation;
+        this.measuringStation = new ArrayList<>(builder.measuringStation);
         this.measurementDate = builder.measurementDate;
         this.measurementHour = builder.measurementHour;
+        this.city = builder.city;
     }
 
     @JsonIgnore
@@ -60,8 +65,8 @@ public class SynopticMeasurement {
         return foreignId;
     }
 
-    public String getCity() {
-        return city;
+    public String getCityName() {
+        return cityName;
     }
 
     public double getTemperature() {
@@ -80,12 +85,12 @@ public class SynopticMeasurement {
         return pressure;
     }
 
-    public MeasuringStation getMeasuringStation() {
+    public List<MeasuringStation> getMeasuringStation() {
         return measuringStation;
     }
 
     @JsonIgnore
-    public void setMeasuringStation(MeasuringStation measuringStation) {
+    public void setMeasuringStation(List<MeasuringStation> measuringStation) {
         this.measuringStation = measuringStation;
     }
 
@@ -101,6 +106,10 @@ public class SynopticMeasurement {
         return measurementHour;
     }
 
+    public void setCity(City city) {
+        this.city = city;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,7 +121,7 @@ public class SynopticMeasurement {
                 Double.compare(that.airHumidity, airHumidity) == 0 &&
                 Double.compare(that.pressure, pressure) == 0 &&
                 Objects.equals(id, that.id) &&
-                Objects.equals(city, that.city) &&
+                Objects.equals(cityName, that.cityName) &&
                 Objects.equals(saveDate, that.saveDate) &&
                 Objects.equals(measurementDate, that.measurementDate) &&
                 Objects.equals(measurementHour, that.measurementHour) &&
@@ -121,12 +130,12 @@ public class SynopticMeasurement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, foreignId, city, saveDate, temperature, windSpeed, airHumidity, pressure, measurementDate, measurementHour, measuringStation);
+        return Objects.hash(id, foreignId, cityName, saveDate, temperature, windSpeed, airHumidity, pressure, measurementDate, measurementHour, measuringStation);
     }
 
     @Override
     public String toString() {
-        return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", city " + city + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure
+        return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", cityName " + cityName + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure
                 + "\n measurement date; " + measurementDate + "\n hour: " + measurementHour + "\n" + "_____________________________" + "\n";
     }
 
@@ -134,14 +143,15 @@ public class SynopticMeasurement {
         private Long id;
         private int foreignId;
         private LocalDateTime saveDate;
-        private String city;
+        private String cityName;
         private double temperature;
         private double windSpeed;
         private double airHumidity;
         private double pressure;
         private String measurementDate;
         private String measurementHour;
-        private MeasuringStation measuringStation;
+        private List<MeasuringStation> measuringStation = new ArrayList<>();
+        private City city;
 
         public SynopticMeasurementsBuilder id(Long id) {
             this.id = id;
@@ -158,8 +168,8 @@ public class SynopticMeasurement {
             return this;
         }
 
-        public SynopticMeasurementsBuilder city(String city) {
-            this.city = city;
+        public SynopticMeasurementsBuilder city(String cityName) {
+            this.cityName = cityName;
             return this;
         }
 
@@ -183,8 +193,8 @@ public class SynopticMeasurement {
             return this;
         }
 
-        public SynopticMeasurementsBuilder measuringStation(MeasuringStation measuringStation) {
-            this.measuringStation = measuringStation;
+        public SynopticMeasurementsBuilder measuringStation(List<MeasuringStation> measuringStation) {
+            this.measuringStation.addAll(measuringStation);
             return this;
         }
 
@@ -195,6 +205,11 @@ public class SynopticMeasurement {
 
         public SynopticMeasurementsBuilder measurementHour(String measurementHour) {
             this.measurementHour = measurementHour;
+            return this;
+        }
+
+        public SynopticMeasurementsBuilder city(City city) {
+            this.city = city;
             return this;
         }
 
