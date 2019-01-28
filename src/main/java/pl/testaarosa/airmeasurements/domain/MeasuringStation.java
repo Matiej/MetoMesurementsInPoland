@@ -30,8 +30,8 @@ public class MeasuringStation {
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "SYNMST_STATION",
-    joinColumns = {@JoinColumn(name = "MST_ID", referencedColumnName = "ID")},
-    inverseJoinColumns = {@JoinColumn(name = "SYNMST_ID", referencedColumnName = "ID")})
+    joinColumns = {@JoinColumn(name = "MEASURINGST_ID", referencedColumnName = "ID")},
+    inverseJoinColumns = {@JoinColumn(name = "SYNOPTICMST_ID", referencedColumnName = "ID")})
     private List<SynopticMeasurement> synopticMeasurements = new ArrayList<>();
 
     public Long getId() {

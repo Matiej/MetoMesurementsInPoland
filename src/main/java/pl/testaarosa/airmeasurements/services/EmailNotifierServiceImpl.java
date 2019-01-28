@@ -69,8 +69,8 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
 
     public String sendEmailAfterDownloadMeasurementsN(List<MeasuringStation> stationList, String[] shortMess) {
         String subject = "Meteo download status success.";
-        String messageHead = "Measured time of downloading data: " + shortMess[3] + " minutes\n" + shortMess[0]
-                + " air measurements, " +shortMess[2] + " synoptic measurementes added to data base correct."
+        String messageHead = "Measured time of downloading data: " + shortMess[2] + " minutes\n" + shortMess[0]
+                + " air measurements, " +shortMess[1] + " synoptic measurementes added to data base correct."
                 + "\n  LIST OF STATIONS FOR WHICH MEASUREMENTS WERE TAKEN:\n";
         StringBuilder messeage = new StringBuilder();
         messeage.append(messageHead);

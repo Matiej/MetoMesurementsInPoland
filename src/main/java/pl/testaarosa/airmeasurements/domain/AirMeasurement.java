@@ -33,8 +33,9 @@ public class AirMeasurement {
     @ManyToOne
     @JoinColumn(name = "STATION_ID")
     private MeasuringStation measuringStation;
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "airMeasurementList", targetEntity = City.class)
-    private List<City> cityList = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "CITY_ID")
+    private City city;
 
     public AirMeasurement() {
     }
@@ -53,7 +54,7 @@ public class AirMeasurement {
         this.o3IndexLevel = builder.o3IndexLevel;
         this.c6h6IndexLevel = builder.c6h6IndexLevel;
         this.measuringStation = builder.measuringStation;
-        this.cityList = new ArrayList<>(builder.cityList);
+        this.city = builder.city;
     }
 
     @JsonIgnore
@@ -109,8 +110,12 @@ public class AirMeasurement {
         return c6h6IndexLevel;
     }
 
-    public List<City> getCityList() {
-        return cityList;
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 
     @JsonIgnore
@@ -171,7 +176,7 @@ public class AirMeasurement {
         private String o3IndexLevel;
         private String c6h6IndexLevel;
         private MeasuringStation measuringStation;
-        private List<City> cityList = new ArrayList<>();
+        private City city;
 
         public AirMaesurementsBuilder id(Long id) {
             this.id = id;
@@ -243,8 +248,8 @@ public class AirMeasurement {
             return this;
         }
 
-        public AirMaesurementsBuilder cityList(List<City> cityList) {
-            this.cityList.addAll(cityList);
+        public AirMaesurementsBuilder city(City city) {
+            this.city=city;
             return this;
         }
 

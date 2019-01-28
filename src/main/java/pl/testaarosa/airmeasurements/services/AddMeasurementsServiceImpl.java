@@ -19,6 +19,7 @@ import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 import javax.transaction.Transactional;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
@@ -66,11 +67,11 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         } catch (RestClientResponseException e) {
             throw new RestClientException("Can't find any synoptic measurement  because of REST API error-> " + e.getMessage());
         }
-        int[] counter = saveSynMeasuremet(synopticMeasurementMap, mStResponseMap, false);
+        int counter = saveSynMeasurement(synopticMeasurementMap, mStResponseMap, false);
 
         String timeer = timeer(System.currentTimeMillis() - startTime1);
-        LOGGER.info("SAVED TOTAL MEASUREMENTS FOR STATION ID: " + stationId + "\nAIR MEASUREMENTS ->" + counter[0] +
-                " \nSYNOPTIC MEASUREMENTS-> " + counter[1] + " \n TOTAL TIME: " + timeer);
+        LOGGER.info("SAVED TOTAL MEASUREMENTS FOR STATION ID: " + stationId + "\nAIR MEASUREMENTS ->" + mStResponseMap.size() +
+                " \nSYNOPTIC MEASUREMENTS-> " + counter + " \n TOTAL TIME: " + timeer);
         return new ArrayList<>(mStResponseMap.keySet()).get(0);
     }
 
@@ -87,14 +88,14 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         } catch (RestClientResponseException e) {
             throw new RestClientException("Can't find any synoptic measurement  because of REST API error-> " + e.getMessage());
         }
-        int[] counter = saveSynMeasuremet(synopticMeasurementMap, mStResponseMap, true);
+        saveSynMeasurement(synopticMeasurementMap, mStResponseMap, true);
         mSList.addAll(mStResponseMap.keySet());
         String timeer = timeer(System.currentTimeMillis() - startTime1);
-        String[] shortMess = {String.valueOf(counter[0]), String.valueOf(counter[1]), String.valueOf(counter[1]), timeer};
+        String[] shortMess = {String.valueOf(synopticMeasurementMap.size()), String.valueOf(mSList.size()), timeer};
         String report = emailNotifierService.sendEmailAfterDownloadMeasurementsN(mSList, shortMess);
         raportGenerator.createXMLReport(mSList);
-        LOGGER.info("SAVED TOTAL MEASUREMENTS FOR => " + "\nAIR MEASUREMENTS ->" + counter[0] +
-                " \nSYNOPTIC MEASUREMENTS-> " + counter[1] + " \n TOTAL TIME: " + timeer);
+        LOGGER.info("SAVED AIR MEASUREMENTS ->" + mSList.size() +
+                " \nSYNOPTIC MEASUREMENTS-> " + synopticMeasurementMap.size() + " \n TOTAL TIME: " + timeer);
         return mSList;
     }
 
@@ -111,6 +112,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                         try {
                             if (!measuringStationRepository.existsAllByStationId(measuringStation.getStationId())) {
                                 airMeasurement.setMeasuringStation(measuringStation);
+                                measuringStation.getAirMeasurementList().add(airMeasurement);
                                 airRepository.save(airMeasurement);
                                 LOGGER.info(ANSI_WHITE + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                         measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
@@ -121,7 +123,6 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                                 MeasuringStation byStationId = measuringStationRepository.findByStationId(measuringStation.getStationId());
                                 airMeasurement.setMeasuringStation(byStationId);
                                 airRepository.save(airMeasurement);
-                                measuringStationRepository.save(byStationId);
                                 LOGGER.info(ANSI_GREEN + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                         measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                                 measurementMap.put(measuringStationRepository.save(byStationId), airMeasurement);
@@ -130,12 +131,13 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                                 city.setCityName(measuringStation.getCity());
                                 city.getAirMeasurementList().add(airMeasurement);
                                 airRepository.save(airMeasurement);
-                                airMeasurement.getCityList().add(city);
+                                airMeasurement.setCity(city);
                                 cityRepository.save(city);
-                                LOGGER.info("SAVE NEW CITY: " + city.getCityName());
+                                LOGGER.info("SAVED NEW CITY: " + city.getCityName());
                             } else {
                                 City oneByCityName = cityRepository.findOneByCityName(measuringStation.getCity());
                                 oneByCityName.getAirMeasurementList().add(airMeasurement);
+                                airMeasurement.setCity(oneByCityName);
                                 airRepository.save(airMeasurement);
                                 cityRepository.save(oneByCityName);
                             }
@@ -154,9 +156,9 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
 
     @Transactional
-    private int[] saveSynMeasuremet(Map<String, SynopticMeasurement> synMstMap,
-                                    Map<MeasuringStation, AirMeasurement> mStMap, boolean forAllMeasurements) throws HibernateException {
-        int[] counters = new int[2];
+    private int saveSynMeasurement(Map<String, SynopticMeasurement> synMstMap,
+                                     Map<MeasuringStation, AirMeasurement> mStMap, boolean forAllMeasurements) throws HibernateException {
+        AtomicInteger counters = new AtomicInteger();
         List<SynopticMeasurement> tmpSynList = new ArrayList<>();
         try {
             mStMap.forEach((measuringStation, value) -> {
@@ -174,7 +176,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                     cityRepository.save(oneByCityName);
                     LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT FOR STATION ID -> " +
                             measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
-                    counters[1]++;
+                    counters.getAndIncrement();
                 }
             });
             if (forAllMeasurements) {
@@ -184,14 +186,16 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                         if (!cityRepository.existsAllByCityName(value.getCityName())) {
                             city = new City();
                             city.setCityName(value.getCityName());
+                            LOGGER.info("SAVED NEW CITY: " + city.getCityName());
                         } else {
                             city = cityRepository.findOneByCityName(value.getCityName());
                         }
                             value.setCity(city);
                             synopticRepository.save(value);
                             cityRepository.save(city);
-                            LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT THAT HAVE NO AIR STATION IN THE CITY -> "
+                            LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT THAT DOESN'T HAVE AIR MEASUREMENT STATION. CITY -> "
                                     + value.getCityName() + ANSI_RESET);
+                        counters.getAndIncrement();
                         }
                     });
                 }
@@ -199,66 +203,11 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                 e.printStackTrace();
                 throw new HibernateException("Can't save synoptic measurements  because of data base error-> " + e.getMessage());
             }
-            return counters;
+            return counters.get();
         }
 
         private String timeer (Long timeMiliseconds){
             DecimalFormat df2 = new DecimalFormat("###.###");
             return df2.format(timeMiliseconds / 60000.0);
         }
-
-//    @Transactional
-//    private Map<MeasuringStation, AirMeasurement> saveAirMeasurementSt(Map<MeasuringStation, AirMeasurement> mStMap) throws HibernateException {
-//        Map<MeasuringStation, AirMeasurement> measurementMap = new LinkedHashMap<>();
-//        try {
-//            mStMap.entrySet()
-//                    .forEach(st -> {
-//                        if (!measuringStationRepository.existsAllByStationId(st.getKey().getStationId())) {
-//                            measurementMap.put(measuringStationRepository.save(st.getKey()), st.getValue());
-//                        } else {
-//                            MeasuringStation byStationId = measuringStationRepository.findByStationId(st.getKey().getStationId());
-//                            measurementMap.put(byStationId, st.getValue());
-//                        }
-//                    });
-//            return measurementMap;
-//        } catch (HibernateException e) {
-//            throw new RuntimeException("External data base server ERROR! Cant' add any measuring station to data base " + e.getMessage());
-//
-//        }
-//    }
-
-
-//    @Transactional
-//    private int[] saveSynMeasuremet(Map<String, SynopticMeasurement> synMstMap,
-//                                 Map<MeasuringStation, AirMeasurement> mStMap) throws HibernateException {
-//        int[] counters = new int[2];
-//        mStMap.entrySet().forEach(mSt -> {
-//            AirMeasurement airMeasurement = mSt.getValue();
-//            MeasuringStation measuringStation = mSt.getKey();
-//            try {
-//                airMeasurement.setMeasuringStation(measuringStation);
-//                airRepository.save(airMeasurement);
-//                LOGGER.info(ANSI_WHITE + "SAVED AIR MEASUREMENT FOR STATION ID -> " + measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
-//                counters[0]++;
-//                if (synMstMap.keySet().contains(measuringStation.getCity())) {
-//                    SynopticMeasurement synopticMeasurement = synMstMap.get(measuringStation.getCity());
-//                    synopticMeasurement.setMeasuringStation(measuringStation);
-//                    synopticRepository.save(synopticMeasurement);
-//                    LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT FOR STATION ID -> " + measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
-//                    counters[1]++;
-//                }
-//                measuringStationRepository.save(measuringStation);
-//            } catch (RuntimeException e) {
-//                e.printStackTrace();
-//                throw new HibernateException("Can't save stationID: " + measuringStation.getStationId()
-//                        + " because of data base error-> " + e.getMessage());
-//            }
-//        });
-//        return counters;
-//    }
-//
-//    private String timeer(Long timeMiliseconds) {
-//        DecimalFormat df2 = new DecimalFormat("###.###");
-//        return df2.format(timeMiliseconds / 60000.0);
-//    }
     }

@@ -24,7 +24,8 @@ public class AddMesurementsSchedulerService {
     private EmailNotifierService emailNotifierService;
 
 
-    @Scheduled(cron = "0 01 13,21,5 * * *")
+//    @Scheduled(cron = "0 01 13,21,5 * * *")
+    @Scheduled(cron = "0 0/15 * 1/1 * *")
     public void addAllMeasurementsSchedule() {
         LOGGER.info(ANSI_PURPLE + "Add measurements is starting and send e-mail notify" + ANSI_RESET);
         emailNotifierService.sendEmailBeforAddMeasuremetns("first");

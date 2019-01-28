@@ -12,10 +12,7 @@ public class City {
     private Long id;
     @Column(name = "CITY_NAME")
     private String cityName;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "AIRMST_CITY",
-            joinColumns = {@JoinColumn(name = "CITY_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "AIRMST_ID", referencedColumnName = "ID")})
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
     private List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
