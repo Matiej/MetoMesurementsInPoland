@@ -3,6 +3,7 @@ package pl.testaarosa.airmeasurements.domain;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class City {
@@ -53,5 +54,28 @@ public class City {
 
     public void setSynopticMeasurementList(List<SynopticMeasurement> synopticMeasurementList) {
         this.synopticMeasurementList = synopticMeasurementList;
+    }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "id=" + id +
+                ", cityName='" + cityName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return Objects.equals(id, city.id) &&
+                Objects.equals(cityName, city.cityName) &&
+                Objects.equals(airMeasurementList, city.airMeasurementList) &&
+                Objects.equals(synopticMeasurementList, city.synopticMeasurementList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, cityName, airMeasurementList, synopticMeasurementList);
     }
 }

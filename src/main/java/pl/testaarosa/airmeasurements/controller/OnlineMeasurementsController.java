@@ -1,6 +1,8 @@
 package pl.testaarosa.airmeasurements.controller;
 
 import io.swagger.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +22,7 @@ import java.util.NoSuchElementException;
 public class OnlineMeasurementsController {
 
     private final OnlineMeasurementService measuringOnlineServices;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OnlineMeasurementsController.class);
 
     @Autowired
     public OnlineMeasurementsController(OnlineMeasurementService measuringOnlineServices) {
@@ -40,6 +43,7 @@ public class OnlineMeasurementsController {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find any online measuring stations");
         } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(500)
                     .body("External REST API server error! Can't get online measurements for all stations.-> ");
         }

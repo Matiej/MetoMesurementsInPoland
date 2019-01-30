@@ -32,17 +32,12 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
     @Cacheable(value = "measuringStCash")
     public List<OnlineMeasurementDto> getAllMeasuringStations() throws RestClientException, NoSuchElementException {
         long start = System.currentTimeMillis();
-        try {
-            List<OnlineMeasurementDto> onlineMeasurementDtos = msProc.fillMeasuringStationListStructure();
-            if (onlineMeasurementDtos.isEmpty()) {
-                throw new NoSuchElementException("Can't find any online measuring stations");
-            }
-            LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
-            return onlineMeasurementDtos;
-        } catch (RestClientResponseException e) {
-            e.printStackTrace();
-            throw new RestClientException("External REST API server error! Can't get online measurements for all stations.-> " + e.getMessage());
+        List<OnlineMeasurementDto> onlineMeasurementDtos = msProc.fillMeasuringStationListStructure();
+        if (onlineMeasurementDtos.isEmpty()) {
+            throw new NoSuchElementException("Can't find any online measuring stations");
         }
+        LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
+        return onlineMeasurementDtos;
     }
 
     @Override
@@ -67,7 +62,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
                 throw new RestClientException("External REST API server error! Can't get online measurements for all stations.-> " + e.getMessage());
             }
         }
-        LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
+        LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
         return onlineMeasurementDtoList;
     }
 
@@ -77,13 +72,13 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
         try {
             OnlineMeasurementDto onlineMeasurementDto = msProc.fillMeasuringStationListStructure()
                     .stream()
-                    .filter(s-> Optional.ofNullable(s.getSynopticMs()).isPresent())
+                    .filter(s -> Optional.ofNullable(s.getSynopticMs()).isPresent())
                     .max(Comparator.comparing(t -> t.getSynopticMs().getTemperature()))
                     .orElse(null);
             if (!Optional.ofNullable(onlineMeasurementDto).isPresent()) {
                 throw new NoSuchElementException("Can't find hottest measurement online");
             }
-            LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()- start) + ANSI_RESET);
+            LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
             return onlineMeasurementDto;
         } catch (RestClientResponseException e) {
             e.printStackTrace();
@@ -97,13 +92,13 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
         try {
             OnlineMeasurementDto onlineMeasurementDto = msProc.fillMeasuringStationListStructure()
                     .stream()
-                    .filter(s-> Optional.ofNullable(s.getSynopticMs()).isPresent())
+                    .filter(s -> Optional.ofNullable(s.getSynopticMs()).isPresent())
                     .min(Comparator.comparing(t -> t.getSynopticMs().getTemperature()))
                     .orElse(null);
             if (!Optional.ofNullable(onlineMeasurementDto).isPresent()) {
                 throw new NoSuchElementException("Can't find coldest measurement online");
             }
-            LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis()-start) + ANSI_RESET);
+            LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
             return onlineMeasurementDto;
         } catch (RestClientResponseException e) {
             e.printStackTrace();

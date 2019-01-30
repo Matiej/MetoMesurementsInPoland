@@ -2,6 +2,7 @@ package pl.testaarosa.airmeasurements.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
@@ -10,6 +11,7 @@ import pl.testaarosa.airmeasurements.mapper.OnlineMeasurementMapper;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 public class OnlineMeasurementProcessor {
@@ -23,7 +25,7 @@ public class OnlineMeasurementProcessor {
         this.measuringStationMapper = measuringStationMapper;
     }
 
-    public List<OnlineMeasurementDto> fillMeasuringStationListStructure() {
+    public List<OnlineMeasurementDto> fillMeasuringStationListStructure() throws RestClientException, NoSuchElementException {
         Map<MeasuringStation, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsAndStProcessor();
         Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();
         return measuringStationMapper.mapToOnlneMsDtoList(airMeasurementMap, synopticMeasurementMap);

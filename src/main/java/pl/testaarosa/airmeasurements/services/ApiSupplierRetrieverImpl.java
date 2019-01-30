@@ -3,11 +3,10 @@ package pl.testaarosa.airmeasurements.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
@@ -65,6 +64,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
                     .collect(Collectors.toList());
             LOGGER.info(ANSI_YELLOW + "GOT MEASURING STATIONS => " + mStList.size() +
                     ". Http response status: " + responseStatus.toString() + ANSI_RESET);
+
             mStList.forEach(st -> {
                 if (stationID != 0) {
                     if (st.getStationId() == stationID) {
@@ -76,16 +76,20 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
                     measurementMap.put(st, airMeasurementProcessorById(st.getStationId()));
                 }
             });
-        } catch (RestClientResponseException e) {
-            e.printStackTrace();
-            LOGGER.error(e.getMessage());
-            throw new RestClientException("Error Api connection. Http response status-> " + responseStatus.toString() + " Can't find any measurement because of REST API error-> " + e.getMessage());
+        } catch (ResourceAccessException e) {
+            String resp = "";
+            if(responseStatus.toString().isEmpty()) {
+                resp = "no connection";
+            } else {
+                resp = "HTTP response status: " +responseStatus.toString();
+            }
+            throw new RestClientException(ANSI_RED+"Error Api connection. Can't find any measurement because of error-> " + resp+ANSI_RESET);
         }
         return measurementMap;
     }
 
     @Override
-    public Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException {
+    public Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException,NoSuchElementException {
         return airMeasurementsAndStProcessor(0);
     }
 
@@ -101,15 +105,18 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
             LOGGER.info(ANSI_BLUE + "RECEIVED SYNOPTIC MEASUREMENTS. GOT => " + measurementDtos.length + ". Http response status: " + responseStatus + ANSI_RESET);
             return Arrays.stream(measurementDtos)
                     .collect(Collectors.toMap(SynopticMeasurementDto::getCity, synopticMeasurementMapper::maptToSynopticMeasurement, (o, n) -> n, LinkedHashMap::new));
-        } catch (RestClientResponseException e) {
-            e.printStackTrace();
-            throw new RestClientException("Error Api connection. Http response status-> " + responseStatus + " Can't find any synoptic measurement because of REST API error-> " + e.getMessage());
+        } catch (ResourceAccessException e) {
+            String resp = "";
+            if(responseStatus.isEmpty()) {
+                resp = "no connection";
+            } else {
+                resp = "HTTP response status: " +responseStatus;
+            }
+            throw new RestClientException(ANSI_RED+"Error Api connection. Can't find any synoptic measurement because of error-> " + resp+ANSI_RESET);
         }
     }
 
-    //    @Async
-    @Override
-    public AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException {
+    private AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException {
         String responseStatus = "";
         try {
             ResponseEntity<AirMeasurementDto> responseEntity = restTemplate.getForEntity(msApi.giosApiSupplierIndex(stationId), AirMeasurementDto.class);
@@ -117,10 +124,14 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
             AirMeasurementDto airMeasurementDto = responseEntity.getBody();
             LOGGER.info(ANSI_GREEN + "RECEIVED AIR MEASUREMENT FOR STATION => " + stationId + ". Http response status: " + responseStatus + ANSI_RESET);
             return airMeasurementMapper.mapToAirMeasurements(airMeasurementDto);
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Error Api connection. Http response status-> + " + responseStatus +
-                    ". Can't find any air measurement for stationID: " + stationId + " because of REST API error-> " + e.getMessage());
+        } catch (ResourceAccessException e) {
+            String resp = "";
+            if(responseStatus.isEmpty()) {
+                resp = "no connection";
+            } else {
+                resp = "HTTP response status: " +responseStatus;
+            }
+            throw new RestClientException(ANSI_RED+"Error Api connection. Can't find any measurement because of error-> " + resp+ANSI_RESET);
         }
     }
 }

@@ -7,13 +7,14 @@ import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public interface ApiSupplierRetriever {
 
     Map<String, SynopticMeasurement> synopticMeasurementProcessor() throws RestClientException;
 
-    Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException;
-    Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor(Integer stationID) throws RestClientException;
+    Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException, NoSuchElementException;
+    Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor(Integer stationID) throws RestClientException,NoSuchElementException;
 
-    AirMeasurement airMeasurementProcessorById(int stationId) throws RuntimeException;
+//    AirMeasurement airMeasurementProcessorById(int stationId) throws RuntimeException;
 }

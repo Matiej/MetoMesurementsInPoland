@@ -4,6 +4,7 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,6 +74,8 @@ public class MockMeasuringStationRepository {
     }
 
     public Map<MeasuringStation, AirMeasurement> measurementMap() {
-        return stations().stream().collect(Collectors.toMap(t->t, t->t.getAirMeasurementList().get(0),(t1,t2)->t1));
+        List<MeasuringStation> stations = stations();
+        stations.remove(0);
+        return stations.stream().collect(Collectors.toMap(t->t, t->t.getAirMeasurementList().get(0), (t1,t2)->t1,LinkedHashMap::new));
     }
 }
