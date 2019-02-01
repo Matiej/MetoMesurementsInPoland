@@ -85,10 +85,8 @@ public class OnlineServiceTestSuit {
     public void shouldGetAllMeasuringStationsAndThrowsRestClientException() {
         //given
         given(msProcessor.fillMeasuringStationListStructure()).willThrow(RestClientResponseException.class);
-        String expectedMessage = "External REST API server error! Can't get online measurements for all stations.-> ";
         //when
         exception.expect(RestClientException.class);
-        exception.expectMessage(expectedMessage);
         //then
         service.getAllMeasuringStations();
     }

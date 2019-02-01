@@ -16,5 +16,4 @@ public interface ApiSupplierRetriever {
     Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException, NoSuchElementException;
     Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor(Integer stationID) throws RestClientException,NoSuchElementException;
 
-//    AirMeasurement airMeasurementProcessorById(int stationId) throws RuntimeException;
 }

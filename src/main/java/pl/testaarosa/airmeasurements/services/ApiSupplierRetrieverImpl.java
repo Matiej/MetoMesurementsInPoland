@@ -3,6 +3,7 @@ package pl.testaarosa.airmeasurements.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -51,19 +52,20 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
     @Override
     public Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor(Integer stationID) throws RestClientException,
             NoSuchElementException {
-        LOGGER.info(ANSI_GREEN + "LOOOKING FOR AIR MEASUREMENTS" + ANSI_RESET);
+        LOGGER.info(ANSI_YELLOW + "LOOOKING FOR MEASURING STATIONS" + ANSI_RESET);
         LinkedHashMap<MeasuringStation, AirMeasurement> measurementMap = new LinkedHashMap<>();
-        AtomicReference<String> responseStatus = new AtomicReference<>("");
         try {
             ResponseEntity<MeasuringStationDto[]> responseEntity = restTemplate
                     .getForEntity(msApi.giosApiSupplierAll(), MeasuringStationDto[].class);
-            responseStatus.set(responseEntity.getStatusCode().toString());
+            HttpStatus statusCode = responseEntity.getStatusCode();
+            if(!statusCode.is2xxSuccessful()) {
+                throw new RestClientException("Can't find any measuring station because of external API error. HTTP Status code => " + statusCode.toString());
+            }
             MeasuringStationDto[] measuringStationDtos = responseEntity.getBody();
             List<MeasuringStation> mStList = Arrays.stream(measuringStationDtos)
                     .map(measuringStationMapper::mapToMeasuringSt)
                     .collect(Collectors.toList());
-            LOGGER.info(ANSI_YELLOW + "GOT MEASURING STATIONS => " + mStList.size() +
-                    ". Http response status: " + responseStatus.toString() + ANSI_RESET);
+            LOGGER.info(ANSI_YELLOW + "GOT MEASURING STATIONS => " + mStList.size() + ANSI_RESET);
 
             mStList.forEach(st -> {
                 if (stationID != 0) {
@@ -77,61 +79,47 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
                 }
             });
         } catch (ResourceAccessException e) {
-            String resp = "";
-            if(responseStatus.toString().isEmpty()) {
-                resp = "no connection";
-            } else {
-                resp = "HTTP response status: " +responseStatus.toString();
-            }
-            throw new RestClientException(ANSI_RED+"Error Api connection. Can't find any measurement because of error-> " + resp+ANSI_RESET);
+            throw new RestClientException("External Api error. Can't find any measuring station or air measurement because of error-> no connection");
         }
         return measurementMap;
     }
 
     @Override
-    public Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException,NoSuchElementException {
+    public Map<MeasuringStation, AirMeasurement> airMeasurementsAndStProcessor() throws RestClientException, NoSuchElementException {
         return airMeasurementsAndStProcessor(0);
     }
 
     @Override
     public Map<String, SynopticMeasurement> synopticMeasurementProcessor() throws RestClientException {
-        String responseStatus = "";
         try {
             URI uri = msApi.imgwApiSupplierAll();
             ResponseEntity<SynopticMeasurementDto[]> responseEntity = restTemplate.getForEntity(uri,
                     SynopticMeasurementDto[].class);
-            responseStatus = responseEntity.getStatusCode().toString();
+            HttpStatus statusCode = responseEntity.getStatusCode();
+            if(!statusCode.is2xxSuccessful()) {
+                throw new RestClientException("Can't find any synoptic measurement because of external API error. HTTP Status code => " + statusCode.toString());
+            }
             SynopticMeasurementDto[] measurementDtos = responseEntity.getBody();
-            LOGGER.info(ANSI_BLUE + "RECEIVED SYNOPTIC MEASUREMENTS. GOT => " + measurementDtos.length + ". Http response status: " + responseStatus + ANSI_RESET);
+            LOGGER.info(ANSI_BLUE + "RECEIVED SYNOPTIC MEASUREMENTS. GOT => " + measurementDtos.length  + ANSI_RESET);
             return Arrays.stream(measurementDtos)
                     .collect(Collectors.toMap(SynopticMeasurementDto::getCity, synopticMeasurementMapper::maptToSynopticMeasurement, (o, n) -> n, LinkedHashMap::new));
         } catch (ResourceAccessException e) {
-            String resp = "";
-            if(responseStatus.isEmpty()) {
-                resp = "no connection";
-            } else {
-                resp = "HTTP response status: " +responseStatus;
-            }
-            throw new RestClientException(ANSI_RED+"Error Api connection. Can't find any synoptic measurement because of error-> " + resp+ANSI_RESET);
+            throw new RestClientException("External Api error. Can't find any synoptic measurement because of error-> no connection");
         }
     }
 
     private AirMeasurement airMeasurementProcessorById(int stationId) throws RestClientException {
-        String responseStatus = "";
         try {
             ResponseEntity<AirMeasurementDto> responseEntity = restTemplate.getForEntity(msApi.giosApiSupplierIndex(stationId), AirMeasurementDto.class);
-            responseStatus = responseEntity.getStatusCode().toString();
+            HttpStatus statusCode = responseEntity.getStatusCode();
+            if(!statusCode.is2xxSuccessful()) {
+                throw new RestClientException("Can't find any air measurement because of external API error. HTTP Status code => " + statusCode.toString());
+            }
             AirMeasurementDto airMeasurementDto = responseEntity.getBody();
-            LOGGER.info(ANSI_GREEN + "RECEIVED AIR MEASUREMENT FOR STATION => " + stationId + ". Http response status: " + responseStatus + ANSI_RESET);
+            LOGGER.info(ANSI_GREEN + "RECEIVED AIR MEASUREMENT FOR STATION => " + stationId + ANSI_RESET);
             return airMeasurementMapper.mapToAirMeasurements(airMeasurementDto);
         } catch (ResourceAccessException e) {
-            String resp = "";
-            if(responseStatus.isEmpty()) {
-                resp = "no connection";
-            } else {
-                resp = "HTTP response status: " +responseStatus;
-            }
-            throw new RestClientException(ANSI_RED+"Error Api connection. Can't find any measurement because of error-> " + resp+ANSI_RESET);
+            throw new RestClientException("External Api error. Can't find any air measurement because of error-> no connection");
         }
     }
 }

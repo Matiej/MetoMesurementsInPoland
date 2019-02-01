@@ -102,7 +102,7 @@ public class AddMeasurementsServicesImplTestSuit {
     }
 
     @Test
-    public void shouldAddAllStationMeasurementsAndThrowsRestClientException() {
+    public void shouldAddAllStationMeasurementsAndThrowsRestClientExceptionAir() {
         //given
         given(apiSupplierRetriever.airMeasurementsAndStProcessor()).willThrow(ResourceAccessException.class);
         //when
@@ -123,7 +123,17 @@ public class AddMeasurementsServicesImplTestSuit {
     }
 
     @Test
-    public void shouldAddAllStationMeasurementsAndThrowsRuntimeException() {
+    public void shouldAddAllStationMeasurementsAndThrowsRestClientExceptionSyn() {
+        //given
+        given(apiSupplierRetriever.synopticMeasurementProcessor()).willThrow(ResourceAccessException.class);
+        //when
+        exception.expect(RestClientException.class);
+        //then
+        addMeasurementsService.addMeasurementsAllStations();
+    }
+
+    @Test
+    public void shouldAddAllStationMeasurementsAndThrowsHibernateExceptionStRepo() {
         //given
         List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         stationsRepo.remove(0);
@@ -136,6 +146,74 @@ public class AddMeasurementsServicesImplTestSuit {
             when(measuringStationRepository.save(key))
                     .thenThrow(HibernateException.class);
         }
+        exception.expect(RuntimeException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        addMeasurementsService.addMeasurementsAllStations();
+    }
+
+    @Test
+    public void shouldAddAllStationMeasurementsAndThrowsHibernateExceptionCityRepo() {
+        //given
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
+        stationsRepo.remove(0);
+        Map<MeasuringStation, AirMeasurement> measurementMap = mockMeasuringStationRepository.measurementMap();
+        given(apiSupplierRetriever.airMeasurementsAndStProcessor()).willReturn(measurementMap);
+        String expectMessage = "Can't save station because of data base error";
+        //when
+        when(cityRepository.existsAllByCityName("Warszawa")).thenReturn(true);
+        for (Map.Entry<MeasuringStation, AirMeasurement> msEntry : measurementMap.entrySet()) {
+            MeasuringStation key = msEntry.getKey();
+            when(measuringStationRepository.save(key))
+                    .thenReturn(stationsRepo.stream().filter(t -> t.equals(key)).findAny().get());
+            String city = key.getCity();
+            when(cityRepository.findOneByCityName(city))
+                    .thenThrow(HibernateException.class);
+        }
+        exception.expect(RuntimeException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        addMeasurementsService.addMeasurementsAllStations();
+    }
+
+    @Test
+    public void shouldAddAllStationMeasurementsAndThrowsHibernateExceptionAirRepo() {
+        //given
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
+        stationsRepo.remove(0);
+        Map<MeasuringStation, AirMeasurement> measurementMap = mockMeasuringStationRepository.measurementMap();
+        given(apiSupplierRetriever.airMeasurementsAndStProcessor()).willReturn(measurementMap);
+        String expectMessage = "Can't save station because of data base error";
+        //when
+        when(airRepository.save(measurementMap.get(stationsRepo.get(0)))).thenThrow(HibernateException.class);
+        exception.expect(RuntimeException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        addMeasurementsService.addMeasurementsAllStations();
+    }
+
+    @Test
+    public void shouldAddAllStationMeasurementsAndThrowsHibernateExceptionSynopticRepo() {
+        //given
+        List<City> cities = mockCityRepository.cityList();
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
+        stationsRepo.remove(0);
+        Map<String, SynopticMeasurement> synopticRepoMap = mockSynopticMeasurementRepository.measurementMap();
+        given(apiSupplierRetriever.synopticMeasurementProcessor()).willReturn(synopticRepoMap);
+        Map<MeasuringStation, AirMeasurement> measurementMap = mockMeasuringStationRepository.measurementMap();
+        given(apiSupplierRetriever.airMeasurementsAndStProcessor()).willReturn(measurementMap);
+        String expectMessage = "Can't save synoptic measurements because of data base error";
+        //when
+        when(cityRepository.existsAllByCityName("Warszawa")).thenReturn(true);
+        for (Map.Entry<MeasuringStation, AirMeasurement> msEntry : measurementMap.entrySet()) {
+            MeasuringStation key = msEntry.getKey();
+            when(measuringStationRepository.save(key))
+                    .thenReturn(stationsRepo.stream().filter(t -> t.equals(key)).findAny().get());
+            String city = key.getCity();
+            when(cityRepository.findOneByCityName(city))
+                    .thenReturn(cities.stream().filter(t -> t.getCityName().equals(city)).findAny().get());
+        }
+        when(synopticRepository.save(synopticRepoMap.get("Warszawa"))).thenThrow(HibernateException.class);
         exception.expect(RuntimeException.class);
         exception.expectMessage(expectMessage);
         //then
@@ -185,10 +263,8 @@ public class AddMeasurementsServicesImplTestSuit {
         addMeasurementsService.addOneStationMeasurement(stationId);
     }
 
-    //TODO testy 31/01/2019 cdd zrobić testy do synoptic save i message bo są tylko dla city i measuring station. Do każdego błędu tak porobic
-    //TODO iinnny zwrot tekstu!.
     @Test
-    public void shouldAddOneStationMeasurementAndThrowsNoSuchElementException() {
+    public void shouldAddOneStationMeasurementAndThrowsHibernateException() {
         List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
         stationsRepo.remove(0);
         MeasuringStation station = stationsRepo.get(0);
@@ -206,6 +282,18 @@ public class AddMeasurementsServicesImplTestSuit {
         }
         exception.expect(RuntimeException.class);
         exception.expectMessage(expectedMessage);
+        //then
+        addMeasurementsService.addOneStationMeasurement(stationId);
+    }
+
+    @Test
+    public void shouldAddOneStationMeasurementAndThrowsNoSuchElementException() {
+        List<MeasuringStation> stationsRepo = mockMeasuringStationRepository.stations();
+        MeasuringStation station = stationsRepo.get(0);
+        Integer stationId = station.getStationId();
+        given(apiSupplierRetriever.airMeasurementsAndStProcessor(stationId)).willThrow(NoSuchElementException.class);
+        //when
+        exception.expect(NoSuchElementException.class);
         //then
         addMeasurementsService.addOneStationMeasurement(stationId);
     }

@@ -84,12 +84,6 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap = new LinkedHashMap<>();
         mStResponseMap.putAll(saveAirMeasurementSt(apiSupplierRetriever.airMeasurementsAndStProcessor()));
         synopticMeasurementMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
-//        try {
-//            mStResponseMap.putAll(saveAirMeasurementSt(apiSupplierRetriever.airMeasurementsAndStProcessor()));
-//            synopticMeasurementMap.putAll(apiSupplierRetriever.synopticMeasurementProcessor());
-//        } catch (RestClientResponseException e) {
-//            throw new RestClientException("Can't find any synoptic measurement because of REST API error-> " + e.getMessage());
-//        }
         saveSynMeasurement(synopticMeasurementMap, mStResponseMap, true);
         mSList.addAll(mStResponseMap.keySet());
         String timeer = timeer(System.currentTimeMillis() - startTime1);
@@ -193,9 +187,9 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                     }
                 });
             }
-        } catch (RuntimeException e) {
+        } catch (HibernateException e) {
             e.printStackTrace();
-            throw new HibernateException("Can't save synoptic measurements because of data base error");
+            throw new RuntimeException("Can't save synoptic measurements because of data base error");
         }
         return counters.get();
     }
