@@ -13,21 +13,11 @@ import java.util.concurrent.ExecutorService;
 
 @SpringBootApplication
 @EnableScheduling
-//@EnableAsync
+@EnableAsync
 @EnableCaching
 public class AirMeasurementsApp {
 
     public static void main(String[] args) {
         SpringApplication.run(AirMeasurementsApp.class, args);
     }
-//    @Bean
-//    public Executor asyncExecutor() {
-//        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-//        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors()*5);
-//        executor.setMaxPoolSize(80);
-//        executor.setQueueCapacity(500);
-//        executor.setThreadNamePrefix("Thread-> ");
-//        executor.initialize();
-//        return executor;
-//    }
 }

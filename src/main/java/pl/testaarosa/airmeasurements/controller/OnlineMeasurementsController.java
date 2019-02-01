@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 @Api(description = "Online measurements directly from API")
 @RestController
 @RequestMapping("/online")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://0.0.0.0:4200","http://192.168.1.101:4200","http://192.168.1.101:4200"})
 public class OnlineMeasurementsController {
 
     private final OnlineMeasurementService measuringOnlineServices;
