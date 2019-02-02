@@ -30,13 +30,13 @@ import java.util.stream.IntStream;
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 @Service
-public class AddMeasurementRaportGenerator {
+public class AddMeasurementReportGenerator {
     //TODO create file jako metoda prv, sheetstyles jako metoda prv.
 // Wymieszać wszystkie style w mteodzie. Ma przyjmować stringa i na tej podstawie definiować ktory styl zwracac=
     //zrobić beany. moze sie przyda
     private static final String PATH = new File(System.getProperty("user.dir") + "/reports").getAbsolutePath();
     private static final String NAME_COST = "_allMeasurementsReport.xls";
-    private static final Logger LOGGER = LoggerFactory.getLogger(AddMeasurementRaportGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddMeasurementReportGenerator.class);
     private HSSFWorkbook workbook;
     private Row row;
     private HSSFCellStyle airHeaderStyle;

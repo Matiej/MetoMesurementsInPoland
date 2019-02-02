@@ -32,20 +32,20 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final SynopticMeasurementRepository synopticRepository;
     private final AirMeasurementRepository airRepository;
     private final EmailNotifierService emailNotifierService;
-    private final AddMeasurementRaportGenerator raportGenerator;
+    private final AddMeasurementReportGenerator reportGenerator;
     private final CityRepository cityRepository;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
                                       SynopticMeasurementRepository synopticRepository, AirMeasurementRepository airRepository,
-                                      EmailNotifierService emailNotifierService, AddMeasurementRaportGenerator raportGenerator,
+                                      EmailNotifierService emailNotifierService, AddMeasurementReportGenerator reportGenerator,
                                       CityRepository cityRepository) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
         this.synopticRepository = synopticRepository;
         this.airRepository = airRepository;
         this.emailNotifierService = emailNotifierService;
-        this.raportGenerator = raportGenerator;
+        this.reportGenerator = reportGenerator;
         this.cityRepository = cityRepository;
     }
 
@@ -88,10 +88,9 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         mSList.addAll(mStResponseMap.keySet());
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         String[] shortMess = {String.valueOf(synopticMeasurementMap.size()), String.valueOf(mSList.size()), timeer};
-        String report = emailNotifierService.sendEmailAfterDownloadMeasurementsN(mSList, shortMess);
-        raportGenerator.createXMLReport(mSList);
+        auxAddService(shortMess, mSList);
         LOGGER.info("SAVED AIR MEASUREMENTS ->" + mSList.size() +
-                " \nSYNOPTIC MEASUREMENTS-> " + synopticMeasurementMap.size() + " \n TOTAL TIME: " + timeer);
+                " \nSYNOPTIC MEASUREMENTS-> " + synopticMeasurementMap.size() + " \n TOTAL TIME: " + timeer(System.currentTimeMillis()-startTime1));
         return mSList;
     }
 
@@ -192,6 +191,20 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             throw new RuntimeException("Can't save synoptic measurements because of data base error");
         }
         return counters.get();
+    }
+
+    private void auxAddService(String[] shortMsg, List<MeasuringStation> mStList) {
+        //TODO use callable to take back email report
+        Thread mailServiceThread = new Thread(()-> {
+            emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
+            LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+        });
+        Thread reportServiceThread = new Thread(() -> {
+            reportGenerator.createXMLReport(mStList);
+            LOGGER.info(ANSI_BOLD+"XML REPORT AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+        });
+        reportServiceThread.start();
+        mailServiceThread.start();
     }
 
     private String timeer(Long timeMiliseconds) {

@@ -52,21 +52,6 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
         emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, date));
     }
 
-    public String sendEmailAfterDownloadMeasurements(List<MeasuringStationDto> mSDtoList, String measurementTime) {
-        String subject = "Meteo download status success.";
-        String messageHead = "Measured time of downloading data: " + measurementTime + " minutes\n" + mSDtoList.size()
-                + " measurements added to data base correct.\n  LIST OF STATIONS FOR WHICH MEASUREMENTS WERE TAKEN:\n";
-        StringBuilder messeage = new StringBuilder();
-        messeage.append(messageHead);
-        mSDtoList.forEach(m-> {
-            messeage.append("Station id: " + m.getId() + ", Latiude: "+m.getGegrLat() + ", Longitude: " + m.getGegrLon() +",\n");
-            messeage.append("name: " + m.getStationName()+", address: " + m.getAddressStreet() + ", city: "
-                    + m.getCityDto().getCityName() +"\n");
-        });
-        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail, date));
-        return messeage.toString();
-    }
-
     public String sendEmailAfterDownloadMeasurementsN(List<MeasuringStation> stationList, String[] shortMess) {
         String subject = "Meteo download status success.";
         String messageHead = "Measured time of downloading data: " + shortMess[2] + " minutes\n" + shortMess[0]

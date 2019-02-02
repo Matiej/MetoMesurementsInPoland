@@ -3,7 +3,6 @@ package pl.testaarosa.airmeasurements.services;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.hibernate.HibernateException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -13,22 +12,18 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.City;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.repositories.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,7 +53,7 @@ public class AddMeasurementsServicesImplTestSuit {
     @Mock
     private EmailNotifierService emailNotifierService;
     @Mock
-    private AddMeasurementRaportGenerator addMeasurementRaportGenerator;
+    private AddMeasurementReportGenerator addMeasurementReportGenerator;
     @Mock
     private CityRepository cityRepository;
 
