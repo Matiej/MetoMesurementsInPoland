@@ -11,32 +11,25 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
 import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
-import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
 import pl.testaarosa.airmeasurements.mapper.MeasuringStationMapper;
 import pl.testaarosa.airmeasurements.mapper.SynopticMeasurementMapper;
 import pl.testaarosa.airmeasurements.repositories.*;
 import pl.testaarosa.airmeasurements.supplier.MeasurementsApiSupplier;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +48,6 @@ public class ApiSupplierRetrieverImplTestSuit {
     private MeasuringStationDto[] measuringStRresponseEntity;
     private List<SynopticMeasurementDto> synopticMeasurementDtoList;
     private SynopticMeasurementDto[] synopticMstResponseEntity;
-    private Method airMeasurementProcessorById;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -68,11 +60,11 @@ public class ApiSupplierRetrieverImplTestSuit {
     @Mock
     private MeasuringStationMapper measuringStationMapper;
     @Mock
-    private AirMeasurementMapper airMeasurementMapper;
-    @Mock
     private SynopticMeasurementMapper synopticMeasurementMapper;
     @Mock
     private RestTemplate restTemplate;
+    @Mock
+    private ApiAirAsyncRetriever apiAirAsyncRetriever;
 
     @Before
     public void init() {
@@ -86,12 +78,6 @@ public class ApiSupplierRetrieverImplTestSuit {
         measuringStRresponseEntity = measuringStationDtoList.toArray(new MeasuringStationDto[measuringStationDtoList.size()]);
         synopticMeasurementDtoList = mockSynopticMeasurementDtoRepository.mockSynopticDtoRepositories();
         synopticMstResponseEntity = synopticMeasurementDtoList.toArray(new SynopticMeasurementDto[synopticMeasurementDtoList.size()]);
-
-        try {
-            airMeasurementProcessorById = ApiSupplierRetrieverImpl.class.getDeclaredMethod("airMeasurementProcessorById", int.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
@@ -106,12 +92,10 @@ public class ApiSupplierRetrieverImplTestSuit {
 
         given(restTemplate.getForEntity(msApi.giosApiSupplierAll(), MeasuringStationDto[].class))
                 .willReturn(new ResponseEntity(measuringStRresponseEntity, HttpStatus.OK));
-        List<AirMeasurementDto> airMeasurementDtos = mockAirMeasurementDtoRepository.airMeasurementsDtos();
         //when
         IntStream.range(0, stations.size()).forEach(s -> {
             when(measuringStationMapper.mapToMeasuringSt(measuringStationDtoList.get(s))).thenReturn(stations.get(s));
-            when(restTemplate.getForEntity(msApi.giosApiSupplierIndex(100), AirMeasurementDto.class)).thenReturn(new ResponseEntity(airMeasurementDtos.get(s), HttpStatus.OK));
-            when(airMeasurementMapper.mapToAirMeasurements(airMeasurementDtos.get(s))).thenReturn(airMeasurements1.get(0));
+            when(apiAirAsyncRetriever.airMeasurementProcessorById(s)).thenReturn(CompletableFuture.completedFuture(airMeasurements1.get(0)));
         });
         Map<MeasuringStation, AirMeasurement> result = apiSupplierRetriever.airMeasurementsAndStProcessor();
         assertNotNull(expected);
@@ -218,54 +202,4 @@ public class ApiSupplierRetrieverImplTestSuit {
         apiSupplierRetriever.synopticMeasurementProcessor();
     }
 
-    @Test
-    public void shouldGetAirMeasurementsByIdAndThrowsRestClientExceptionStatus400() {
-        //given
-        airMeasurementProcessorById.setAccessible(true);
-        given(restTemplate.getForEntity(msApi.giosApiSupplierIndex(1), AirMeasurementDto.class))
-                .willReturn(new ResponseEntity(mockAirMeasurementDtoRepository.airMeasurementsDtos().get(0), HttpStatus.BAD_REQUEST));
-        String expectMessage = "Can't find any air measurement because of external API error. HTTP Status code => 400";
-        //when
-        //then
-        try {
-            airMeasurementProcessorById.invoke(apiSupplierRetriever, 1);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            assertThat(e.getCause(), instanceOf(RestClientException.class));
-            assertEquals(expectMessage, e.getCause().getMessage());
-        }
-    }
-
-    @Test
-    public void shouldGetAirMeasurementsByIdAndThrowsRestClientExceptionStatus502() {
-        //given
-        airMeasurementProcessorById.setAccessible(true);
-        given(restTemplate.getForEntity(msApi.giosApiSupplierIndex(1), AirMeasurementDto.class))
-                .willReturn(new ResponseEntity(mockAirMeasurementDtoRepository.airMeasurementsDtos().get(0), HttpStatus.BAD_GATEWAY));
-        String expectMessage = "Can't find any air measurement because of external API error. HTTP Status code => 502";
-        //when
-        //then
-        try {
-            airMeasurementProcessorById.invoke(apiSupplierRetriever, 1);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            assertThat(e.getCause(), instanceOf(RestClientException.class));
-            assertEquals(expectMessage, e.getCause().getMessage());
-        }
-    }
-
-    @Test
-    public void shouldGetAirMeasurementsByIdAndThrowsResourceAccessException() {
-        //given
-        airMeasurementProcessorById.setAccessible(true);
-        given(restTemplate.getForEntity(msApi.giosApiSupplierIndex(1), AirMeasurementDto.class))
-                .willThrow(ResourceAccessException.class);
-        String expectMessage = "External Api error. Can't find any air measurement because of error-> no connection";
-        //when
-        //then
-        try {
-            airMeasurementProcessorById.invoke(apiSupplierRetriever, 1);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            assertThat(e.getCause(), instanceOf(RestClientException.class));
-            assertEquals(expectMessage, e.getCause().getMessage());
-        }
-    }
 }
