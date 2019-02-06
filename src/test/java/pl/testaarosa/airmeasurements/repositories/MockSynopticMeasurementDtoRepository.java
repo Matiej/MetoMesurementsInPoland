@@ -2,8 +2,10 @@ package pl.testaarosa.airmeasurements.repositories;
 
 import pl.testaarosa.airmeasurements.domain.dtoApi.SynopticMeasurementDto;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MockSynopticMeasurementDtoRepository {
 

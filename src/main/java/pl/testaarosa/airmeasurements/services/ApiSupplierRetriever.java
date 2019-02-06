@@ -5,7 +5,6 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 

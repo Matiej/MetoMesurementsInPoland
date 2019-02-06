@@ -123,7 +123,7 @@ public class AirMeasurementDto {
     }
 
     private LevelDto emptyObj() {
-        return (new LevelDto.Builder().id(6).indexLevelName("No data available").build());
+        return (new LevelDto.Builder().id(6).indexLevelName("N/A").build());
     }
 
     private String currentData() {

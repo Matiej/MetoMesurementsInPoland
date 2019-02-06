@@ -10,8 +10,8 @@ import java.util.Optional;
 @Component
 public class SynopticMeasurementMapper {
 //TODO porządek z tym emptyObj w pizdu.
-    public SynopticMeasurement maptToSynopticMeasurement(SynopticMeasurementDto synDto) {
-        SynopticMeasurementDto synMeasurements = Optional.ofNullable(synDto).orElse(emptyObj());
+    public SynopticMeasurement maptToSynopticMeasurement(SynopticMeasurementDto synMeasurements) {
+//        SynopticMeasurementDto synMeasurements = Optional.ofNullable(synMeasurements).orElse(emptyObj());
         LocalDateTime currentDate = LocalDateTime.now().withNano(0);
         return new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .foreignId(synMeasurements.getId())
@@ -21,8 +21,8 @@ public class SynopticMeasurementMapper {
                 .windSpeed(synMeasurements.getWindSpeed())
                 .airHumidity(synMeasurements.getAirHumidity())
                 .pressure(synMeasurements.getPressure())
-                .measurementDate(synDto.getMeasurementDate())
-                .measurementHour(synDto.getGetMeasurementHour())
+                .measurementDate(synMeasurements.getMeasurementDate())
+                .measurementHour(synMeasurements.getGetMeasurementHour())
                 .build();
     }
 

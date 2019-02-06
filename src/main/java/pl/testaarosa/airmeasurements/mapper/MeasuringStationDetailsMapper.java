@@ -1,7 +1,6 @@
 package pl.testaarosa.airmeasurements.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 import pl.testaarosa.airmeasurements.domain.dtoApi.CityRegionDto;
 import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;

@@ -27,7 +27,7 @@ public class CityDto {
     }
 
     public void setCityName(String cityName) {
-        this.cityName = Optional.ofNullable(cityName).orElse("->No data available<-");
+        this.cityName = Optional.ofNullable(cityName).orElse("N/A");
     }
 
     public CityRegionDto getCityRegionDto() {

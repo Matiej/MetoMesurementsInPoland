@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,6 +31,7 @@ public class AirMeasurement {
     @ManyToOne
     @JoinColumn(name = "STATION_ID")
     private MeasuringStation measuringStation;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "CITY_ID")
     private City city;

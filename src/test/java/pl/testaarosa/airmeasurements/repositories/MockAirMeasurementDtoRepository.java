@@ -3,8 +3,8 @@ package pl.testaarosa.airmeasurements.repositories;
 import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
 import pl.testaarosa.airmeasurements.domain.dtoApi.LevelDto;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MockAirMeasurementDtoRepository {
 

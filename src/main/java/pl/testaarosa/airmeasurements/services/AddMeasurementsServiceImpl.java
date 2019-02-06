@@ -15,6 +15,7 @@ import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.CityRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
+import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportGenerator;
 
 import javax.transaction.Transactional;
 import java.text.DecimalFormat;
@@ -32,21 +33,21 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final SynopticMeasurementRepository synopticRepository;
     private final AirMeasurementRepository airRepository;
     private final EmailNotifierService emailNotifierService;
-    private final AddMeasurementReportGenerator reportGenerator;
     private final CityRepository cityRepository;
+    private final WorkBookReportGenerator workBookReportGenerator;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
                                       SynopticMeasurementRepository synopticRepository, AirMeasurementRepository airRepository,
-                                      EmailNotifierService emailNotifierService, AddMeasurementReportGenerator reportGenerator,
-                                      CityRepository cityRepository) {
+                                      EmailNotifierService emailNotifierService,
+                                      CityRepository cityRepository, WorkBookReportGenerator workBookReportGenerator) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
         this.synopticRepository = synopticRepository;
         this.airRepository = airRepository;
         this.emailNotifierService = emailNotifierService;
-        this.reportGenerator = reportGenerator;
         this.cityRepository = cityRepository;
+        this.workBookReportGenerator = workBookReportGenerator;
     }
 
     @Transactional
@@ -88,7 +89,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         mSList.addAll(mStResponseMap.keySet());
         String timeer = timeer(System.currentTimeMillis() - startTime1);
         String[] shortMess = {String.valueOf(synopticMeasurementMap.size()), String.valueOf(mSList.size()), timeer};
-        auxAddService(shortMess, mSList);
+        auxAddService(shortMess, mSList, synopticMeasurementMap, mStResponseMap);
         LOGGER.info("SAVED AIR MEASUREMENTS ->" + mSList.size() +
                 " \nSYNOPTIC MEASUREMENTS-> " + synopticMeasurementMap.size() + " \n TOTAL TIME: " + timeer(System.currentTimeMillis()-startTime1));
         return mSList;
@@ -110,21 +111,22 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                             LOGGER.info(ANSI_WHITE + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                             measurementMap.put(measuringStationRepository.save(measuringStation), airMeasurement);
-                            LOGGER.info(ANSI_WHITE + "SAVED NEW MEASURING STATION ID -> " +
+                                 LOGGER.info(ANSI_WHITE + "SAVED NEW MEASURING STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                         } else {
-                            MeasuringStation byStationId = measuringStationRepository.findByStationId(measuringStation.getStationId());
-                            airMeasurement.setMeasuringStation(byStationId);
+                            MeasuringStation stationFromDb = measuringStationRepository.findByStationId(measuringStation.getStationId());
+                            airMeasurement.setMeasuringStation(stationFromDb);
+                            stationFromDb.getAirMeasurementList().add(airMeasurement);
                             airRepository.save(airMeasurement);
                             LOGGER.info(ANSI_GREEN + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
-                            measurementMap.put(measuringStationRepository.save(byStationId), airMeasurement);
+                            measurementMap.put(stationFromDb, airMeasurement);
                         }
                         if (!cityRepository.existsAllByCityName(measuringStation.getCity())) {
                             city.setCityName(measuringStation.getCity());
                             city.getAirMeasurementList().add(airMeasurement);
-                            airRepository.save(airMeasurement);
                             airMeasurement.setCity(city);
+//                            airRepository.save(airMeasurement);
                             cityRepository.save(city);
                             LOGGER.info("SAVED NEW CITY: " + city.getCityName());
                         } else {
@@ -132,7 +134,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                             oneByCityName.getAirMeasurementList().add(airMeasurement);
                             airMeasurement.setCity(oneByCityName);
                             airRepository.save(airMeasurement);
-                            cityRepository.save(oneByCityName);
+//                            cityRepository.save(oneByCityName);
                         }
                     } catch (HibernateException e) {
                         throw new RuntimeException("Can't save station because of data base error");
@@ -156,10 +158,11 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
                     synopticMeasurement.getMeasuringStation().add(measuringStation);
                     measuringStation.getSynopticMeasurements().add(synopticMeasurement);
+//                    measuringStationRepository.save(measuringStation);
+                    synopticRepository.save(synopticMeasurement);
+
                     synopticMeasurement.setCity(oneByCityName);
                     oneByCityName.getSynopticMeasurementList().add(synopticMeasurement);
-                    synopticRepository.save(synopticMeasurement);
-                    measuringStationRepository.save(measuringStation);
                     cityRepository.save(oneByCityName);
                     LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT FOR STATION ID -> " +
                             measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
@@ -177,8 +180,9 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                         } else {
                             city = cityRepository.findOneByCityName(value.getCityName());
                         }
+                        city.getSynopticMeasurementList().add(value);
                         value.setCity(city);
-                        synopticRepository.save(value);
+//                        synopticRepository.save(value);
                         cityRepository.save(city);
                         LOGGER.info(ANSI_PURPLE + "SAVED SYNOPTIC MEASUREMENT THAT DOESN'T HAVE AIR MEASUREMENT STATION. CITY -> "
                                 + value.getCityName() + ANSI_RESET);
@@ -193,14 +197,16 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         return counters.get();
     }
 
-    private void auxAddService(String[] shortMsg, List<MeasuringStation> mStList) {
+    private void auxAddService(String[] shortMsg, List<MeasuringStation> mStList,
+                               LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
+                               LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
         //TODO use callable to take back email report
         Thread mailServiceThread = new Thread(()-> {
             emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
             LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
         });
         Thread reportServiceThread = new Thread(() -> {
-            reportGenerator.createXMLReport(mStList);
+            workBookReportGenerator.createXMLAddAllMeasurementsReport(synopticMeasurementMap,mStResponseMap);
             LOGGER.info(ANSI_BOLD+"XML REPORT AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
         });
         reportServiceThread.start();

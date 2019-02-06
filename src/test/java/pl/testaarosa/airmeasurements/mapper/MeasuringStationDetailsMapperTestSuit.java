@@ -2,7 +2,6 @@ package pl.testaarosa.airmeasurements.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import pl.testaarosa.airmeasurements.domain.MeasuringStationDetails;
 import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationDetailsRepository;

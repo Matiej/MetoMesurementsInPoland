@@ -48,7 +48,7 @@ public class SynopticMeasurementDto {
     }
 
     public void setCity(String city) {
-        this.city = Optional.ofNullable(city).orElse("->No data available<-");
+        this.city = Optional.ofNullable(city).orElse("->N/A");
     }
 
     public double getTemperature() {

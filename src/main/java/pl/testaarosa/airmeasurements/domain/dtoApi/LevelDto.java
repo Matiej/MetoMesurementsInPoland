@@ -23,7 +23,7 @@ public class LevelDto {
     }
 
     public String getIndexLevelName() {
-        return indexLevelName;
+        return levelNameTranslate(indexLevelName);
     }
 
     @Override
@@ -64,8 +64,27 @@ public class LevelDto {
 
         public LevelDto build() {
             id = Optional.ofNullable(id).orElse(0);
-            indexLevelName = Optional.ofNullable(indexLevelName).orElse("no data available");
+            indexLevelName = Optional.ofNullable(indexLevelName).orElse("N/A");
             return new LevelDto(id, indexLevelName);
+        }
+    }
+
+    private String levelNameTranslate(String levelName) {
+        switch (levelName) {
+            case "Bardzo dobry":
+                return "Very good";
+            case "Dobry":
+                return "Good";
+            case "Umiarkowany":
+                return "Moderate";
+            case "Dostateczny":
+                return "Sufficient";
+            case "Zły":
+                return "Bad";
+            case "Bardzo zły":
+                return "Very bad";
+            default:
+                return "N/A";
         }
     }
 }

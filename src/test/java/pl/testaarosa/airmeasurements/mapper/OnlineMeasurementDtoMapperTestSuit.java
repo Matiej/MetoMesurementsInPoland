@@ -7,9 +7,13 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
-import pl.testaarosa.airmeasurements.repositories.*;
+import pl.testaarosa.airmeasurements.repositories.MockAirMeasurementRepository;
+import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationRepository;
+import pl.testaarosa.airmeasurements.repositories.MockOnlineMeasurementRepository;
+import pl.testaarosa.airmeasurements.repositories.MockSynopticMeasurementRepository;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static org.junit.Assert.*;
 

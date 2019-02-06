@@ -1,6 +1,5 @@
 package pl.testaarosa.airmeasurements.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 

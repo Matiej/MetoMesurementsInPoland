@@ -6,8 +6,6 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class MockAirMeasurementRepository {
 

@@ -30,6 +30,7 @@ public class SynopticMeasurement {
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "synopticMeasurements", targetEntity = MeasuringStation.class)
     private List<MeasuringStation> measuringStation = new ArrayList<>();
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "CITY_ID")
     private City city;
@@ -108,6 +109,10 @@ public class SynopticMeasurement {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    public City getCity() {
+        return city;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package pl.testaarosa.airmeasurements.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +16,10 @@ public class City {
     private Long id;
     @Column(name = "CITY_NAME")
     private String cityName;
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
 
     public City() {

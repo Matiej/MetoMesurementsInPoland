@@ -25,7 +25,6 @@ import java.util.NoSuchElementException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,8 +51,6 @@ public class AddMeasurementsServicesImplTestSuit {
     private AirMeasurementRepository airRepository;
     @Mock
     private EmailNotifierService emailNotifierService;
-    @Mock
-    private AddMeasurementReportGenerator addMeasurementReportGenerator;
     @Mock
     private CityRepository cityRepository;
 

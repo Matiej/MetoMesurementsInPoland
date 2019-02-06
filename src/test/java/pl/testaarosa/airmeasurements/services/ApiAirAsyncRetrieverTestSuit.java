@@ -1,7 +1,6 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -16,7 +15,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
-import pl.testaarosa.airmeasurements.domain.dtoApi.MeasuringStationDto;
 import pl.testaarosa.airmeasurements.mapper.AirMeasurementMapper;
 import pl.testaarosa.airmeasurements.repositories.MockAirMeasurementDtoRepository;
 import pl.testaarosa.airmeasurements.repositories.MockAirMeasurementRepository;
