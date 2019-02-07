@@ -17,6 +17,7 @@ public class City {
     @Column(name = "CITY_NAME")
     private String cityName;
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL,fetch=FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)

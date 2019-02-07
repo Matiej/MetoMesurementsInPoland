@@ -12,43 +12,43 @@ public class MockAirMeasurementDtoRepository {
         List<AirMeasurementDto> airMeasurementDtoList = new ArrayList<>();
 
         LevelDto stIndexLevel = new LevelDto.Builder()
-                .indexLevelName("stILevel")
-                .id(1)
+                .indexLevelName("Bardzo dobry")
+                .id(0)
                 .build();
 
         LevelDto so2IndexLevel = new LevelDto.Builder()
-                .indexLevelName("so2LEVEL")
-                .id(0)
+                .indexLevelName("Dobry")
+                .id(1)
                 .build();
 
         LevelDto no2IndexLevel = new LevelDto.Builder()
-                .indexLevelName("noLEVEL")
-                .id(0)
+                .indexLevelName("Umiarkowany")
+                .id(2)
                 .build();
 
         LevelDto coIndexLevel = new LevelDto.Builder()
-                .indexLevelName("coLEVEL")
-                .id(0)
+                .indexLevelName("Dostateczny")
+                .id(3)
                 .build();
 
         LevelDto pm10IndexLevel = new LevelDto.Builder()
-                .indexLevelName("pm10LEVEL")
-                .id(0)
+                .indexLevelName("Zły")
+                .id(4)
                 .build();
 
         LevelDto pm25IndexLevel = new LevelDto.Builder()
-                .indexLevelName("pm25LEVEL")
-                .id(0)
+                .indexLevelName("Bardzo zły")
+                .id(5)
                 .build();
 
         LevelDto o3IndexLevel = new LevelDto.Builder()
-                .indexLevelName("o3LEVEL")
+                .indexLevelName("Bardzo dobry")
                 .id(0)
                 .build();
 
         LevelDto c6h6IndexLevel = new LevelDto.Builder()
-                .indexLevelName("c6hLEVEL")
-                .id(0)
+                .indexLevelName("Dobry")
+                .id(1)
                 .build();
 
         AirMeasurementDto airMeasurementDto1 = new AirMeasurementDto();
