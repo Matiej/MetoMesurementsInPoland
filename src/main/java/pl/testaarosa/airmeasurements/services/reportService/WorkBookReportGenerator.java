@@ -39,6 +39,7 @@ public class WorkBookReportGenerator {
     private LinkedHashMap<String, Object[]> stationMap;
     private LinkedHashMap<String, Object[]> airMstMap;
     private LinkedHashMap<String, Object[]> synoptcMstMap;
+    private final Object lock1 = new Object();
 
     private final SheetStyles sheetStyles;
     private final FileService fileService;
@@ -49,8 +50,8 @@ public class WorkBookReportGenerator {
         this.fileService = fileService;
     }
 
-    public File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
-                                                  LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
+    public synchronized File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
+                                                               LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
 
         String reportFileName = LocalDateTime.now().withNano(0).toString().replaceAll(":", "-") + NAME_CONST;
         File file = fileService.createFile(reportFileName, PATH);
@@ -100,7 +101,7 @@ public class WorkBookReportGenerator {
             AirMeasurement airMst = c.getValue();
             City city = airMst.getCity();
             MeasuringStation station = c.getKey();
-            if (cityMap.values().stream().noneMatch(v-> v[1].equals(city.getCityName()))) {
+            if (cityMap.values().stream().noneMatch(v -> v[1].equals(city.getCityName()))) {
                 cityMap.put(String.valueOf(cityRow.get()), new Object[]{city.getId(), city.getCityName(),
                         !city.getAirMeasurementList().isEmpty(),
                         !city.getSynopticMeasurementList().isEmpty()});
@@ -120,7 +121,7 @@ public class WorkBookReportGenerator {
     private void createSynoptic(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap) {
         Iterator<Map.Entry<String, Object[]>> iterator = cityMap.entrySet().iterator();
         String last = "";
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             last = iterator.next().getKey();
         }
         AtomicInteger cityRow = new AtomicInteger(Integer.valueOf(last));
@@ -130,14 +131,14 @@ public class WorkBookReportGenerator {
         AtomicInteger row = new AtomicInteger(1);
         synopticMeasurementMap.forEach((key, value) -> {
             SynopticMeasurement synMst = value;
-            String msDate = synMst.getMeasurementDate()+"T"+synMst.getMeasurementHour()+":00:00";
+            String msDate = synMst.getMeasurementDate() + "T" + synMst.getMeasurementHour() + ":00:00";
             synoptcMstMap.put(String.valueOf(row.get()), new Object[]{row.get(), synMst.getForeignId(), msDate,
-            synMst.getSaveDate(), synMst.getCityName(), synMst.getTemperature(), synMst.getWindSpeed(), synMst.getAirHumidity(),
-            synMst.getPressure()});
+                    synMst.getSaveDate(), synMst.getCityName(), synMst.getTemperature(), synMst.getWindSpeed(), synMst.getAirHumidity(),
+                    synMst.getPressure()});
             row.getAndIncrement();
-            if(cityMap.values().stream().noneMatch(c-> c[1].equals(key))) {
+            if (cityMap.values().stream().noneMatch(c -> c[1].equals(key))) {
                 City city = synMst.getCity();
-                cityMap.put(String.valueOf(cityRow.get()), new Object[]{city.getId(),city.getCityName(),
+                cityMap.put(String.valueOf(cityRow.get()), new Object[]{city.getId(), city.getCityName(),
                         !city.getAirMeasurementList().isEmpty(),
                         !city.getSynopticMeasurementList().isEmpty()});
                 cityRow.getAndIncrement();
@@ -171,7 +172,7 @@ public class WorkBookReportGenerator {
                         cell.setCellValue((Integer) cells[t]);
                     } else if (cells[t] instanceof Long) {
                         cell.setCellValue((Long) cells[t]);
-                    } else if (cells[t]==null) {
+                    } else if (cells[t] == null) {
                         cell.setCellValue("null");
                     } else {
                         cell.setCellValue(cells[t].toString());
