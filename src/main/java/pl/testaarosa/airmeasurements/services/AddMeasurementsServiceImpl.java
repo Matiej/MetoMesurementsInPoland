@@ -15,9 +15,11 @@ import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.CityRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
+import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierService;
 import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportGenerator;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -201,16 +203,19 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                                LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
                                LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
         //TODO use callable to take back email report
-        Thread mailServiceThread = new Thread(()-> {
-            emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
+//        Thread mailServiceThread = new Thread(()-> {
+//            emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
+//            LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+//        });
+        Thread reportServiceThread = new Thread(() -> {
+            LOGGER.info(ANSI_BOLD+"Preparing email with xml report after successful download all measurement data from external API"+ANSI_RESET);
+            File xmlAddAllMeasurementsReport = workBookReportGenerator.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
+            LOGGER.info(ANSI_BOLD+"XML REPORT AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+            emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport,shortMsg);
             LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
         });
-        Thread reportServiceThread = new Thread(() -> {
-            workBookReportGenerator.createXMLAddAllMeasurementsReport(synopticMeasurementMap,mStResponseMap);
-            LOGGER.info(ANSI_BOLD+"XML REPORT AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
-        });
         reportServiceThread.start();
-        mailServiceThread.start();
+//        mailServiceThread.start();
     }
 
     private String timeer(Long timeMiliseconds) {

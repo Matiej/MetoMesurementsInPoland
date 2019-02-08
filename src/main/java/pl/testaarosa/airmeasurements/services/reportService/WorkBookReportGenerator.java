@@ -3,6 +3,7 @@ package pl.testaarosa.airmeasurements.services.reportService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -80,12 +81,12 @@ public class WorkBookReportGenerator {
         } catch (IOException e) {
             LOGGER.error("Can't generate XML report! " + e);
         }
-        return null;
+        return file;
     }
 
     private void createCity_Station_AirMap(LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
         cityMap = new LinkedHashMap<>();
-        cityMap.put("0", new Object[]{"ID", "City name", "Air Measurement", "Synoptic measurement"});
+        cityMap.put("0", new Object[]{"ID", "City name", "Air measurement", "Synoptic measurement"});
 
         stationMap = new LinkedHashMap<>();
         stationMap.put("0", new String[]{"ID", "StationID", "Save date", "Name", "Street", "City", "Latitude", "Longitude"});
@@ -148,6 +149,7 @@ public class WorkBookReportGenerator {
 
     private void sheetCellFill(HSSFCellStyle headerStyle, HSSFCellStyle rowsStyle, HSSFSheet sheet,
                                Map<String, Object[]> cellsMap) {
+
         cellsMap.forEach((key, cells) -> {
             int rowId = Integer.parseInt(key);
             row = sheet.createRow(rowId);
@@ -160,9 +162,6 @@ public class WorkBookReportGenerator {
                 } else {
                     cell.setCellStyle(rowsStyle);
                 }
-                CellStyle cellStyle = cell.getCellStyle();
-                cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
-                cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
                 if (rowId == 0) {
                     cell.setCellValue(cells[t].toString());
                 } else {
@@ -175,7 +174,12 @@ public class WorkBookReportGenerator {
                     } else if (cells[t] == null) {
                         cell.setCellValue("null");
                     } else {
-                        cell.setCellValue(cells[t].toString());
+                        if (cells[t].toString().equals("false")) {
+                            cell.setCellStyle(sheetStyles.cellStyle(workbook, "false"));
+                            cell.setCellValue(cells[t].toString());
+                        } else {
+                            cell.setCellValue(cells[t].toString());
+                        }
                     }
                     cell.removeCellComment();
                 }

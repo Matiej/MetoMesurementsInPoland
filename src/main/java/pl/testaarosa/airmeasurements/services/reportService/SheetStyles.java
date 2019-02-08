@@ -4,6 +4,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,8 @@ public class SheetStyles {
         font.setFontName(HSSFFont.FONT_ARIAL);
         if (styleName.equalsIgnoreCase("ordinary")) {
             font.setFontHeightInPoints((short) 8);
+        } else if(styleName.equalsIgnoreCase("false")){
+            font.setColor(HSSFColor.RED.index);
         } else {
             font.setFontHeightInPoints((short) 9);
             font.setBoldweight(Font.BOLDWEIGHT_BOLD);
@@ -35,7 +38,7 @@ public class SheetStyles {
             }
         }
         HSSFCellStyle style = workbook.createCellStyle();
-        if (styleName.equalsIgnoreCase("ordinary")) {
+        if (styleName.equalsIgnoreCase("ordinary") || styleName.equalsIgnoreCase("false")) {
             style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
             style.setBorderRight(HSSFCellStyle.BORDER_THIN);
             style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -47,6 +50,8 @@ public class SheetStyles {
             style.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
             style.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
         }
+        style.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
         style.setFont(font);
         return style;
     }

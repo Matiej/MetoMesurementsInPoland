@@ -8,6 +8,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import pl.testaarosa.airmeasurements.domain.Mail;
+import pl.testaarosa.airmeasurements.services.emailService.EmailServiceImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

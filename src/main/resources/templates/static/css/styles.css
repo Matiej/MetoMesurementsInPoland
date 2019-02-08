@@ -1,0 +1,29 @@
+body {
+  font-family: "Lato", sans-serif;
+  background: #cfe7fa; /* Old browsers */
+  background: -moz-linear-gradient(
+    -45deg,
+    #cfe7fa 0%,
+    #6393c1 100%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    -45deg,
+    #cfe7fa 0%,
+    #6393c1 100%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    135deg,
+    #cfe7fa 0%,
+    #6393c1 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cfe7fa', endColorstr='#6393c1',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  background-size: auto;
+  background-attachment: fixed;
+}
+
+.title {
+  color: black;
+  text-shadow: 2px 1px wheat;
+  font-size: 25px;
+  font-style: italic;
+}

@@ -17,6 +17,7 @@ import pl.testaarosa.airmeasurements.domain.City;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.repositories.*;
+import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierService;
 
 import java.util.List;
 import java.util.Map;

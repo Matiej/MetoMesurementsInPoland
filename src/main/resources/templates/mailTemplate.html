@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html
+        lang="en"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meteo</title>
+</head>
+<body style="
+  font-family: sans-serif;
+background: #cfe7fa;
+background: -moz-linear-gradient(
+-45deg,
+#cfe7fa 0%,
+#6393c1 100%);
+background: -webkit-linear-gradient(
+-45deg,
+#cfe7fa 0%,
+#6393c1 100%);
+background: linear-gradient(
+135deg,
+#cfe7fa 0%,
+#6393c1 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cfe7fa', endColorstr='#6393c1',GradientType=1 );
+background-size: auto;
+background-attachment: fixed">
+<div style="text-align: center">
+    <p style="
+     color: grey;
+  text-shadow: 2px 1px black;
+  font-size: 25px;
+  font-style: italic"
+    >MATIEJ METEO MEASUREMENTS DOWNLOAD REPORT</p>
+    <img style="max-width: 10%" src="https://goshico.com/allegro/questionmarksmall.png">
+    <p style="font-size:18px; font-style: italic; color: grey" th:text="${reportMessage}"></p>
+</div>
+</body>
+</html>
