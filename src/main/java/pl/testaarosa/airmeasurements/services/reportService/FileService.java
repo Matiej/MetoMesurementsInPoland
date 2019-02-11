@@ -8,6 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
@@ -31,5 +36,16 @@ public class FileService {
         }
         LOGGER.info(ANSI_WHITE + " File " + meteoRaportFile.getName() + ANSI_BLUE + " created successful" + ANSI_RESET);
         return meteoRaportFile;
+    }
+
+    public boolean delFile(File fileToDel) {
+        if (fileToDel.exists()) {
+            LocalDateTime lastFileModifiedDate = LocalDateTime
+                    .ofInstant(Instant.ofEpochMilli(fileToDel.lastModified()), ZoneId.systemDefault());
+            boolean delete = fileToDel.delete();
+            LOGGER.warn(ANSI_RED + "Deleted report file-> " + fileToDel.getName() + ", dated: " + lastFileModifiedDate + ANSI_RESET);
+            return delete;
+        }
+        return false;
     }
 }

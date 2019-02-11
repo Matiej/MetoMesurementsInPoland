@@ -10,6 +10,5 @@ public interface EmailNotifierService {
     void sendEmailBeforAddMeasuremetns(String shortMessage);
     void sendFirstErrorMail(String error);
     void sendSecondErrorMail(String error);
-    String sendEmailAfterDownloadMeasurementsN(List<MeasuringStation> mSDtoList, String[] shortMess);
-    String sendEmailAfterDownloadMeasurementsWithReport(File file, String[] shortMess);
+    String sendEmailAfterDownloadMeasurementsWithReport(File file, String[] shortMess, String delReport);
 }

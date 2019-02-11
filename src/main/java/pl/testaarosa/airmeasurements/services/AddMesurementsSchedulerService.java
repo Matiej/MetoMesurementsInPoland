@@ -17,7 +17,7 @@ public class AddMesurementsSchedulerService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(AddMesurementsSchedulerService.class);
     private boolean whiteFlag = true;
-    LocalDateTime timeStamp;
+    private LocalDateTime timeStamp;
 
     @Autowired
     private AddMeasurementsService addMeasurementsService;
@@ -26,7 +26,6 @@ public class AddMesurementsSchedulerService {
 
 
     @Scheduled(cron = "0 01 13,21,5 * * *")
-//    @Scheduled(cron = "0 0/15 * 1/1 * *")
     public void addAllMeasurementsSchedule() {
         LOGGER.info(ANSI_PURPLE + "Add measurements is starting and send e-mail notify" + ANSI_RESET);
         emailNotifierService.sendEmailBeforAddMeasuremetns("first");

@@ -25,15 +25,17 @@ background: linear-gradient(
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cfe7fa', endColorstr='#6393c1',GradientType=1 );
 background-size: auto;
 background-attachment: fixed">
-<div style="text-align: center">
+<div style="text-align: justify">
     <p style="
-     color: grey;
-  text-shadow: 2px 1px black;
-  font-size: 25px;
-  font-style: italic"
+        color: black;
+        text-shadow: 3px 1px yellow;
+        font-size: 25px;
+        font-style: italic;
+        text-align: center;"
     >MATIEJ METEO MEASUREMENTS DOWNLOAD REPORT</p>
-    <img style="max-width: 10%" src="https://goshico.com/allegro/questionmarksmall.png">
-    <p style="font-size:18px; font-style: italic; color: grey" th:text="${reportMessage}"></p>
+    <!--<img style="max-width: 10%" src="https://goshico.com/allegro/questionmarksmall.png">-->
+    <p style="font-size:18px; color: black;" th:text="${reportMessage}"></p>
+    <p style="font-size:15px; color: brown;" th:text="${delMessage}"></p>
 </div>
 </body>
 </html>

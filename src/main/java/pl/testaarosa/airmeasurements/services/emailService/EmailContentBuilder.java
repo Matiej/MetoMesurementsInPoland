@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Map;
+
 @Service
 public class EmailContentBuilder {
 
@@ -15,9 +17,9 @@ public class EmailContentBuilder {
         this.templateEngine = templateEngine;
     }
 
-    public String build(String message) {
+    public String multiVarBuilder(Map<String, Object> messages) {
         Context context = new Context();
-        context.setVariable("reportMessage", message);
+        context.setVariables(messages);
         return templateEngine.process("mailTemplate", context);
     }
 }

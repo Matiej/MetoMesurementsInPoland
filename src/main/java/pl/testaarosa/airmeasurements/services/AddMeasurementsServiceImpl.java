@@ -16,7 +16,8 @@ import pl.testaarosa.airmeasurements.repositories.CityRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierService;
-import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportGenerator;
+import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportService;
+import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportServiceImpl;
 
 import javax.transaction.Transactional;
 import java.io.File;
@@ -36,20 +37,20 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final AirMeasurementRepository airRepository;
     private final EmailNotifierService emailNotifierService;
     private final CityRepository cityRepository;
-    private final WorkBookReportGenerator workBookReportGenerator;
+    private final WorkBookReportService workBookReportService;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
                                       SynopticMeasurementRepository synopticRepository, AirMeasurementRepository airRepository,
                                       EmailNotifierService emailNotifierService,
-                                      CityRepository cityRepository, WorkBookReportGenerator workBookReportGenerator) {
+                                      CityRepository cityRepository, WorkBookReportServiceImpl workBookReportService) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
         this.synopticRepository = synopticRepository;
         this.airRepository = airRepository;
         this.emailNotifierService = emailNotifierService;
         this.cityRepository = cityRepository;
-        this.workBookReportGenerator = workBookReportGenerator;
+        this.workBookReportService = workBookReportService;
     }
 
     @Transactional
@@ -202,20 +203,16 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private void auxAddService(String[] shortMsg, List<MeasuringStation> mStList,
                                LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
                                LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
-        //TODO use callable to take back email report
-//        Thread mailServiceThread = new Thread(()-> {
-//            emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
-//            LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
-//        });
         Thread reportServiceThread = new Thread(() -> {
             LOGGER.info(ANSI_BOLD+"Preparing email with xml report after successful download all measurement data from external API"+ANSI_RESET);
-            File xmlAddAllMeasurementsReport = workBookReportGenerator.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
+            File xmlAddAllMeasurementsReport = workBookReportService.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
+            String delOldReports = workBookReportService.delOldReports();
             LOGGER.info(ANSI_BOLD+"XML REPORT AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
-            emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport,shortMsg);
+            emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport,shortMsg, delOldReports);
             LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+
         });
         reportServiceThread.start();
-//        mailServiceThread.start();
     }
 
     private String timeer(Long timeMiliseconds) {

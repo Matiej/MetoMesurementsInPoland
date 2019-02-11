@@ -3,9 +3,7 @@ package pl.testaarosa.airmeasurements.services.reportService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,37 +18,44 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.time.ZoneId;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 @Service
-public class WorkBookReportGenerator {
+public class WorkBookReportServiceImpl implements WorkBookReportService {
 
     private static final String PATH = new File(System.getProperty("user.dir") + "/reports").getAbsolutePath();
+    private static final String PATH_UBUNTU_TOMCAT = new File(System.getProperty("user.home") + File.separator +"reports").getAbsolutePath();
     private static final String NAME_CONST = "_addAllMeasurementsReport.xls";
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkBookReportGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkBookReportServiceImpl.class);
     private HSSFWorkbook workbook;
     private Row row;
     private LinkedHashMap<String, Object[]> cityMap;
     private LinkedHashMap<String, Object[]> stationMap;
     private LinkedHashMap<String, Object[]> airMstMap;
     private LinkedHashMap<String, Object[]> synoptcMstMap;
-    private final Object lock1 = new Object();
 
     private final SheetStyles sheetStyles;
     private final FileService fileService;
 
     @Autowired
-    public WorkBookReportGenerator(SheetStyles sheetStyles, FileService fileService) {
+    public WorkBookReportServiceImpl(SheetStyles sheetStyles, FileService fileService) {
         this.sheetStyles = sheetStyles;
         this.fileService = fileService;
     }
 
+    @Override
     public synchronized File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
                                                                LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
 
@@ -103,12 +108,12 @@ public class WorkBookReportGenerator {
             City city = airMst.getCity();
             MeasuringStation station = c.getKey();
             if (cityMap.values().stream().noneMatch(v -> v[1].equals(city.getCityName()))) {
-                cityMap.put(String.valueOf(cityRow.get()), new Object[]{city.getId(), city.getCityName(),
+                Object[] put = cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
                         !city.getAirMeasurementList().isEmpty(),
                         !city.getSynopticMeasurementList().isEmpty()});
                 cityRow.getAndIncrement();
             }
-            stationMap.put(String.valueOf(row.get()), new Object[]{station.getId(), station.getStationId(),
+            stationMap.put(String.valueOf(row.get()), new Object[]{row.get(), station.getStationId(),
                     LocalDate.now(), station.getStationName(), station.getStreet(), station.getCity(), station.getLatitude(),
                     station.getLongitude()});
             airMstMap.put(String.valueOf(row.get()), new Object[]{row.get(), station.getStationId(), station.getCity(),
@@ -139,7 +144,7 @@ public class WorkBookReportGenerator {
             row.getAndIncrement();
             if (cityMap.values().stream().noneMatch(c -> c[1].equals(key))) {
                 City city = synMst.getCity();
-                cityMap.put(String.valueOf(cityRow.get()), new Object[]{city.getId(), city.getCityName(),
+                cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
                         !city.getAirMeasurementList().isEmpty(),
                         !city.getSynopticMeasurementList().isEmpty()});
                 cityRow.getAndIncrement();
@@ -185,5 +190,29 @@ public class WorkBookReportGenerator {
                 }
             });
         });
+    }
+
+    @Override
+    public synchronized String delOldReports() {
+        File[] listFiles = new File(PATH).listFiles();
+        AtomicInteger delFileCounter = new AtomicInteger(0);
+        int noReportsInDb = Objects.requireNonNull(listFiles).length;
+        if (noReportsInDb > 30) {
+            Stream.of(listFiles).forEach(r -> {
+                LocalDateTime lastFileModifiedDate = LocalDateTime
+                        .ofInstant(Instant.ofEpochMilli(r.lastModified()), ZoneId.systemDefault());
+                if (lastFileModifiedDate.isBefore(LocalDateTime.now().minusDays(1))) {
+                    fileService.delFile(r);
+                    delFileCounter.getAndIncrement();
+                }
+            });
+            File[] filesInDb = new File(PATH).listFiles();
+            int noOfFilesInDb = Objects.requireNonNull(filesInDb).length;
+            LOGGER.warn("Deleted " + delFileCounter.get() + " reports files. Number of reports left in data base: " + noOfFilesInDb);
+            return "Deleted " + delFileCounter.get() + " reports files. Number of reports left in data base: " + noOfFilesInDb;
+        } else {
+            LOGGER.info("No reports deleted because number of reports in data base is less than 30. Reports in database: " + noReportsInDb);
+            return "No reports deleted because number of reports in data base is less than 30. Reports in database: " + noReportsInDb;
+        }
     }
 }
