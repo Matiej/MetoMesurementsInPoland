@@ -108,7 +108,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             City city = airMst.getCity();
             MeasuringStation station = c.getKey();
             if (cityMap.values().stream().noneMatch(v -> v[1].equals(city.getCityName()))) {
-                Object[] put = cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
+               cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
                         !city.getAirMeasurementList().isEmpty(),
                         !city.getSynopticMeasurementList().isEmpty()});
                 cityRow.getAndIncrement();

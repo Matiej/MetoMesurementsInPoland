@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.domain;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -16,11 +17,14 @@ public class City {
     private Long id;
     @Column(name = "CITY_NAME")
     private String cityName;
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    //TODO poprawić EAGEr. Tylko potrzebne do raportów. Bez sensu bo moze to zamulac baze
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
+    @BatchSize(size = 5)
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL,fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
+    @BatchSize(size = 5)
     private List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
 
     public City() {

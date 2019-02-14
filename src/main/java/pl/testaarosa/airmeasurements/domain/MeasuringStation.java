@@ -26,7 +26,6 @@ public class MeasuringStation {
     private MeasuringStationDetails stationDetails;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "measuringStation")
-    //set??
     private List<AirMeasurement> airMeasurementList = new ArrayList<>();
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)

@@ -84,7 +84,6 @@
             <version>2.1.2.RELEASE</version>
         </dependency>
 
-
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -100,9 +99,9 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>io.swagger</groupId>-->
-            <!--<artifactId>swagger-annotations</artifactId>-->
-            <!--<version>1.5.21</version>-->
+        <!--<groupId>io.swagger</groupId>-->
+        <!--<artifactId>swagger-annotations</artifactId>-->
+        <!--<version>1.5.21</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -129,26 +128,26 @@
             <scope>compile</scope>
         </dependency>
 
-    <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-ooxml</artifactId>
-        <version>3.9</version>
-    </dependency>
-    <dependency>
-        <groupId>commons-net</groupId>
-        <artifactId>commons-net</artifactId>
-        <version>3.5</version>
-    </dependency>
-    <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>2.6</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
-            <!--<scope>provided</scope>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
+        <!--<scope>provided</scope>-->
         <!--</dependency>-->
     </dependencies>
 
