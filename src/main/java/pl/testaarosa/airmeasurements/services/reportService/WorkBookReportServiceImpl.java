@@ -5,10 +5,12 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.City;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
@@ -22,10 +24,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 public class WorkBookReportServiceImpl implements WorkBookReportService {
 
     private static final String PATH = new File(System.getProperty("user.dir") + "/reports").getAbsolutePath();
-    private static final String PATH_UBUNTU_TOMCAT = new File(System.getProperty("user.home") + File.separator +"reports").getAbsolutePath();
+    private static final String PATH_UBUNTU_TOMCAT = new File(System.getProperty("user.home") + File.separator + "reports").getAbsolutePath();
     private static final String NAME_CONST = "_addAllMeasurementsReport.xls";
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkBookReportServiceImpl.class);
     private HSSFWorkbook workbook;
@@ -57,7 +56,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
 
     @Override
     public synchronized File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
-                                                               LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
+                                                               LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) throws Exception {
 
         String reportFileName = LocalDateTime.now().withNano(0).toString().replaceAll(":", "-") + NAME_CONST;
         File file = fileService.createFile(reportFileName, PATH);
@@ -68,7 +67,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             HSSFCellStyle synopticStyle = sheetStyles.cellStyle(workbook, "synoptic");
             HSSFCellStyle airStyle = sheetStyles.cellStyle(workbook, "air");
 
-            createCity_Station_AirMap(mStResponseMap);
+            createCity_Station_AirMap(mStResponseMap, synopticMeasurementMap);
             createSynoptic(synopticMeasurementMap);
 
             HSSFSheet citySheet = workbook.createSheet("City");
@@ -85,11 +84,37 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             LOGGER.info(ANSI_BLUE + "Report saved successful in => " + ANSI_PURPLE + file + ANSI_RESET);
         } catch (IOException e) {
             LOGGER.error("Can't generate XML report! " + e);
+            throw new Exception(e);
         }
         return file;
     }
 
-    private void createCity_Station_AirMap(LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
+    @Override
+    public synchronized String delOldReports() {
+        File[] listFiles = new File(PATH).listFiles();
+        AtomicInteger delFileCounter = new AtomicInteger(0);
+        int noReportsInDb = Objects.requireNonNull(listFiles).length;
+        if (noReportsInDb > 30) {
+            Stream.of(listFiles).forEach(r -> {
+                LocalDateTime lastFileModifiedDate = LocalDateTime
+                        .ofInstant(Instant.ofEpochMilli(r.lastModified()), ZoneId.systemDefault());
+                if (lastFileModifiedDate.isBefore(LocalDateTime.now().minusDays(1))) {
+                    fileService.delFile(r);
+                    delFileCounter.getAndIncrement();
+                }
+            });
+            File[] filesInDb = new File(PATH).listFiles();
+            int noOfFilesInDb = Objects.requireNonNull(filesInDb).length;
+            LOGGER.warn("Deleted " + delFileCounter.get() + " reports files. Number of reports left in data base: " + noOfFilesInDb);
+            return "Deleted " + delFileCounter.get() + " reports files. Number of reports left in data base: " + noOfFilesInDb;
+        } else {
+            LOGGER.info("No reports deleted because number of reports in data base is less than 30. Reports in database: " + noReportsInDb);
+            return "No reports deleted because number of reports in data base is less than 30. Reports in database: " + noReportsInDb;
+        }
+    }
+
+    private void createCity_Station_AirMap(LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap,
+                                           LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap ) {
         cityMap = new LinkedHashMap<>();
         cityMap.put("0", new Object[]{"ID", "City name", "Air measurement", "Synoptic measurement"});
 
@@ -108,9 +133,9 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             City city = airMst.getCity();
             MeasuringStation station = c.getKey();
             if (cityMap.values().stream().noneMatch(v -> v[1].equals(city.getCityName()))) {
-               cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
-                        !city.getAirMeasurementList().isEmpty(),
-                        !city.getSynopticMeasurementList().isEmpty()});
+                cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
+                        true,
+                        synopticMeasurementMap.keySet().stream().anyMatch(t-> t.equalsIgnoreCase(city.getCityName()))});
                 cityRow.getAndIncrement();
             }
             stationMap.put(String.valueOf(row.get()), new Object[]{row.get(), station.getStationId(),
@@ -144,9 +169,10 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             row.getAndIncrement();
             if (cityMap.values().stream().noneMatch(c -> c[1].equals(key))) {
                 City city = synMst.getCity();
+                Hibernate.initialize(city.getAirMeasurementList());
+                Hibernate.initialize(city.getSynopticMeasurementList());
                 cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
-                        !city.getAirMeasurementList().isEmpty(),
-                        !city.getSynopticMeasurementList().isEmpty()});
+                        false,true});
                 cityRow.getAndIncrement();
             }
         });
@@ -190,29 +216,5 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
                 }
             });
         });
-    }
-
-    @Override
-    public synchronized String delOldReports() {
-        File[] listFiles = new File(PATH).listFiles();
-        AtomicInteger delFileCounter = new AtomicInteger(0);
-        int noReportsInDb = Objects.requireNonNull(listFiles).length;
-        if (noReportsInDb > 30) {
-            Stream.of(listFiles).forEach(r -> {
-                LocalDateTime lastFileModifiedDate = LocalDateTime
-                        .ofInstant(Instant.ofEpochMilli(r.lastModified()), ZoneId.systemDefault());
-                if (lastFileModifiedDate.isBefore(LocalDateTime.now().minusDays(1))) {
-                    fileService.delFile(r);
-                    delFileCounter.getAndIncrement();
-                }
-            });
-            File[] filesInDb = new File(PATH).listFiles();
-            int noOfFilesInDb = Objects.requireNonNull(filesInDb).length;
-            LOGGER.warn("Deleted " + delFileCounter.get() + " reports files. Number of reports left in data base: " + noOfFilesInDb);
-            return "Deleted " + delFileCounter.get() + " reports files. Number of reports left in data base: " + noOfFilesInDb;
-        } else {
-            LOGGER.info("No reports deleted because number of reports in data base is less than 30. Reports in database: " + noReportsInDb);
-            return "No reports deleted because number of reports in data base is less than 30. Reports in database: " + noReportsInDb;
-        }
     }
 }

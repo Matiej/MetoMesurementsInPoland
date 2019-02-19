@@ -21,6 +21,7 @@ import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportServic
 
 import javax.transaction.Transactional;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -200,17 +201,24 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         return counters.get();
     }
 
+    @Transactional
     private void auxAddService(String[] shortMsg, List<MeasuringStation> mStList,
                                LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
                                LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
         Thread reportServiceThread = new Thread(() -> {
-            LOGGER.info(ANSI_BOLD+"Preparing email with xml report after successful download all measurement data from external API"+ANSI_RESET);
-            File xmlAddAllMeasurementsReport = workBookReportService.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
-            String delOldReports = workBookReportService.delOldReports();
-            LOGGER.info(ANSI_BOLD+"XML REPORT AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
-            emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport,shortMsg, delOldReports);
-            LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
-
+            try {
+                LOGGER.info(ANSI_BOLD + "Preparing email with xml report after successful download all measurement data from external API" + ANSI_RESET);
+                File xmlAddAllMeasurementsReport = workBookReportService.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
+                String delOldReports = workBookReportService.delOldReports();
+                LOGGER.info(ANSI_BOLD + "XML REPORT AUXILIARY SERVICE JOB DONE" + ANSI_RESET);
+                emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport, shortMsg, delOldReports);
+            } catch (Exception e) {
+                e.printStackTrace();
+                LOGGER.error("REPORT GENERATOR PROBLEM, SEND NON HTML FILE WITHOUT REPORT FILE. ERROR LOG-> " +e.getMessage());
+                emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
+            } finally {
+                LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+            }
         });
         reportServiceThread.start();
     }

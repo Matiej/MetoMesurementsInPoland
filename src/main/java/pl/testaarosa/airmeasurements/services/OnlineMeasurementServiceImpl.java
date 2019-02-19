@@ -31,7 +31,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
     }
 
     @Override
-//    @Cacheable(value = "measuringStCash")
+    @Cacheable(value = "measuringStCash")
     public List<OnlineMeasurementDto> getAllMeasuringStations() throws RestClientException, NoSuchElementException {
         long start = System.currentTimeMillis();
         List<OnlineMeasurementDto> onlineMeasurementDtos = msProc.fillMeasuringStationListStructure();

@@ -9,8 +9,9 @@ import java.util.LinkedHashMap;
 
 public interface WorkBookReportService {
 
+
     File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
-                                           LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap);
+                                           LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) throws Exception;
 
     String delOldReports();
 }
