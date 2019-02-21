@@ -34,7 +34,7 @@ import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 @Service
 public class WorkBookReportServiceImpl implements WorkBookReportService {
 
-    private static final String PATH = new File(System.getProperty("user.dir") + "/reports").getAbsolutePath();
+    private static final String PATH = new File(System.getProperty("user.dir") + File.separator + "reports").getAbsolutePath();
     private static final String PATH_UBUNTU_TOMCAT = new File(System.getProperty("user.home") + File.separator + "reports").getAbsolutePath();
     private static final String NAME_CONST = "_addAllMeasurementsReport.xls";
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkBookReportServiceImpl.class);

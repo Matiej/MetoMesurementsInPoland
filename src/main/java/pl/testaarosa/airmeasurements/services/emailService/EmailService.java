@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.services.emailService;
 
+import org.hibernate.pretty.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,10 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import pl.testaarosa.airmeasurements.domain.Mail;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
@@ -34,12 +38,25 @@ public class EmailService {
         }
     }
 
+//    public void sendEmailWithReport(final Mail mail, final File report) {
+//        LOGGER.info(ANSI_BLUE + "Meteo is starting email preparation.." + ANSI_RESET);
+//        try {
+//            MimeMessagePreparator mimeMessageHelper = getMimeMessageHelper(mail, report);
+//            javaMailSender.send(mimeMessageHelper);
+//            LOGGER.info(ANSI_BLUE + "Email has been sent to -> " + mail.getMailTo() + ANSI_RESET);
+//        } catch (MailException e) {
+//            LOGGER.error(ANSI_RED + "Error to process sending email to ->" + mail.getMailTo() + ANSI_RESET + e);
+//        }
+//    }
+
     public void sendEmailWithReport(final Mail mail, final File report) {
         LOGGER.info(ANSI_BLUE + "Meteo is starting email preparation.." + ANSI_RESET);
         try {
-            javaMailSender.send(getMimeMessageHelper(mail,report));
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = getMimeMessageHelper(message,mail, report);
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
             LOGGER.info(ANSI_BLUE + "Email has been sent to -> " + mail.getMailTo() + ANSI_RESET);
-        } catch (MailException e) {
+        } catch (MailException | MessagingException | UnsupportedEncodingException e) {
             LOGGER.error(ANSI_RED + "Error to process sending email to ->" + mail.getMailTo() + ANSI_RESET + e);
         }
     }
@@ -54,17 +71,26 @@ public class EmailService {
         return mailMessage;
     }
 
-    private MimeMessagePreparator getMimeMessageHelper(final Mail mail, final File report) {
-        MimeMessagePreparator mimeMessagePreparator = mimeMessage1 -> {
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage1, true);
-            helper.setTo(mail.getMailTo());
-            helper.setSubject(mail.getSubject());
-            helper.setText(mail.getMessage(), true);
-            helper.setFrom("javamatiej@gmail.com", "Matiej MeteoCenter");
-            helper.setSentDate(mail.getSentDate());
-            helper.addAttachment(report.getName(), report);
-//            helper.setCc(new String[]{"znikenson@gmail.com"});
-        };
-        return mimeMessagePreparator;
+    private MimeMessageHelper getMimeMessageHelper(final MimeMessage message, final Mail mail, final File report) throws MessagingException, UnsupportedEncodingException {
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(mail.getMailTo());
+        helper.setSubject(mail.getSubject());
+        helper.setText(mail.getMessage(), true);
+        helper.setFrom("javamatiej@gmail.com", "Matiej MeteoCenter");
+        helper.setSentDate(mail.getSentDate());
+        helper.addAttachment(report.getName(), report);
+        return helper;
+
+//        MimeMessagePreparator mimeMessagePreparator = mimeMessage1 -> {
+//            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage1, true);
+//            helper.setTo(mail.getMailTo());
+//            helper.setSubject(mail.getSubject());
+//            helper.setText(mail.getMessage(), true);
+//            helper.setFrom("javamatiej@gmail.com", "Matiej MeteoCenter");
+//            helper.setSentDate(mail.getSentDate());
+//            helper.addAttachment(report.getName(), report);
+////            helper.setCc(new String[]{"znikenson@gmail.com"});
+//        };
+//        return mimeMessagePreparator;
     }
 }
