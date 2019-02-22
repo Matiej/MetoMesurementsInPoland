@@ -25,8 +25,4 @@ public class SynopticMeasurementMapper {
                 .measurementHour(synMeasurements.getGetMeasurementHour())
                 .build();
     }
-
-    private SynopticMeasurementDto emptyObj() {
-        return new SynopticMeasurementDto(9999, "->>no data available<<-", 9999.0, 9999.0, 9999.0, 9999.0);
-    }
 }

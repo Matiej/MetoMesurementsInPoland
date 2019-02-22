@@ -1,6 +1,5 @@
 package pl.testaarosa.airmeasurements.services;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,18 +10,17 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import pl.testaarosa.airmeasurements.domain.Mail;
 import pl.testaarosa.airmeasurements.repositories.MockMailRepository;
+import pl.testaarosa.airmeasurements.repositories.MockReportCreator;
 import pl.testaarosa.airmeasurements.services.emailService.EmailService;
 
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -36,6 +34,9 @@ public class EmailServiceITestSuit {
 
     private MockMailRepository mockMailRepository;
     private MockReportCreator mockReportCreator;
+    private static final String PATH = new File(System.getProperty("user.dir")
+            + File.separator + "src/test/java/pl/testaarosa/airmeasurements/repositories/mockReport").getAbsolutePath();
+    private static final String NAME_CONST = "_addAllMeasurementsReportTEST.xls";
 
     @Before
     public void init() {
@@ -48,8 +49,6 @@ public class EmailServiceITestSuit {
         //given
         EmailService underTest = new EmailService();
         Mail mail1 = mockMailRepository.mockMail();
-//        Mail mail = new Mail("test@unitTest.com","method test", "Here we are testing something",
-//                "From@from.com", new Date());
         Method getSimpleMailMessage = underTest.getClass().getDeclaredMethod("getSimpleMailMessage", Mail.class);
         getSimpleMailMessage.setAccessible(true);
         SimpleMailMessage result = (SimpleMailMessage)getSimpleMailMessage.invoke(underTest, mail1);
@@ -62,10 +61,10 @@ public class EmailServiceITestSuit {
 
     @Test
     public void shouldSendEmailWithReport() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        EmailService underTest = new EmailService();
         JavaMailSender js = new JavaMailSenderImpl();
         MimeMessage mimeMessage = js.createMimeMessage();
-        File testFileReport = mockReportCreator.createTestFileReport();
+        String reportFileName = LocalDateTime.now().withNano(0).toString().replaceAll(":", "-") + NAME_CONST;
+        File testFileReport = mockReportCreator.createTestFileReport(reportFileName, PATH);
         Mail mail1 = mockMailRepository.mockMail();
         Method getMimeMessageHelper = emailService.getClass().getDeclaredMethod("getMimeMessageHelper", MimeMessage.class,Mail.class, File.class);
         getMimeMessageHelper.setAccessible(true);

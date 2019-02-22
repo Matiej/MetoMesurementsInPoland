@@ -9,6 +9,9 @@ import java.util.Map;
 
 public class MockSynopticMeasurementDtoRepository {
 
+    private final String M_DATE = "2019-02-22";
+    private final String M_HOUR = "18";
+
     public List<SynopticMeasurementDto> mockSynopticDtoRepositories() {
         List<SynopticMeasurementDto> measurementDtoList = new ArrayList<>();
 
@@ -19,6 +22,8 @@ public class MockSynopticMeasurementDtoRepository {
         synopticMeasurementDto.setWindSpeed(35);
         synopticMeasurementDto.setAirHumidity(77);
         synopticMeasurementDto.setPressure(999);
+        synopticMeasurementDto.setMeasurementDate(M_DATE);
+        synopticMeasurementDto.setGetMeasurementHour(M_HOUR);
 
         SynopticMeasurementDto synopticMeasurementDto1 = new SynopticMeasurementDto();
         synopticMeasurementDto1.setId(1);
@@ -27,6 +32,8 @@ public class MockSynopticMeasurementDtoRepository {
         synopticMeasurementDto1.setWindSpeed(35);
         synopticMeasurementDto1.setAirHumidity(77);
         synopticMeasurementDto1.setPressure(999);
+        synopticMeasurementDto1.setMeasurementDate(M_DATE);
+        synopticMeasurementDto1.setGetMeasurementHour(M_HOUR);
 
         SynopticMeasurementDto synopticMeasurementDto2 = new SynopticMeasurementDto();
         synopticMeasurementDto2.setId(2);
@@ -35,6 +42,8 @@ public class MockSynopticMeasurementDtoRepository {
         synopticMeasurementDto2.setWindSpeed(35);
         synopticMeasurementDto2.setAirHumidity(66);
         synopticMeasurementDto2.setPressure(999);
+        synopticMeasurementDto2.setMeasurementDate(M_DATE);
+        synopticMeasurementDto2.setGetMeasurementHour(M_HOUR);
 
         SynopticMeasurementDto synopticMeasurementDto3 = new SynopticMeasurementDto();
         synopticMeasurementDto3.setId(3);
@@ -43,6 +52,8 @@ public class MockSynopticMeasurementDtoRepository {
         synopticMeasurementDto3.setWindSpeed(35);
         synopticMeasurementDto3.setAirHumidity(66);
         synopticMeasurementDto3.setPressure(999);
+        synopticMeasurementDto3.setMeasurementDate(M_DATE);
+        synopticMeasurementDto3.setGetMeasurementHour(M_HOUR);
 
         measurementDtoList.add(synopticMeasurementDto);
         measurementDtoList.add(synopticMeasurementDto1);

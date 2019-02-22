@@ -1,5 +1,6 @@
 package pl.testaarosa.airmeasurements.repositories;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import pl.testaarosa.airmeasurements.domain.dtoApi.AirMeasurementDto;
 import pl.testaarosa.airmeasurements.domain.dtoApi.LevelDto;
 
@@ -7,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockAirMeasurementDtoRepository {
+
+    private final String DATE1 = "2018-05-05 12:01:05";
 
     public List<AirMeasurementDto> airMeasurementsDtos() {
         List<AirMeasurementDto> airMeasurementDtoList = new ArrayList<>();
@@ -60,9 +63,9 @@ public class MockAirMeasurementDtoRepository {
         airMeasurementDto1.setPm25IndexLevel(pm25IndexLevel);
         airMeasurementDto1.setO3IndexLevel(o3IndexLevel);
         airMeasurementDto1.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementDto1.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementDto1.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementDto1.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto1.setStCalcDate(DATE1);
+        airMeasurementDto1.setSo2SourceDataDate(DATE1);
+        airMeasurementDto1.setStCalcDate(DATE1);
         airMeasurementDto1.setId(1);
 
         AirMeasurementDto airMeasurementDto = new AirMeasurementDto();
@@ -74,9 +77,9 @@ public class MockAirMeasurementDtoRepository {
         airMeasurementDto.setPm25IndexLevel(pm25IndexLevel);
         airMeasurementDto.setO3IndexLevel(o3IndexLevel);
         airMeasurementDto.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementDto.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementDto.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementDto.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto.setStCalcDate(DATE1);
+        airMeasurementDto.setSo2SourceDataDate(DATE1);
+        airMeasurementDto.setStCalcDate(DATE1);
         airMeasurementDto.setId(1);
 
         AirMeasurementDto airMeasurementDto2 = new AirMeasurementDto();
@@ -88,9 +91,9 @@ public class MockAirMeasurementDtoRepository {
         airMeasurementDto2.setPm25IndexLevel(pm25IndexLevel);
         airMeasurementDto2.setO3IndexLevel(o3IndexLevel);
         airMeasurementDto2.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementDto2.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementDto2.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementDto2.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto2.setStCalcDate(DATE1);
+        airMeasurementDto2.setSo2SourceDataDate(DATE1);
+        airMeasurementDto2.setStCalcDate(DATE1);
         airMeasurementDto2.setId(2);
 
         AirMeasurementDto airMeasurementDto3 = new AirMeasurementDto();
@@ -102,9 +105,9 @@ public class MockAirMeasurementDtoRepository {
         airMeasurementDto3.setPm25IndexLevel(pm25IndexLevel);
         airMeasurementDto3.setO3IndexLevel(o3IndexLevel);
         airMeasurementDto3.setC6h6IndexLevel(c6h6IndexLevel);
-        airMeasurementDto3.setStCalcDate("2018-05-12 12:05:01:05");
-        airMeasurementDto3.setSo2SourceDataDate("2018-05-05 12:01:05");
-        airMeasurementDto3.setStCalcDate("2018-05-05 12:01:05");
+        airMeasurementDto3.setStCalcDate(DATE1);
+        airMeasurementDto3.setSo2SourceDataDate(DATE1);
+        airMeasurementDto3.setStCalcDate(DATE1);
         airMeasurementDto3.setId(3);
 
         airMeasurementDtoList.add(airMeasurementDto);

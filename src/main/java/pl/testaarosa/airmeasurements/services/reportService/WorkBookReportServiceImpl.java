@@ -169,8 +169,8 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             row.getAndIncrement();
             if (cityMap.values().stream().noneMatch(c -> c[1].equals(key))) {
                 City city = synMst.getCity();
-                Hibernate.initialize(city.getAirMeasurementList());
-                Hibernate.initialize(city.getSynopticMeasurementList());
+//                Hibernate.initialize(city.getAirMeasurementList());
+//                Hibernate.initialize(city.getSynopticMeasurementList());
                 cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
                         false,true});
                 cityRow.getAndIncrement();

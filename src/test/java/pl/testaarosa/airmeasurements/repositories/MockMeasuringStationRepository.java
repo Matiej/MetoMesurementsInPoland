@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MockMeasuringStationRepository {
     private final MockAirMeasurementRepository mockAirMeasurementRepository = new MockAirMeasurementRepository();
@@ -73,9 +74,14 @@ public class MockMeasuringStationRepository {
 
     }
 
-    public Map<MeasuringStation, AirMeasurement> measurementMap() {
+    public LinkedHashMap<MeasuringStation, AirMeasurement> measurementMap() {
         List<MeasuringStation> stations = stations();
+        LinkedHashMap<MeasuringStation, AirMeasurement> measurementLinkedHashMap = new LinkedHashMap<>();
         stations.remove(0);
-        return stations.stream().collect(Collectors.toMap(t->t, t->t.getAirMeasurementList().get(0), (t1,t2)->t1,LinkedHashMap::new));
+        measurementLinkedHashMap.put(stations.get(0), stations.get(0).getAirMeasurementList().get(0));
+        measurementLinkedHashMap.put(stations.get(1), stations.get(1).getAirMeasurementList().get(1));
+        measurementLinkedHashMap.put(stations.get(2), stations.get(2).getAirMeasurementList().get(2));
+        return measurementLinkedHashMap;
+//        return stations.stream().collect(Collectors.toMap(t->t, t->t.getAirMeasurementList().get(0), (t1,t2)->t1,LinkedHashMap::new));
     }
 }

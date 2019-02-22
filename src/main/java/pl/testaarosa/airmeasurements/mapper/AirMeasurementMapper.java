@@ -14,6 +14,7 @@ import java.util.List;
 public class AirMeasurementMapper {
 
     public AirMeasurement mapToAirMeasurements(AirMeasurementDto airDto) {
+//        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime currentDate = LocalDateTime.now().withNano(0);
         LocalDateTime toSql;
