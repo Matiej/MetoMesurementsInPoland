@@ -80,8 +80,6 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
         } catch (ResourceAccessException e) {
             throw new RestClientException("External Api error. Can't find any measuring station or air measurement because of error-> no connection");
         }
-//        CompletableFuture.allOf((CompletableFuture<?>) measurementMap.values()).join();
-
         return measurementMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> (v.getValue().join())));
     }
 

@@ -65,6 +65,8 @@ public class WorkBookReportServiceTestSuit {
         sheetAssertion(mockReportCreator.stationSheetMap(), stationSheet);
         sheetAssertion(mockReportCreator.airSheetMap(), airSheet);
         sheetAssertion(mockReportCreator.synSheetMap(), synSheet);
+        //cleaning
+        fileService.delFile(xmlAddAllMeasurementsReport);
     }
 
     private void sheetAssertion(Map<String, Object[]> map, HSSFSheet citySheet) {
