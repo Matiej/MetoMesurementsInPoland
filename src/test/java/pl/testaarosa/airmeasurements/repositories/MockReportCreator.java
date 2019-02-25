@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,9 +54,9 @@ public class MockReportCreator {
     public Map<String, Object[]> stationSheetMap() {
         Map<String, Object[]> statonSheetMap = new HashMap<>();
         statonSheetMap.put("0", new Object[]{"ID", "StationID", "Save date", "Name","Street", "City", "Latitude", "Longitude"});
-        statonSheetMap.put("1", new Object[]{"1.0", "1.0", "2019-02-22", "Wawrszawa-Centrum", "Piekna", "Warszawa", "15", "15"});
-        statonSheetMap.put("2", new Object[]{"2.0", "2.0", "2019-02-22", "Poznan-Stoleczna","Stoleczna", "Poznan", "11", "123"});
-        statonSheetMap.put("3", new Object[]{"3.0", "3.0", "2019-02-22", "Krakow-Starowka", "Starowka", "Krakow", "23", "221"});
+        statonSheetMap.put("1", new Object[]{"1.0", "1.0", LocalDate.now().toString(), "Wawrszawa-Centrum", "Piekna", "Warszawa", "15", "15"});
+        statonSheetMap.put("2", new Object[]{"2.0", "2.0", LocalDate.now().toString(), "Poznan-Stoleczna","Stoleczna", "Poznan", "11", "123"});
+        statonSheetMap.put("3", new Object[]{"3.0", "3.0", LocalDate.now().toString(), "Krakow-Starowka", "Starowka", "Krakow", "23", "221"});
         return statonSheetMap;
     }
 

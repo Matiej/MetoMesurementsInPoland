@@ -61,12 +61,16 @@ public class WorkBookReportServiceTestSuit {
         HSSFSheet airSheet = workbook.getSheetAt(2);
         HSSFSheet synSheet = workbook.getSheetAt(3);
         //then
-        sheetAssertion(mockReportCreator.citySheetMap(), citySheet);
-        sheetAssertion(mockReportCreator.stationSheetMap(), stationSheet);
-        sheetAssertion(mockReportCreator.airSheetMap(), airSheet);
-        sheetAssertion(mockReportCreator.synSheetMap(), synSheet);
-        //cleaning
-        fileService.delFile(xmlAddAllMeasurementsReport);
+        try {
+            sheetAssertion(mockReportCreator.citySheetMap(), citySheet);
+            sheetAssertion(mockReportCreator.stationSheetMap(), stationSheet);
+            sheetAssertion(mockReportCreator.airSheetMap(), airSheet);
+            sheetAssertion(mockReportCreator.synSheetMap(), synSheet);
+        } catch (Exception e){
+            fileService.delFile(xmlAddAllMeasurementsReport);
+        } finally {
+            fileService.delFile(xmlAddAllMeasurementsReport);
+        }
     }
 
     private void sheetAssertion(Map<String, Object[]> map, HSSFSheet citySheet) {
