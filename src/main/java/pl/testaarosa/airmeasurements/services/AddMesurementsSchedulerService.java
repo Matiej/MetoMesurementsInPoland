@@ -16,7 +16,7 @@ public class AddMesurementsSchedulerService {
 
 
     public static final Logger LOGGER = LoggerFactory.getLogger(AddMesurementsSchedulerService.class);
-    private boolean whiteFlag = true;
+    private volatile boolean whiteFlag = true;
     private LocalDateTime timeStamp;
 
     @Autowired
