@@ -14,6 +14,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
@@ -21,6 +24,7 @@ import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 public class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT =  new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -65,7 +69,11 @@ public class EmailService {
         mailMessage.setSubject(mail.getSubject());
         mailMessage.setText(mail.getMessage());
         mailMessage.setFrom(mail.getFrom());
-        mailMessage.setSentDate(mail.getSentDate());
+        try {
+            mailMessage.setSentDate(SIMPLE_DATE_FORMAT.parse(mail.getSentDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return mailMessage;
     }
 
@@ -75,7 +83,11 @@ public class EmailService {
         helper.setSubject(mail.getSubject());
         helper.setText(mail.getMessage(), true);
         helper.setFrom("javamatiej@gmail.com", "Matiej MeteoCenter");
-        helper.setSentDate(mail.getSentDate());
+        try {
+            helper.setSentDate(SIMPLE_DATE_FORMAT.parse(mail.getSentDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         helper.addAttachment(report.getName(), report);
         return helper;
 

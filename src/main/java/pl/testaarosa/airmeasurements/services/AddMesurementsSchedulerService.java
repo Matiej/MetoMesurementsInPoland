@@ -28,7 +28,7 @@ public class AddMesurementsSchedulerService {
     @Scheduled(cron = "0 01 13,21,5 * * *")
     public void addAllMeasurementsSchedule() {
         LOGGER.info(ANSI_PURPLE + "Add measurements is starting and send e-mail notify" + ANSI_RESET);
-        emailNotifierService.sendEmailBeforAddMeasuremetns("first");
+        emailNotifierService.sendEmailBeforeAddMeasuremetns("first");
         try {
             addMeasurementsService.addMeasurementsAllStations();
             LOGGER.info(ANSI_BLUE + "Measurements added first try successful"+ ANSI_RESET);
@@ -49,7 +49,7 @@ public class AddMesurementsSchedulerService {
                 try {
                     if (LocalDateTime.now().isAfter(timeStamp.plusMinutes(10))) {
                         LOGGER.info(ANSI_PURPLE + "Trying add all measurements second time. " + ANSI_RESET);
-                        emailNotifierService.sendEmailBeforAddMeasuremetns("second");
+                        emailNotifierService.sendEmailBeforeAddMeasuremetns("second");
                         addMeasurementsService.addMeasurementsAllStations();
                         LOGGER.info(ANSI_BLUE + "Added measurements second try successful!");
                         whiteFlag = false;

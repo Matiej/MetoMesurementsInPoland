@@ -7,6 +7,7 @@ import pl.testaarosa.airmeasurements.domain.Mail;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
     private String notifyMail;
     @Value("${from.mail}")
     private String fromMail;
-    private final static Date date = new Date();
+    private final static String DATE = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
     private final EmailService emailService;
     private final EmailContentBuilder emailContentBuilder;
 
@@ -31,31 +32,31 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
     }
 
     @Override
-    public void sendEmailBeforAddMeasuremetns(String shortMessage) {
-        String subject = "Starting METEO measurements " + LocalDateTime.now();
+    public void sendEmailBeforeAddMeasuremetns(String shortMessage) {
+        String subject = "Starting METEO measurements " + LocalDateTime.now().withNano(0);
         String message = "\n Scheduler is starting "+shortMessage +" try to download of measurements for Testaaarosa METO and AIR stations.";
-        emailService.sendEmail(new Mail(notifyMail, subject, message, fromMail, date));
+        emailService.sendEmail(new Mail(notifyMail, subject, message, fromMail, DATE));
     }
 
     @Override
     public void sendFirstErrorMail(String error) {
-        String subject = "Error METEO measurements " + LocalDateTime.now();
+        String subject = "Error METEO measurements " + LocalDateTime.now().withNano(0);
         StringBuilder message = new StringBuilder();
         message.append("\n Can't download of measurements for Testaaarosa METO and AIR stations because of some error.\n" +
                 " Scheduler will try once again it 10minutes. Below log error report: \n");
         message.append("\n  REPORT -> \n"+error);
 
-        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, date));
+        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, DATE));
     }
 
     @Override
     public void sendSecondErrorMail(String error) {
-        String subject = "Error METEO measurements " + LocalDateTime.now();
+        String subject = "Error METEO measurements " + LocalDateTime.now().withNano(0);
         StringBuilder message = new StringBuilder();
         message.append("\n Can't download of measurements second try for Testaaarosa METO and AIR stations because of some error.\n" +
                 " Scheduler will try once again it 8 hours. Below log error report: \n");
         message.append("\n + REPORT -> \n"+error);
-        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, date));
+        emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, DATE));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
             messeage.append("name: " + m.getStationName()+", address: " + m.getStreet() + ", city: "
                     + m.getCity() +"\n");
         });
-        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail, date));
+        emailService.sendEmail(new Mail(notifyMail, subject, messeage.toString(), fromMail, DATE));
         return messeage.toString();
     }
 
@@ -86,7 +87,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
         model.put("reportMessage", messageHead);
         model.put("delMessage", delReport);
         String content = emailContentBuilder.multiVarBuilder(model);
-        emailService.sendEmailWithReport(new Mail(notifyMail, subject, content, fromMail, date), file);
+        emailService.sendEmailWithReport(new Mail(notifyMail, subject, content, fromMail, DATE), file);
         return messageHead;
     }
 

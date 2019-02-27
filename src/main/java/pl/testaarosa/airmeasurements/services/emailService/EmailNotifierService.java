@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface EmailNotifierService {
 
-    void sendEmailBeforAddMeasuremetns(String shortMessage);
+    void sendEmailBeforeAddMeasuremetns(String shortMessage);
     void sendFirstErrorMail(String error);
     void sendSecondErrorMail(String error);
     String sendEmailAfterDownloadMeasurementsN(List<MeasuringStation> stationList, String[] shortMess);

@@ -14,8 +14,7 @@ import pl.testaarosa.airmeasurements.services.emailService.EmailContentBuilder;
 import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierServiceImpl;
 import pl.testaarosa.airmeasurements.services.emailService.EmailService;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,17 +43,24 @@ public class EmailServiceNotiferTestSuit {
     }
 
     @Test
-    public void shouldSendEmailBeforAddMeasuremetns() {
+    public void shouldSendEmailBeforeAddMeasuremetns() {
         //given
-        String sub = "some subject";
-        String message = "some test message";
-        Mail mail = mockMailRepository.mockMail();
+        String shortMessage = "first";
+        Mail mail = mockMailRepository.mockMailBeforeMeasurement();
         //when
-        emailService.sendEmail(mail);
+        emailNotifierService.sendEmailBeforeAddMeasuremetns(shortMessage);
         //then
+//        verify(emailService).sendEmail(argThat(mail));
         verify(emailService, times(1)).sendEmail(mail);
         verifyNoMoreInteractions(emailService);
+    }
 
+    @Test
+    public void shouldSendFirstErrorMail() {
+        //given
+        Mail mail = mockMailRepository.mockMail();
+        //when
+//        emailService.
     }
 
 }

@@ -10,12 +10,12 @@ public class Mail {
     private String message;
     private String toCc;
     private String from;
-    private Date sentDate;
+    private String sentDate;
 
     public Mail() {
     }
 
-    public Mail(String mailTo, String subject, String message, String from, Date sentdate) {
+    public Mail(String mailTo, String subject, String message, String from, String sentdate) {
         this.mailTo = mailTo;
         this.subject = subject;
         this.message = message;
@@ -23,13 +23,13 @@ public class Mail {
         this.sentDate = sentdate;
     }
 
-    public Mail(String mailTo, String subject, String message, String toCc, String from) {
-        this.mailTo = mailTo;
-        this.subject = subject;
-        this.message = message;
-        this.toCc = toCc;
-        this.from = from;
-    }
+//    public Mail(String mailTo, String subject, String message, String toCc, String from) {
+//        this.mailTo = mailTo;
+//        this.subject = subject;
+//        this.message = message;
+//        this.toCc = toCc;
+//        this.from = from;
+//    }
 
     public String getMailTo() {
         return mailTo;
@@ -71,11 +71,11 @@ public class Mail {
         this.from = from;
     }
 
-    public Date getSentDate() {
+    public String getSentDate() {
         return sentDate;
     }
 
-    public void setSentDate(Date sentDate) {
+    public void setSentDate(String sentDate) {
         this.sentDate = sentDate;
     }
 
@@ -95,5 +95,17 @@ public class Mail {
     @Override
     public int hashCode() {
         return Objects.hash(mailTo, subject, message, toCc, from, sentDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Mail{" +
+                "mailTo='" + mailTo + '\'' +
+                ", subject='" + subject + '\'' +
+                ", message='" + message + '\'' +
+                ", toCc='" + toCc + '\'' +
+                ", from='" + from + '\'' +
+                ", sentDate=" + sentDate +
+                '}';
     }
 }
