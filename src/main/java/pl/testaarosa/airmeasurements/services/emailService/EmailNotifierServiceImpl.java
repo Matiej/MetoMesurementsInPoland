@@ -87,8 +87,9 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
         model.put("reportMessage", messageHead);
         model.put("delMessage", delReport);
         String content = emailContentBuilder.multiVarBuilder(model);
-        emailService.sendEmailWithReport(new Mail(notifyMail, subject, content, fromMail, DATE), file);
-        return messageHead;
+        Mail mail = new Mail(notifyMail, subject, content, fromMail, DATE);
+        emailService.sendEmailWithReport(mail, file);
+        return mail.getMessage();
     }
 
 }

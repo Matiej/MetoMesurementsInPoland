@@ -16,8 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
-import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_RED;
-import static pl.testaarosa.airmeasurements.services.ConsolerData.ANSI_RESET;
+import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 @Service
 //@Scope(scopeName = "prototype")
@@ -117,6 +116,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
         if (cityFeDtoList.isEmpty()) {
             throw new NoSuchElementException("Can't find cities online measurements");
         }
+        LOGGER.info(ANSI_WHITE + "Received total cities: " + cityFeDtoList.size() + ANSI_RESET);
         LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
         return cityFeDtoList;
     }

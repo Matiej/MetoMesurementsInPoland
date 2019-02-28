@@ -155,7 +155,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
         while (iterator.hasNext()) {
             last = iterator.next().getKey();
         }
-        AtomicInteger cityRow = new AtomicInteger(Integer.valueOf(last));
+        AtomicInteger cityRow = new AtomicInteger(Integer.valueOf(last)+1);
         synoptcMstMap = new LinkedHashMap<>();
         synoptcMstMap.put("0", new Object[]{"ID", "ForeignID", "Measurement date", "Save date", "City",
                 "Temperature", "Wind speed", "Air Humidity", "Presure"});

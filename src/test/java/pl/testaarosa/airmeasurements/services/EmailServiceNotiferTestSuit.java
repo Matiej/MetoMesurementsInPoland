@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -109,20 +110,11 @@ public class EmailServiceNotiferTestSuit {
         String[] shortMess = new String[]{"1","2","3"};
         File file = mockReportCreator.createTestFileReport(NAME_CONST, PATH);
         Mail mail = mockMailRepository.mockAfterDownloadMeasurementsWithReportMail(file, shortMess, deleteMessage);
-        String mailMessage = mail.getMessage();
-        Map model = new HashMap();
-        model.put("reportMessage", mail.getMessage());
-        model.put("delMessage", "Delete test message");
-        TemplateEngine templateEngine = new TemplateEngine();
-        Context context = new Context();
+        mail.setMessage(null);
         //when
-        context.setVariables(model);
-        String mailTemplate = templateEngine.process("mailTemplate", context);
-        mail.setMessage(mailTemplate);
-        when(emailContentBuilder.multiVarBuilder(model)).thenReturn(mailTemplate);
         String s = emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(file, shortMess, deleteMessage);
         //then
-        assertEquals(mailMessage,s);
+       assertNull(s);
         verify(emailService, times(1)).sendEmailWithReport(mail,file);
         verifyNoMoreInteractions(emailService);
     }
