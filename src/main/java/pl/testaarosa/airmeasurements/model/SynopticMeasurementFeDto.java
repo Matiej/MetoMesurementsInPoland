@@ -9,12 +9,11 @@ public class SynopticMeasurementFeDto {
     private int foreignId;
     private String cityName;
     private LocalDateTime saveDate;
+    private String measurementDate;
     private double temperature;
     private double windSpeed;
     private double airHumidity;
     private double pressure;
-    private String measurementDate;
-    private City city;
 
     public int getForeignId() {
         return foreignId;
@@ -80,11 +79,4 @@ public class SynopticMeasurementFeDto {
         this.measurementDate = measurementDate;
     }
 
-    public City getCity() {
-        return city;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
-    }
 }

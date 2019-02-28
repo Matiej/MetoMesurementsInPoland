@@ -1,12 +1,16 @@
 package pl.testaarosa.airmeasurements.model;
 
+import pl.testaarosa.airmeasurements.domain.AirMeasurement;
+import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
+
+import java.util.LinkedList;
 import java.util.List;
 
 public class CityFeDto {
 
     private String name;
-    private List<AirMeasurementFeDto> airMeasurementFeDtoList;
-    private SynopticMeasurementFeDto synopticMeasurementFeDto;
+    private List<AirMeasurement> airMeasurementList = new LinkedList<>();
+    private SynopticMeasurement synopticMeasurement;
 
     public String getName() {
         return name;
@@ -16,19 +20,19 @@ public class CityFeDto {
         this.name = name;
     }
 
-    public List<AirMeasurementFeDto> getAirMeasurementFeDtoList() {
-        return airMeasurementFeDtoList;
+    public List<AirMeasurement> getAirMeasurementList() {
+        return airMeasurementList;
     }
 
-    public void setAirMeasurementFeDtoList(List<AirMeasurementFeDto> airMeasurementFeDtoList) {
-        this.airMeasurementFeDtoList = airMeasurementFeDtoList;
+    public void setAirMeasurementList(List<AirMeasurement> airMeasurementList) {
+        this.airMeasurementList = airMeasurementList;
     }
 
-    public SynopticMeasurementFeDto getSynopticMeasurementFeDto() {
-        return synopticMeasurementFeDto;
+    public SynopticMeasurement getSynopticMeasurement() {
+        return synopticMeasurement;
     }
 
-    public void setSynopticMeasurementFeDto(SynopticMeasurementFeDto synopticMeasurementFeDto) {
-        this.synopticMeasurementFeDto = synopticMeasurementFeDto;
+    public void setSynopticMeasurement(SynopticMeasurement synopticMeasurement) {
+        this.synopticMeasurement = synopticMeasurement;
     }
 }

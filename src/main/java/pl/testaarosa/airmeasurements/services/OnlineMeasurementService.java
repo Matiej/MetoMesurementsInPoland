@@ -1,6 +1,7 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.springframework.web.client.RestClientException;
+import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface OnlineMeasurementService {
     OnlineMeasurementDto getHottestOnlineStation() throws RestClientException, NoSuchElementException;
 
     OnlineMeasurementDto getColdestOnlineStation() throws RestClientException, NoSuchElementException;
+
+    List<CityFeDto> onlineMeasurementsForCities() throws RestClientException, NoSuchElementException;
 }

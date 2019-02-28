@@ -7,6 +7,7 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 import pl.testaarosa.airmeasurements.mapper.OnlineMeasurementMapper;
+import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.List;
@@ -28,6 +29,13 @@ public class OnlineMeasurementProcessor {
     public List<OnlineMeasurementDto> fillMeasuringStationListStructure() throws RestClientException, NoSuchElementException {
         Map<MeasuringStation, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsAndStProcessor();
         Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();
+        fillCityFeDtoStructure();
         return measuringStationMapper.mapToOnlneMsDtoList(airMeasurementMap, synopticMeasurementMap);
+    }
+
+    public List<CityFeDto> fillCityFeDtoStructure() throws RestClientException, NoSuchElementException {
+        Map<MeasuringStation, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsAndStProcessor();
+        Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();
+        return measuringStationMapper.mapToCityFeDto(airMeasurementMap,synopticMeasurementMap);
     }
 }

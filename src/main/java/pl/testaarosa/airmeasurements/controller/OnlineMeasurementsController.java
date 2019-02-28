@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
+import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
@@ -108,6 +109,26 @@ public class OnlineMeasurementsController {
             return ResponseEntity.status(400).body("Can't find coldest online measurement!");
         } catch (RestClientException e) {
             return ResponseEntity.status(500).body("External REST API server error! Can't get hottest measurement online for station -> ");
+        }
+    }
+
+    @ApiOperation(value = "Get measurements for all cities.", response = CityFeDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Online measurements for cities found successful"),
+            @ApiResponse(code = 400, message = "Can not find any online measurements"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
+            @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for all cities")})
+    @RequestMapping(value = "/allCities", method = RequestMethod.GET)
+    public ResponseEntity<Object> getAllCites() {
+        try {
+            return ResponseEntity.ok().body(measuringOnlineServices.onlineMeasurementsForCities());
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("Can't find any online measurements for cities");
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return ResponseEntity.status(500)
+                    .body("External REST API server error! Can't get online measurements for all stations.-> ");
         }
     }
 }

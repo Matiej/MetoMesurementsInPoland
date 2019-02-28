@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
+import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 
 import java.util.Comparator;
@@ -107,5 +108,16 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
             throw new RestClientException("External REST API server error! Can't get coldest measurement online for station"
                     + " -> " + e.getMessage());
         }
+    }
+
+    @Override
+    public List<CityFeDto> onlineMeasurementsForCities() throws RestClientException, NoSuchElementException {
+        long start = System.currentTimeMillis();
+        List<CityFeDto> cityFeDtoList = msProc.fillCityFeDtoStructure();
+        if (cityFeDtoList.isEmpty()) {
+            throw new NoSuchElementException("Can't find cities online measurements");
+        }
+        LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
+        return cityFeDtoList;
     }
 }

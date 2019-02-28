@@ -34,7 +34,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
     @Override
     public void sendEmailBeforeAddMeasuremetns(String shortMessage) {
         String subject = "Starting METEO measurements " + LocalDateTime.now().withNano(0);
-        String message = "\n Scheduler is starting "+shortMessage +" try to download of measurements for Testaaarosa METO and AIR stations.";
+        String message = "\n Scheduler is starting "+shortMessage +" try to download of measurements for Testaaarosa METEO and AIR stations.";
         emailService.sendEmail(new Mail(notifyMail, subject, message, fromMail, DATE));
     }
 
@@ -42,7 +42,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
     public void sendFirstErrorMail(String error) {
         String subject = "Error METEO measurements " + LocalDateTime.now().withNano(0);
         StringBuilder message = new StringBuilder();
-        message.append("\n Can't download of measurements for Testaaarosa METO and AIR stations because of some error.\n" +
+        message.append("\n Can't download of measurements for Testaaarosa METEO and AIR stations because of some error.\n" +
                 " Scheduler will try once again it 10minutes. Below log error report: \n");
         message.append("\n  REPORT -> \n"+error);
 
@@ -53,7 +53,7 @@ public class EmailNotifierServiceImpl implements EmailNotifierService{
     public void sendSecondErrorMail(String error) {
         String subject = "Error METEO measurements " + LocalDateTime.now().withNano(0);
         StringBuilder message = new StringBuilder();
-        message.append("\n Can't download of measurements second try for Testaaarosa METO and AIR stations because of some error.\n" +
+        message.append("\n Can't download of measurements second try for Testaaarosa METEO and AIR stations because of some error.\n" +
                 " Scheduler will try once again it 8 hours. Below log error report: \n");
         message.append("\n + REPORT -> \n"+error);
         emailService.sendEmail(new Mail(notifyMail, subject, message.toString(), fromMail, DATE));
