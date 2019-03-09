@@ -43,7 +43,11 @@ public class OnlineMeasurementMapper {
         measurementMap.forEach((k, v) -> {
             if (cityFeDtos.stream().noneMatch(c -> k.getCity().equalsIgnoreCase(c.getName()))) {
                 CityFeDto cityFeDtoNew = new CityFeDto();
-                cityFeDtoNew.setName(k.getCity());
+                if(k.getCity().isEmpty()) {
+                    cityFeDtoNew.setName(k.getStationName());
+                } else {
+                    cityFeDtoNew.setName(k.getCity());
+                }
                 cityFeDtoNew.getAirMeasurementList().add(v);
                 cityFeDtos.add(cityFeDtoNew);
             } else {

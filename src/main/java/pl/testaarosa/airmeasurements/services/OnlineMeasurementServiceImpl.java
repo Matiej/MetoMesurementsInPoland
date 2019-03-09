@@ -110,6 +110,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
     }
 
     @Override
+    @Cacheable(value = "cities")
     public List<CityFeDto> onlineMeasurementsForCities() throws RestClientException, NoSuchElementException {
         long start = System.currentTimeMillis();
         List<CityFeDto> cityFeDtoList = msProc.fillCityFeDtoStructure();
