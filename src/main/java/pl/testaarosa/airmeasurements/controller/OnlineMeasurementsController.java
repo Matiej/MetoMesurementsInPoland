@@ -123,8 +123,8 @@ public class OnlineMeasurementsController {
         try {
             return ResponseEntity.ok().body(measuringOnlineServices.onlineMeasurementsForCities());
         } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(400).body("Can't find any online measurements for cities");
+            LOGGER.error(e.getMessage(),e);
+            return ResponseEntity.status(400).body("Can't find any online measurements for all cities");
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(), e);
             return ResponseEntity.status(500)

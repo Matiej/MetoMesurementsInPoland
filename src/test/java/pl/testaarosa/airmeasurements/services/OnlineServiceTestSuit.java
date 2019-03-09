@@ -10,7 +10,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
+import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
+import pl.testaarosa.airmeasurements.repositories.MockCityFeDtoRepository;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineMeasurementRepository;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +29,7 @@ import static org.mockito.Mockito.when;
 public class OnlineServiceTestSuit {
 
     private MockOnlineMeasurementRepository mockOnlineMeasurementRepository;
+    private MockCityFeDtoRepository mockCityFeDtoRepository;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -39,6 +43,7 @@ public class OnlineServiceTestSuit {
     @Before
     public void init() {
         mockOnlineMeasurementRepository = new MockOnlineMeasurementRepository();
+        mockCityFeDtoRepository = new MockCityFeDtoRepository();
     }
 
     @Test
@@ -290,5 +295,49 @@ public class OnlineServiceTestSuit {
         exception.expectMessage(expectedMessage);
         //then
         service.getColdestOnlineStation();
+    }
+
+    @Test
+    public void shouldGetonlineMeasurementsForCities() {
+        //given
+        List<CityFeDto> cityFeDtoList = mockCityFeDtoRepository.cityFeDtoList();
+        //when
+        when(msProcessor.fillCityFeDtoStructure()).thenReturn(cityFeDtoList);
+        //then
+        List<CityFeDto> resultList = null;
+        try {
+            resultList = service.onlineMeasurementsForCities();
+        } catch (RestClientException | NoSuchElementException e) {
+            assertEquals("if test pass, not eter here-> some not important message", e.getMessage());
+        }
+
+        assertNotNull(resultList);
+        assertEquals(cityFeDtoList, resultList);
+    }
+
+    @Test
+    public void shouldGetonlineMeasurementsForCitiesAndThrowsNoSuchElementException() {
+        //given
+        String expectMessage = "Can't find cities online measurements";
+        //when
+        exception.expect(NoSuchElementException.class);
+        exception.expectMessage(expectMessage);
+        //then
+        service.onlineMeasurementsForCities();
+    }
+
+    @Test
+    public void shouldGetonlineMeasurementsForCitiesAndThrowsNoSuchElementExceptionJuVintage() {
+        //given
+        String expectMessage = "Can't find cities online measurements";
+        given(msProcessor.fillCityFeDtoStructure()).willReturn(new ArrayList<>());
+        //when
+        List<CityFeDto> result = null;
+        try {
+            result = service.onlineMeasurementsForCities();
+        } catch (RestClientException | NoSuchElementException e) {
+            assertEquals(expectMessage, e.getMessage());
+        }
+        assertNull(result);
     }
 }

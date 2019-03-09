@@ -29,7 +29,6 @@ public class OnlineMeasurementProcessor {
     public List<OnlineMeasurementDto> fillMeasuringStationListStructure() throws RestClientException, NoSuchElementException {
         Map<MeasuringStation, AirMeasurement> airMeasurementMap = apiSupplierRetriever.airMeasurementsAndStProcessor();
         Map<String, SynopticMeasurement> synopticMeasurementMap = apiSupplierRetriever.synopticMeasurementProcessor();
-        fillCityFeDtoStructure();
         return measuringStationMapper.mapToOnlneMsDtoList(airMeasurementMap, synopticMeasurementMap);
     }
 

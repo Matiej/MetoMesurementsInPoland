@@ -11,8 +11,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestClientException;
+import pl.testaarosa.airmeasurements.domain.City;
+import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.repositories.Converter;
+import pl.testaarosa.airmeasurements.repositories.MockCityFeDtoRepository;
+import pl.testaarosa.airmeasurements.repositories.MockCityRepository;
 import pl.testaarosa.airmeasurements.repositories.MockOnlineMeasurementRepository;
 import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
@@ -20,13 +24,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OnlineMeasurementsControllerTestSuit {
 
-    private final MockOnlineMeasurementRepository mockOnlineMeasurementRepository = new MockOnlineMeasurementRepository();
     private final Converter converter = new Converter();
+    private MockOnlineMeasurementRepository mockOnlineMeasurementRepository;
+    private MockCityFeDtoRepository mockCityFeDtoRepository;
     private final static String MAPPING = "/online";
 
     @InjectMocks
@@ -39,7 +45,9 @@ public class OnlineMeasurementsControllerTestSuit {
 
     @Before
     public void init() {
+        mockOnlineMeasurementRepository = new MockOnlineMeasurementRepository();
         mockMvc = MockMvcBuilders.standaloneSetup(onlineMeasurementsController).build();
+        mockCityFeDtoRepository = new MockCityFeDtoRepository();
     }
 
     @Test
@@ -48,7 +56,7 @@ public class OnlineMeasurementsControllerTestSuit {
         List<OnlineMeasurementDto> stationOnLineList = mockOnlineMeasurementRepository.measuringStationOnLineList();
         //when
         when(measuringOnlineServices.getAllMeasuringStations()).thenReturn(stationOnLineList);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/allSt"))
+        mockMvc.perform(get(MAPPING + "/allSt"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLineList)));
         //then
@@ -62,7 +70,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getAllMeasuringStations())
                 .thenThrow(new NoSuchElementException("Find all onLine measuring stations, throws NoSuchElementException, return status 400"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/allSt"))
+        mockMvc.perform(get(MAPPING + "/allSt"))
                 .andExpect(status().is(400))
                 .andReturn();
         //then
@@ -74,7 +82,7 @@ public class OnlineMeasurementsControllerTestSuit {
     public void shouldNotFindAllMeasuringStationsWrongURL() throws Exception {
         //given
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/allSt/404"))
+        mockMvc.perform(get(MAPPING + "/allSt/404"))
                 .andExpect(status().is(404))
                 .andReturn();
         //then
@@ -88,7 +96,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getAllMeasuringStations())
                 .thenThrow(new RestClientException("Find all onLine measuring stations, throws throws RestClientException, return status 500"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/allSt"))
+        mockMvc.perform(get(MAPPING +"/allSt"))
                 .andExpect(status().is(500))
                 .andReturn();
         //then
@@ -103,7 +111,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
                 .thenReturn(stationOnLines);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/citySt")
+        mockMvc.perform(get(MAPPING +"/citySt")
                 .param("city", "wawa"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLines)));
@@ -118,7 +126,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
                 .thenThrow(new NoSuchElementException("Get measuring station for given city, throws NoSuchElementException, then return status 400"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/citySt")
+        mockMvc.perform(get(MAPPING +"/citySt")
                 .param("city", "wawa"))
                 .andExpect(status().is(400))
                 .andReturn();
@@ -131,7 +139,7 @@ public class OnlineMeasurementsControllerTestSuit {
     public void shouldGetGivenCityMeasuringStationsAndWrongURL() throws Exception {
         //given
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/citySt404")
+        mockMvc.perform(get(MAPPING +"/citySt404")
                 .param("city", "wawa"))
                 .andExpect(status().is(404))
                 .andReturn();
@@ -146,7 +154,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(""))
                 .thenThrow(new IllegalArgumentException("Get measuring station for given city, throw InterruptedException, then return status 406"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/citySt")
+        mockMvc.perform(get(MAPPING +"/citySt")
                 .param("city", ""))
                 .andExpect(status().is(406));
         //then
@@ -160,7 +168,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
                 .thenThrow(new RestClientException("Get measuring station for given city, throw RestClientException, then return status 500"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/citySt")
+        mockMvc.perform(get(MAPPING +"/citySt")
                 .param("city", "wawa"))
                 .andExpect(status().is(500))
                 .andReturn();
@@ -175,7 +183,7 @@ public class OnlineMeasurementsControllerTestSuit {
         OnlineMeasurementDto stationOnLine = mockOnlineMeasurementRepository.measuringStationOnLineList().get(0);
         //when
         when(measuringOnlineServices.getHottestOnlineStation()).thenReturn(stationOnLine);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/hottest"))
+        mockMvc.perform(get(MAPPING +"/hottest"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLine)));
         //then
@@ -189,7 +197,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getHottestOnlineStation())
                 .thenThrow(new NoSuchElementException("Get hottest online measurements, throws NoSuchElementException and return status 400"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING + "/hottest"))
+        mockMvc.perform(get(MAPPING + "/hottest"))
                 .andExpect(status().is(400));
         //then
         verify(measuringOnlineServices, times(1)).getHottestOnlineStation();
@@ -200,7 +208,7 @@ public class OnlineMeasurementsControllerTestSuit {
     public void shouldGetHotestOnlineMeasurementAndWrongURL() throws Exception {
         //given
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/hottest404"))
+        mockMvc.perform(get(MAPPING +"/hottest404"))
                 .andExpect(status().is(404))
                 .andReturn();
         //then
@@ -214,7 +222,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getHottestOnlineStation())
                 .thenThrow(new RestClientException("Get Hottest online measurements, throw RestClientException and return 500 status"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/hottest"))
+        mockMvc.perform(get(MAPPING +"/hottest"))
                 .andExpect(status().is(500))
                 .andReturn();
         //then
@@ -228,7 +236,7 @@ public class OnlineMeasurementsControllerTestSuit {
         OnlineMeasurementDto stationOnLine = mockOnlineMeasurementRepository.measuringStationOnLineList().get(0);
         //when
         when(measuringOnlineServices.getColdestOnlineStation()).thenReturn(stationOnLine);
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/coldest"))
+        mockMvc.perform(get(MAPPING +"/coldest"))
                 .andExpect(status().is(200))
                 .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLine)));
         //then
@@ -242,7 +250,7 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getColdestOnlineStation())
                 .thenThrow(new NoSuchElementException("Get coldest online measurements, throws NoSuchElementException and return status 400"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/coldest"))
+        mockMvc.perform(get(MAPPING +"/coldest"))
                 .andExpect(status().is(400));
         //then
         verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
@@ -253,7 +261,7 @@ public class OnlineMeasurementsControllerTestSuit {
     public void shouldGetColdestOnlineMeasurementAndWrongURLTest() throws Exception {
         //given
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/coldest404"))
+        mockMvc.perform(get(MAPPING +"/coldest404"))
                 .andExpect(status().is(404))
                 .andReturn();
         //then
@@ -267,10 +275,56 @@ public class OnlineMeasurementsControllerTestSuit {
         //when
         when(measuringOnlineServices.getColdestOnlineStation())
                 .thenThrow(new RestClientException("Get Coldest online measurements, throw RestClientException and return 500 status"));
-        mockMvc.perform(MockMvcRequestBuilders.get(MAPPING +"/coldest"))
+        mockMvc.perform(get(MAPPING +"/coldest"))
                 .andExpect(status().is(500));
         //then
         verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
         verifyNoMoreInteractions(measuringOnlineServices);
     }
+
+    @Test
+    public void shouldGetAllCites() throws Exception {
+        //given
+        List<CityFeDto> cityFeDtoList = mockCityFeDtoRepository.cityFeDtoList();
+        //when
+        when(measuringOnlineServices.onlineMeasurementsForCities()).thenReturn(cityFeDtoList);
+        mockMvc.perform(get(MAPPING+"/allCities"))
+                .andExpect(status().isOk());
+        //when
+        verify(measuringOnlineServices, times(1)).onlineMeasurementsForCities();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shouldGetAllCitesAndThrowsNoSuchElementException() throws Exception {
+        //when
+        when(measuringOnlineServices.onlineMeasurementsForCities())
+                .thenThrow(new NoSuchElementException("Get all cities online measurements, throws NoSuchElementException and return status 400"));
+        mockMvc.perform(get(MAPPING+"/allCities"))
+                .andExpect(status().is(400));
+        //when
+        verify(measuringOnlineServices, times(1)).onlineMeasurementsForCities();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shuldGetAllCitesAndThrowsRestClientException() throws Exception {
+        //when
+        when(measuringOnlineServices.onlineMeasurementsForCities())
+                .thenThrow(new RestClientException("Get all cites online measurements, throw RestClientException and return 500 status"));
+        mockMvc.perform(get(MAPPING+"/allCities"))
+                .andExpect(status().is(500));
+        verify(measuringOnlineServices, times(1)).onlineMeasurementsForCities();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
+    @Test
+    public void shuldGetAllCitesAndWrongURLTest() throws Exception {
+        //given
+        //when
+        mockMvc.perform(get(MAPPING+"/wrongURL"));
+        verify(measuringOnlineServices, times(0)).onlineMeasurementsForCities();
+        verifyNoMoreInteractions(measuringOnlineServices);
+    }
+
 }
