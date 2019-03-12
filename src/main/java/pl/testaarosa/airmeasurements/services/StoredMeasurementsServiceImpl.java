@@ -14,6 +14,7 @@ import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class StoredMeasurementsServiceImpl implements StoredMeasurementsService {
 
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final MeasuringStationRepository stationRepository;
     private final AirMeasurementRepository airRepository;
@@ -48,9 +50,11 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
         }
     }
 
+    //TODO After synoptics service ready -> to delete
     @Override
     public List<SynopticMeasurement> getSynopticMeasuremets(String date) throws DateTimeException, NoSuchElementException,
             DataIntegrityViolationException {
+
         List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
         if (isValidDate(date)) {
             try {

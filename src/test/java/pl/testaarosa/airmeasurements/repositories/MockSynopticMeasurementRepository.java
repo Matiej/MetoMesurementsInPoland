@@ -11,22 +11,20 @@ import java.util.List;
 public class MockSynopticMeasurementRepository {
 
     private final MockCityRepository mockCityRepository = new MockCityRepository();
-    private final String M_DATE = "2019-02-22";
-    private final String M_HOUR = "18";
     public List<SynopticMeasurement> synopticMeasurementsOrderColdest(){
         List<City> cities = mockCityRepository.cityList();
-        LocalDateTime date = LocalDateTime.of(2018,05,05,12,01,05).withNano(0);
+        LocalDateTime saveDate = LocalDateTime.of(2018,05,05,12,01,05).withNano(0);
+        LocalDateTime measurementdate = LocalDateTime.of(2018,02,22,18,00,00).withNano(0);
         SynopticMeasurement synopticMeasurement1 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(1L)
                 .foreignId(1)
                 .city("Warszawa")
-                .saveDate(date)
+                .saveDate(saveDate)
                 .temperature(6)
                 .windSpeed(35)
                 .airHumidity(77)
                 .pressure(999)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement1.setCity(cities.get(0));
 
@@ -34,13 +32,12 @@ public class MockSynopticMeasurementRepository {
                 .id(1L)
                 .foreignId(1)
                 .city("Warszawa")
-                .saveDate(date)
+                .saveDate(saveDate)
                 .temperature(6)
                 .windSpeed(35)
                 .airHumidity(77)
                 .pressure(999)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement2.setCity(cities.get(0));
 
@@ -48,13 +45,12 @@ public class MockSynopticMeasurementRepository {
                 .id(2L)
                 .foreignId(2)
                 .city("Poznan")
-                .saveDate(date)
+                .saveDate(saveDate)
                 .temperature(12)
                 .windSpeed(35)
                 .airHumidity(66)
                 .pressure(999)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement3.setCity(cities.get(1));
 
@@ -62,13 +58,12 @@ public class MockSynopticMeasurementRepository {
                 .id(3L)
                 .foreignId(3)
                 .city("Krakow")
-                .saveDate(date)
+                .saveDate(saveDate)
                 .temperature(15)
                 .windSpeed(35)
                 .airHumidity(66)
                 .pressure(999)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement4.setCity(cities.get(2));
 
@@ -83,6 +78,7 @@ public class MockSynopticMeasurementRepository {
     public List<SynopticMeasurement> synopticMeasurementsOrderHottest(){
         List<City> cities = mockCityRepository.cityList();
         LocalDateTime date = LocalDateTime.of(2018,05,11,10,20);
+        LocalDateTime measurementdate = LocalDateTime.of(2018,02,22,18,00,00).withNano(0);
         SynopticMeasurement synopticMeasurement1 = new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .id(1L)
                 .foreignId(1)
@@ -92,8 +88,7 @@ public class MockSynopticMeasurementRepository {
                 .windSpeed(15)
                 .airHumidity(16)
                 .pressure(1001)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement1.setCity(cities.get(0));
 
@@ -106,8 +101,7 @@ public class MockSynopticMeasurementRepository {
                 .windSpeed(15)
                 .airHumidity(16)
                 .pressure(1001)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement2.setCity(cities.get(0));
 
@@ -120,8 +114,7 @@ public class MockSynopticMeasurementRepository {
                 .windSpeed(11)
                 .airHumidity(26)
                 .pressure(999)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement3.setCity(cities.get(1));
 
@@ -134,8 +127,7 @@ public class MockSynopticMeasurementRepository {
                 .windSpeed(11)
                 .airHumidity(26)
                 .pressure(999)
-                .measurementDate(M_DATE)
-                .measurementHour(M_HOUR)
+                .measurementDate(measurementdate)
                 .build();
         synopticMeasurement4.setCity(cities.get(2));
 

@@ -26,8 +26,7 @@ public class SynopticMeasurement {
     @Column(name = "AIR_HUMIDITY")
     private double airHumidity;
     private double pressure;
-    private String measurementDate;
-    private String measurementHour;
+    private LocalDateTime measurementDate;
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "synopticMeasurements", targetEntity = MeasuringStation.class)
     private List<MeasuringStation> measuringStation = new ArrayList<>();
@@ -49,7 +48,6 @@ public class SynopticMeasurement {
         this.pressure = builder.pressure;
         this.measuringStation = new ArrayList<>(builder.measuringStation);
         this.measurementDate = builder.measurementDate;
-        this.measurementHour = builder.measurementHour;
         this.city = builder.city;
     }
 
@@ -100,12 +98,8 @@ public class SynopticMeasurement {
         return saveDate;
     }
 
-    public String getMeasurementDate() {
+    public LocalDateTime getMeasurementDate() {
         return measurementDate;
-    }
-
-    public String getMeasurementHour() {
-        return measurementHour;
     }
 
     public void setCity(City city) {
@@ -116,33 +110,11 @@ public class SynopticMeasurement {
         return city;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SynopticMeasurement that = (SynopticMeasurement) o;
-        return foreignId == that.foreignId &&
-                Double.compare(that.temperature, temperature) == 0 &&
-                Double.compare(that.windSpeed, windSpeed) == 0 &&
-                Double.compare(that.airHumidity, airHumidity) == 0 &&
-                Double.compare(that.pressure, pressure) == 0 &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(cityName, that.cityName) &&
-                Objects.equals(saveDate, that.saveDate) &&
-                Objects.equals(measurementDate, that.measurementDate) &&
-                Objects.equals(measurementHour, that.measurementHour) &&
-                Objects.equals(measuringStation, that.measuringStation);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, foreignId, cityName, saveDate, temperature, windSpeed, airHumidity, pressure, measurementDate, measurementHour, measuringStation);
-    }
 
     @Override
     public String toString() {
         return "SynopticMeasurement id: " + id + ", foreign id=" + foreignId + ", cityName " + cityName + ", save date: " + saveDate + "\n" + ", temperature: " + temperature + ", windSpeed: " + windSpeed + "\n" + ", airHumidity: " + airHumidity + ", pressure: " + pressure
-                + "\n measurement date; " + measurementDate + "\n hour: " + measurementHour + "\n" + "_____________________________" + "\n";
+                + "\n measurement date; " + measurementDate + "\n" + "_____________________________" + "\n";
     }
 
     public static class SynopticMeasurementsBuilder {
@@ -154,8 +126,7 @@ public class SynopticMeasurement {
         private double windSpeed;
         private double airHumidity;
         private double pressure;
-        private String measurementDate;
-        private String measurementHour;
+        private LocalDateTime measurementDate;
         private List<MeasuringStation> measuringStation = new ArrayList<>();
         private City city;
 
@@ -204,13 +175,8 @@ public class SynopticMeasurement {
             return this;
         }
 
-        public SynopticMeasurementsBuilder measurementDate(String measurementDate) {
+        public SynopticMeasurementsBuilder measurementDate(LocalDateTime measurementDate) {
             this.measurementDate = measurementDate;
-            return this;
-        }
-
-        public SynopticMeasurementsBuilder measurementHour(String measurementHour) {
-            this.measurementHour = measurementHour;
             return this;
         }
 

@@ -162,15 +162,13 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
         AtomicInteger row = new AtomicInteger(1);
         synopticMeasurementMap.forEach((key, value) -> {
             SynopticMeasurement synMst = value;
-            String msDate = synMst.getMeasurementDate() + "T" + synMst.getMeasurementHour() + ":00:00";
-            synoptcMstMap.put(String.valueOf(row.get()), new Object[]{row.get(), synMst.getForeignId(), msDate,
+//            String msDate = synMst.getMeasurementDate() + "T" + synMst.getMeasurementHour() + ":00:00";
+            synoptcMstMap.put(String.valueOf(row.get()), new Object[]{row.get(), synMst.getForeignId(), synMst.getMeasurementDate(),
                     synMst.getSaveDate(), synMst.getCityName(), synMst.getTemperature(), synMst.getWindSpeed(), synMst.getAirHumidity(),
                     synMst.getPressure()});
             row.getAndIncrement();
             if (cityMap.values().stream().noneMatch(c -> c[1].equals(key))) {
                 City city = synMst.getCity();
-//                Hibernate.initialize(city.getAirMeasurementList());
-//                Hibernate.initialize(city.getSynopticMeasurementList());
                 cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
                         false,true});
                 cityRow.getAndIncrement();
