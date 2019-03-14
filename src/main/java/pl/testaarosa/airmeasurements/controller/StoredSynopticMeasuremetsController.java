@@ -26,6 +26,7 @@ public class StoredSynopticMeasuremetsController {
         this.storedSynopticMeasurementService = storedSynopticMeasurementService;
     }
 
+    //TODO test
     @ApiOperation(value = "Get all stored synoptic measurements for all available cities", response = MeasuringStation.class,
             position = 1)
     @ApiResponses(value = {
@@ -130,6 +131,32 @@ public class StoredSynopticMeasuremetsController {
     public ResponseEntity<Object> findAHottestPlaceByDate(String date) {
         try {
             return ResponseEntity.ok().body(storedSynopticMeasurementService.getHottestPlaceGivenDate(date));
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");
+        } catch (DateTimeException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
+        }
+    }
+
+    @ApiOperation(value = "Get coldest place and synoptic measurements for given date", response = SynopticMeasurement.class,
+            position = 6)
+    @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
+            paramType = "query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 503, message = "Server error. Can't get synoptic measurements information."),
+            @ApiResponse(code = 200, message = "Synoptic coldest measurement for given date loaded from db successful."),
+            @ApiResponse(code = 400, message = "No measurements for given date found."),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
+            @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
+    @RequestMapping(value = "/coldestDate", method = RequestMethod.GET)
+    public ResponseEntity<Object> findColdestPlaceByDate(String date) {
+        try {
+            return ResponseEntity.ok(storedSynopticMeasurementService.getColdestPlaceGivenDate(date));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");

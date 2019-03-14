@@ -10,13 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.repositories.MockAirMeasurementRepository;
-import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.MockSynopticMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 
 import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -30,8 +30,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class StoredSynopticMeasurementServiceImplTestSuit {
 
-    private MockMeasuringStationRepository mockMeasuringStationRepository;
-    private MockAirMeasurementRepository mockAirMeasurementRepository;
     private MockSynopticMeasurementRepository mockSynopticMeasurementRepository;
 
     @Rule
@@ -45,17 +43,16 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
 
     @Before
     public void init() {
-        mockMeasuringStationRepository = new MockMeasuringStationRepository();
-        mockAirMeasurementRepository = new MockAirMeasurementRepository();
         mockSynopticMeasurementRepository = new MockSynopticMeasurementRepository();
     }
 
     @Test
     public void shouldFindAllSynopticMeasurementsGivenDate() {
         //given
+        LocalDateTime dateTime = LocalDateTime.of(2018,05,11,00,00,00);
         List<SynopticMeasurement> expect = mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest();
         //when
-        when(synopticRepository.findAll()).thenReturn(expect);
+        when(synopticRepository.findSynopticMeasurementsByDate(dateTime, dateTime.plusDays(1))).thenReturn(expect);
         //then
         List<SynopticMeasurement> result = new ArrayList<>();
         try {
@@ -71,7 +68,9 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindAllSynopticMeasurementsGivenDateAndThrowsDataIntegrityViolationException() {
         //given
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        LocalDateTime dateTime = LocalDateTime.of(2019,01,01,00,00,00);
+        given(synopticRepository.findSynopticMeasurementsByDate(dateTime, dateTime.plusDays(1)))
+                .willThrow(DataIntegrityViolationException.class);
         String date = "2019-01-01";
         String expectMessage = "There is some db connection problem: null";
         //when
@@ -117,13 +116,14 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindHottestTop10Places() {
         //given jUnit vintage ver
+        String noOfResults = "10";
         List<SynopticMeasurement> expected = mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest();
         //when
-        when(synopticRepository.findAll()).thenReturn(expected);
+        when(synopticRepository.findHottestPlaces(PageRequest.of(0, Integer.parseInt(noOfResults)))).thenReturn(expected);
         //then
         List<SynopticMeasurement> hottestPlaces = new ArrayList<>();
         try {
-            hottestPlaces = service.getHottestPlaces();
+            hottestPlaces = service.getHottestPlaces(noOfResults);
         } catch (DataIntegrityViolationException | NoSuchElementException e) {
             assertEquals("Some ignored message", e.getMessage());
         } finally {
@@ -137,7 +137,8 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     public void shouldFindHottestTop10PlacesAndThrowsDataIntegrityViolationException() {
         //given
         String noOfResults = "10";
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        given(synopticRepository.findHottestPlaces(PageRequest.of(0, Integer.parseInt(noOfResults))))
+                .willThrow(DataIntegrityViolationException.class);
         //when
         exception.expect(RuntimeException.class);
         exception.expectMessage("There is some db problem: null");
@@ -173,11 +174,11 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
         String noOfResults = "5";
         List<SynopticMeasurement> expect = mockSynopticMeasurementRepository.synopticMeasurementsOrderColdest();
         //when
-        when(synopticRepository.findAll()).thenReturn(expect);
+        when(synopticRepository.findColdestPlaces(PageRequest.of(0, Integer.parseInt(noOfResults)))).thenReturn(expect);
         //then
         List<SynopticMeasurement> result = new ArrayList<>();
         try {
-            result = service.getColdestPlaces();
+            result = service.getColdestPlaces(noOfResults);
         } catch (DataIntegrityViolationException | NoSuchElementException e) {
             assertEquals("Some ignored message", e.getMessage());
         }
@@ -191,13 +192,13 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     public void shouldFindColdestTop10PlacesAndThrowsDataIntegrityViolationException() {
         //given
         String noOfResults = "5";
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        given(synopticRepository.findColdestPlaces(PageRequest.of(0, Integer.parseInt(noOfResults))))
+                .willThrow(DataIntegrityViolationException.class);
         //when
         exception.expect(RuntimeException.class);
         exception.expectMessage("There is some db problem: null");
         //then
-        service.getHottestPlaces(noOfResults);
-        List<SynopticMeasurement> result = service.getHottestPlaces(noOfResults);
+        List<SynopticMeasurement> result = service.getColdestPlaces(noOfResults);
         Assertions.assertNull(result);
     }
 
@@ -205,7 +206,8 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     public void shouldFindColdestTop10PlacesAndThrowsDataIntegrityViolationExceptionJU5() {
         //given
         String expectMessage = "There is some db problem: null";
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        given(synopticRepository.findColdestPlaces(PageRequest.of(0, Integer.parseInt("10"))))
+                .willThrow(DataIntegrityViolationException.class);
         //when
         RuntimeException resultMessage = assertThrows(RuntimeException.class, () -> service.getColdestPlaces("10"));
         //then
@@ -215,7 +217,7 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindColdestTop10PlacesAndThrowsNoSuchElementException() {
         //given
-        String expectedMessage = "Can't find coldest 10 measurements";
+        String expectedMessage = "Can't find coldest 5 measurements";
         //when
         exception.expect(NoSuchElementException.class);
         exception.expectMessage(expectedMessage);
@@ -231,7 +233,7 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
         //when
         //then
         try {
-            service.getColdestPlaces("5");
+            service.getColdestPlaces("10");
         } catch (NoSuchElementException e) {
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -240,10 +242,11 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindHottestPlaceGivenDate() {
         //given
+        LocalDateTime dateTime = LocalDateTime.of(2018,05,11,00,00,00);
         List<SynopticMeasurement> givenRepo = mockSynopticMeasurementRepository.synopticMeasurementsOrderHottest();
         SynopticMeasurement expected = givenRepo.get(0);
         //when
-        when(synopticRepository.findAll()).thenReturn(givenRepo);
+        when(synopticRepository.findHottestPlacesByDate(dateTime, dateTime.plusDays(1))).thenReturn(givenRepo.get(0));
         //then
         SynopticMeasurement result = new SynopticMeasurement();
         try {
@@ -261,7 +264,8 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindHottestPlaceGivenDateAndThrowsDataIntegrityViolationException() {
         //given
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        LocalDateTime dateTime = LocalDateTime.of(2018,05,11,00,00,00);
+        given(synopticRepository.findHottestPlacesByDate(dateTime, dateTime.plusDays(1))).willThrow(DataIntegrityViolationException.class);
         //when
         exception.expect(RuntimeException.class);
         exception.expectMessage("There is some db problem: null");
@@ -273,8 +277,9 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindHottestPlaceGivenDateAndThrowsDataIntegrityViolationExceptionJU5() {
         //given
+        LocalDateTime dateTime = LocalDateTime.of(2019,1,1,0,0,0);
         String expectMessage = "There is some db problem: null";
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        given(synopticRepository.findHottestPlacesByDate(dateTime, dateTime.plusDays(1))).willThrow(DataIntegrityViolationException.class);
         //when
         RuntimeException resultMessage = assertThrows(RuntimeException.class, () -> service.getHottestPlaceGivenDate("2019-01-01"));
         //then
@@ -333,9 +338,10 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
         //given
         List<SynopticMeasurement> givenRepo = mockSynopticMeasurementRepository.synopticMeasurementsOrderColdest();
         SynopticMeasurement expected = givenRepo.get(0);
+        LocalDateTime dateTime = LocalDateTime.of(2018,5,5,0,0,0);
         String date = "2018-05-05";
         //when
-        when(synopticRepository.findAll()).thenReturn(givenRepo);
+        when(synopticRepository.findColestPlacesByDate(dateTime,dateTime.plusDays(1))).thenReturn(givenRepo.get(0));
         //then
         SynopticMeasurement result = new SynopticMeasurement();
         try {
@@ -353,7 +359,9 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     @Test
     public void shouldFindColdestPlaceGivenDateAndThrowsDataIntegrityViolationException() {
         //given
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        LocalDateTime dateTime = LocalDateTime.of(2018,5,5,0,0,0);
+        given(synopticRepository.findColestPlacesByDate(dateTime,dateTime.plusDays(1)))
+                .willThrow(DataIntegrityViolationException.class);
         String date = "2018-05-05";
         //when
         exception.expect(RuntimeException.class);
@@ -367,7 +375,9 @@ public class StoredSynopticMeasurementServiceImplTestSuit {
     public void shouldFindColdestPlaceGivenDateAndThrowsDataIntegrityViolationExceptionJU5() {
         //give
         String expectMessage = "There is some db problem: null";
-        given(synopticRepository.findAll()).willThrow(DataIntegrityViolationException.class);
+        LocalDateTime dateTime = LocalDateTime.of(2018,5,5,0,0,0);
+        given(synopticRepository.findColestPlacesByDate(dateTime,dateTime.plusDays(1)))
+                .willThrow(DataIntegrityViolationException.class);
         String date = "2018-05-05";
         //when
         RuntimeException exception = assertThrows(RuntimeException.class, () -> service.getColdestPlaceGivenDate(date));

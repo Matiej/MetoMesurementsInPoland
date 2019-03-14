@@ -103,9 +103,9 @@ public class StoredSynopticMeasurementServiceImpl implements StoredSynopticMeasu
 
     @Override
     public SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
-        LocalDateTime saveDate = LocalDateTime.parse(date+ " 00:00:00", dateTimeFormatter);
         SynopticMeasurement synopticMeasurement;
         if (isValidDate(date)) {
+            LocalDateTime saveDate = LocalDateTime.parse(date+ " 00:00:00", dateTimeFormatter);
             try {
                 synopticMeasurement = synopticRepository.findHottestPlacesByDate(saveDate, saveDate.plusDays(1));
             } catch (DataIntegrityViolationException e) {
@@ -122,9 +122,9 @@ public class StoredSynopticMeasurementServiceImpl implements StoredSynopticMeasu
 
     @Override
     public SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
-        LocalDateTime saveDate = LocalDateTime.parse(date+ " 00:00:00", dateTimeFormatter);
         SynopticMeasurement synopticMeasurement;
         if (isValidDate(date)) {
+            LocalDateTime saveDate = LocalDateTime.parse(date+ " 00:00:00", dateTimeFormatter);
             try {
                 synopticMeasurement = synopticRepository.findColestPlacesByDate(saveDate, saveDate.plusDays(1));
             } catch (DataIntegrityViolationException e) {
