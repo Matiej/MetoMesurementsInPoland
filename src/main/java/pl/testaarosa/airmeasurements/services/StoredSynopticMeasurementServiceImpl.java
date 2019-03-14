@@ -103,12 +103,40 @@ public class StoredSynopticMeasurementServiceImpl implements StoredSynopticMeasu
 
     @Override
     public SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
-        return null;
+        LocalDateTime saveDate = LocalDateTime.parse(date+ " 00:00:00", dateTimeFormatter);
+        SynopticMeasurement synopticMeasurement;
+        if (isValidDate(date)) {
+            try {
+                synopticMeasurement = synopticRepository.findHottestPlacesByDate(saveDate, saveDate.plusDays(1));
+            } catch (DataIntegrityViolationException e) {
+                throw new RuntimeException("There is some db problem: " + e.getMessage());
+            }
+        } else {
+            throw new DateTimeException("Wrong date format!");
+        }
+        if (!Optional.ofNullable(synopticMeasurement).isPresent()) {
+            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
+        }
+        return synopticMeasurement;
     }
 
     @Override
     public SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
-        return null;
+        LocalDateTime saveDate = LocalDateTime.parse(date+ " 00:00:00", dateTimeFormatter);
+        SynopticMeasurement synopticMeasurement;
+        if (isValidDate(date)) {
+            try {
+                synopticMeasurement = synopticRepository.findColestPlacesByDate(saveDate, saveDate.plusDays(1));
+            } catch (DataIntegrityViolationException e) {
+                throw new RuntimeException("There is some db problem: " + e.getMessage());
+            }
+        } else {
+            throw new DateTimeException("Wrong date format!");
+        }
+        if (!Optional.ofNullable(synopticMeasurement).isPresent()) {
+            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
+        }
+        return synopticMeasurement;
     }
 
     private boolean isValidDate(String date) {

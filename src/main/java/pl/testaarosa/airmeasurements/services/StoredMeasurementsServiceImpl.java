@@ -51,29 +51,29 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     }
 
     //TODO After synoptics service ready -> to delete
-    @Override
-    public List<SynopticMeasurement> getSynopticMeasuremets(String date) throws DateTimeException, NoSuchElementException,
-            DataIntegrityViolationException {
+//    @Override
+//    public List<SynopticMeasurement> getSynopticMeasuremets(String date) throws DateTimeException, NoSuchElementException,
+//            DataIntegrityViolationException {
 
-        List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
-        if (isValidDate(date)) {
-            try {
-                LocalDate localDate = LocalDate.parse(date, formatter);
-                synopticMeasurementList = synopticRepository.findAll().stream()
-                        .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
-                        .collect(Collectors.toList());
-            } catch (DataIntegrityViolationException e) {
-                e.printStackTrace();
-                throw new RuntimeException("There is some db connection problem: " + e.getMessage());
-            }
-        } else if (!isValidDate(date)) {
-            throw new DateTimeException("Wrong date format!");
-        }
-        if (synopticMeasurementList.isEmpty()) {
-            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
-        }
-        return synopticMeasurementList;
-    }
+//        List<SynopticMeasurement> synopticMeasurementList = new ArrayList<>();
+//        if (isValidDate(date)) {
+//            try {
+//                LocalDate localDate = LocalDate.parse(date, formatter);
+//                synopticMeasurementList = synopticRepository.findAll().stream()
+//                        .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
+//                        .collect(Collectors.toList());
+//            } catch (DataIntegrityViolationException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("There is some db connection problem: " + e.getMessage());
+//            }
+//        } else if (!isValidDate(date)) {
+//            throw new DateTimeException("Wrong date format!");
+//        }
+//        if (synopticMeasurementList.isEmpty()) {
+//            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
+//        }
+//        return synopticMeasurementList;
+//    }
 
     @Override
     public List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
@@ -118,116 +118,116 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     }
 
 
-    @Override
-    public List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, DataIntegrityViolationException {
-        List<SynopticMeasurement> measurementsList = new ArrayList<>();
-        try {
-            measurementsList = synopticRepository.findAll()
-                    .stream()
-                    .filter(a -> a.getTemperature() < 9999)
-                    .sorted(Comparator.comparing(SynopticMeasurement::getTemperature)
-                            .reversed()
-                            .thenComparing(SynopticMeasurement::getAirHumidity)
-                            .thenComparing(SynopticMeasurement::getWindSpeed))
-                    .limit(10)
-                    .collect(Collectors.toList());
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            throw new RuntimeException("There is some db problem: " + e.getMessage());
-        }
-        if (measurementsList.isEmpty()) {
-            throw new NoSuchElementException("Can't find hottest 10 measurements");
-        } else {
-            return measurementsList;
-        }
-    }
+//    @Override
+//    public List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, DataIntegrityViolationException {
+//        List<SynopticMeasurement> measurementsList = new ArrayList<>();
+//        try {
+//            measurementsList = synopticRepository.findAll()
+//                    .stream()
+//                    .filter(a -> a.getTemperature() < 9999)
+//                    .sorted(Comparator.comparing(SynopticMeasurement::getTemperature)
+//                            .reversed()
+//                            .thenComparing(SynopticMeasurement::getAirHumidity)
+//                            .thenComparing(SynopticMeasurement::getWindSpeed))
+//                    .limit(10)
+//                    .collect(Collectors.toList());
+//        } catch (DataIntegrityViolationException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("There is some db problem: " + e.getMessage());
+//        }
+//        if (measurementsList.isEmpty()) {
+//            throw new NoSuchElementException("Can't find hottest 10 measurements");
+//        } else {
+//            return measurementsList;
+//        }
+//    }
 
-    @Override
-    public List<SynopticMeasurement> getColdestPlaces() throws NoSuchElementException, HibernateException {
-        List<SynopticMeasurement> synopticMeasurementList;
-        try {
-            synopticMeasurementList = synopticRepository.findAll()
-                    .stream()
-                    .filter(a -> a.getTemperature() < 9999)
-                    .sorted(Comparator.comparing(SynopticMeasurement::getTemperature)
-                            .thenComparing(SynopticMeasurement::getAirHumidity)
-                            .reversed()
-                            .thenComparing(SynopticMeasurement::getWindSpeed)
-                            .reversed())
-                    .limit(10)
-                    .collect(Collectors.toList());
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            throw new RuntimeException("There is some db problem: " + e.getMessage());
-        }
-        if (synopticMeasurementList.isEmpty()) {
-            throw new NoSuchElementException("Can't find coldest 10 measurements");
-        } else {
-            return synopticMeasurementList;
-        }
-    }
+//    @Override
+//    public List<SynopticMeasurement> getColdestPlaces() throws NoSuchElementException, HibernateException {
+//        List<SynopticMeasurement> synopticMeasurementList;
+//        try {
+//            synopticMeasurementList = synopticRepository.findAll()
+//                    .stream()
+//                    .filter(a -> a.getTemperature() < 9999)
+//                    .sorted(Comparator.comparing(SynopticMeasurement::getTemperature)
+//                            .thenComparing(SynopticMeasurement::getAirHumidity)
+//                            .reversed()
+//                            .thenComparing(SynopticMeasurement::getWindSpeed)
+//                            .reversed())
+//                    .limit(10)
+//                    .collect(Collectors.toList());
+//        } catch (DataIntegrityViolationException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("There is some db problem: " + e.getMessage());
+//        }
+//        if (synopticMeasurementList.isEmpty()) {
+//            throw new NoSuchElementException("Can't find coldest 10 measurements");
+//        } else {
+//            return synopticMeasurementList;
+//        }
+//    }
 
-    @Override
-    public SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
-            DataIntegrityViolationException {
-        SynopticMeasurement synopticMeasurement = new SynopticMeasurement();
-        if (isValidDate(date)) {
-            try {
-                LocalDate localDate = LocalDate.parse(date, formatter);
-                synopticMeasurement = synopticRepository.findAll()
-                        //TODO spradzić to filtrowanie czy aby potrzebne
-                        .stream()
-                        .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
-                                .toLocalDate()
-                                .isEqual(localDate))
-                        .max(Comparator.comparing(SynopticMeasurement::getTemperature)
-                                .thenComparing(SynopticMeasurement::getAirHumidity)
-                                .reversed()
-                                .thenComparing(SynopticMeasurement::getWindSpeed)
-                                .reversed())
-                        .orElse(null);
-            } catch (DataIntegrityViolationException e) {
-                throw new RuntimeException("There is some db problem: " + e.getMessage());
-            }
-        } else {
-            throw new DateTimeException("Wrong date format!");
-        }
-        if (!Optional.ofNullable(synopticMeasurement).isPresent()) {
-            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
-        }
-        return synopticMeasurement;
-    }
+//    @Override
+//    public SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
+//            DataIntegrityViolationException{
+//        SynopticMeasurement synopticMeasurement = new SynopticMeasurement();
+//        if (isValidDate(date)) {
+//            try {
+//                LocalDate localDate = LocalDate.parse(date, formatter);
+//                synopticMeasurement = synopticRepository.findAll()
+//                        //TODO spradzić to filtrowanie czy aby potrzebne
+//                        .stream()
+//                        .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
+//                                .toLocalDate()
+//                                .isEqual(localDate))
+//                        .max(Comparator.comparing(SynopticMeasurement::getTemperature)
+//                                .thenComparing(SynopticMeasurement::getAirHumidity)
+//                                .reversed()
+//                                .thenComparing(SynopticMeasurement::getWindSpeed)
+//                                .reversed())
+//                        .orElse(null);
+//            } catch (DataIntegrityViolationException e) {
+//                throw new RuntimeException("There is some db problem: " + e.getMessage());
+//            }
+//        } else {
+//            throw new DateTimeException("Wrong date format!");
+//        }
+//        if (!Optional.ofNullable(synopticMeasurement).isPresent()) {
+//            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
+//        }
+//        return synopticMeasurement;
+//    }
 
-    @Override
-    public SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
-            DataIntegrityViolationException {
-        SynopticMeasurement synopticColdestMeasurement = new SynopticMeasurement();
-        if (isValidDate(date)) {
-            try {
-                LocalDate localDate = LocalDate.parse(date, formatter);
-                synopticColdestMeasurement = synopticRepository.findAll().stream()
-                        .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
-                                .toLocalDate()
-                                .isEqual(localDate))
-                        .min(Comparator.comparing(SynopticMeasurement::getTemperature)
-                                .thenComparing(SynopticMeasurement::getAirHumidity)
-                                .reversed()
-                                .thenComparing(SynopticMeasurement::getWindSpeed)
-                                .reversed())
-                        .orElse(null);
-            } catch (DataIntegrityViolationException e) {
-                e.printStackTrace();
-                throw new RuntimeException("There is some db problem: " + e.getMessage());
-            }
-        } else if (!isValidDate(date)) {
-            throw new DateTimeException("Wrong date format!");
-        }
-        if (!Optional.ofNullable(synopticColdestMeasurement).isPresent()) {
-            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
-        }
-        return synopticColdestMeasurement;
-    }
-//TODO poprawić upościc
+//    @Override
+//    public SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException,
+//            DataIntegrityViolationException {
+//        SynopticMeasurement synopticColdestMeasurement = new SynopticMeasurement();
+//        if (isValidDate(date)) {
+//            try {
+//                LocalDate localDate = LocalDate.parse(date, formatter);
+//                synopticColdestMeasurement = synopticRepository.findAll().stream()
+//                        .filter(a -> a.getTemperature() < 9999 && a.getSaveDate()
+//                                .toLocalDate()
+//                                .isEqual(localDate))
+//                        .min(Comparator.comparing(SynopticMeasurement::getTemperature)
+//                                .thenComparing(SynopticMeasurement::getAirHumidity)
+//                                .reversed()
+//                                .thenComparing(SynopticMeasurement::getWindSpeed)
+//                                .reversed())
+//                        .orElse(null);
+//            } catch (DataIntegrityViolationException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("There is some db problem: " + e.getMessage());
+//            }
+//        } else if (!isValidDate(date)) {
+//            throw new DateTimeException("Wrong date format!");
+//        }
+//        if (!Optional.ofNullable(synopticColdestMeasurement).isPresent()) {
+//            throw new NoSuchElementException("Cant't find any synoptic measurements for date: " + date);
+//        }
+//        return synopticColdestMeasurement;
+//    }
+
     private boolean isValidDate(String date) {
         if (date.isEmpty() || !date.matches("\\d{4}-\\d{2}-\\d{2}")) {
             return false;

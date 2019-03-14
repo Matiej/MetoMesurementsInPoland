@@ -46,7 +46,7 @@ public class StoredSynopticMeasuremetsController {
         }
     }
 
-    @ApiOperation(value = "Get synoptic measurements for given date", response = SynopticMeasurement.class)
+    @ApiOperation(value = "Get synoptic measurements for given date", response = SynopticMeasurement.class, position = 2)
     @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD",
             dataType = "String", paramType = "query")
     @ApiResponses(value = {
@@ -68,7 +68,7 @@ public class StoredSynopticMeasuremetsController {
         }
     }
 
-    @ApiOperation(value = "Get top hottest measurements and places", response = SynopticMeasurement.class)
+    @ApiOperation(value = "Get top hottest measurements and places", response = SynopticMeasurement.class, position = 3)
     @ApiImplicitParam(required = true, defaultValue = "10", dataType = "String", name = "noOfResults",
             value = "Number of results", paramType = "query")
     @ApiResponses(value = {
@@ -92,7 +92,7 @@ public class StoredSynopticMeasuremetsController {
         }
     }
 
-    @ApiOperation(value = "Get top coldest measurements and places", response = SynopticMeasurement.class)
+    @ApiOperation(value = "Get top coldest measurements and places", response = SynopticMeasurement.class, position = 4)
     @ApiImplicitParam(required = true, defaultValue = "10", dataType = "String", name = "noOfResults",
             value = "Number of results", paramType = "query")
     @ApiResponses(value = {
@@ -113,6 +113,32 @@ public class StoredSynopticMeasuremetsController {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return ResponseEntity.status(406).body("Not Acceptable! Wrong number format");
+        }
+    }
+
+    @ApiOperation(value = "Get hottest place and synoptic measurements for given date", response = SynopticMeasurement.class,
+            position = 5)
+    @ApiImplicitParam(required = true, name = "date", value = "Date in format: YYYY-MM-DD", dataType = "String",
+            paramType = "query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 503, message = "Server error. Can't get measurements information."),
+            @ApiResponse(code = 200, message = "Hottest  measurement for for given date loaded from db successful."),
+            @ApiResponse(code = 400, message = "No hottest measurements found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measuring stations found!"),
+            @ApiResponse(code = 406, message = "Not Acceptable! Incorrect data or data format!")})
+    @RequestMapping(value = "/hottestDate", method = RequestMethod.GET)
+    public ResponseEntity<Object> findAHottestPlaceByDate(String date) {
+        try {
+            return ResponseEntity.ok().body(storedSynopticMeasurementService.getHottestPlaceGivenDate(date));
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("No synoptic measurements for date: " + date + " found.");
+        } catch (DateTimeException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(406).body("Not Acceptable! Incorrect data or data format for input: " + date);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(503).body("Data base server error. Can't get synoptic measurements information.");
         }
     }
 }

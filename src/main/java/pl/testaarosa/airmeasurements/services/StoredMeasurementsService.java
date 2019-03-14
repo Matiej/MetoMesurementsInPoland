@@ -13,19 +13,19 @@ import java.util.NoSuchElementException;
 public interface StoredMeasurementsService {
     List<MeasuringStation> findAll() throws NoSuchElementException, DataIntegrityViolationException;
 
-    List<SynopticMeasurement> getSynopticMeasuremets(String date) throws NoSuchElementException, DateTimeException, DataIntegrityViolationException;
+//    List<SynopticMeasurement> getSynopticMeasuremets(String date) throws NoSuchElementException, DateTimeException, DataIntegrityViolationException;
 
     List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
             NoSuchElementException, DataIntegrityViolationException;
 
     List<AirMeasurement> getAirMeasurementsByDate(String date) throws NoSuchElementException, DateTimeException, DataIntegrityViolationException;
 
-    List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, DataIntegrityViolationException;
+//    List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, DataIntegrityViolationException;
 
-    List<SynopticMeasurement> getColdestPlaces() throws NoSuchElementException, DataIntegrityViolationException;
+//    List<SynopticMeasurement> getColdestPlaces() throws NoSuchElementException, DataIntegrityViolationException;
 
-    SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException;
+//    SynopticMeasurement getHottestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException;
 
-    SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException;
+//    SynopticMeasurement getColdestPlaceGivenDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException;
 
 }
