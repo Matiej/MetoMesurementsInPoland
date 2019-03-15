@@ -11,8 +11,13 @@ import java.util.Optional;
 @Component
 public class SynopticMeasurementMapper {
     public SynopticMeasurement maptToSynopticMeasurement(SynopticMeasurementDto synMeasurements) {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String date = synMeasurements.getMeasurementDate()+ " " + synMeasurements.getGetMeasurementHour() + ":00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String date = "";
+        if (synMeasurements.getGetMeasurementHour().length() == 2) {
+            date = synMeasurements.getMeasurementDate() + " " + synMeasurements.getGetMeasurementHour() + ":00:00";
+        } else {
+            date = synMeasurements.getMeasurementDate() + " " + "0" + synMeasurements.getGetMeasurementHour() + ":00:00";
+        }
         LocalDateTime measurementDate = LocalDateTime.parse(date, formatter);
         return new SynopticMeasurement.SynopticMeasurementsBuilder()
                 .foreignId(synMeasurements.getId())
