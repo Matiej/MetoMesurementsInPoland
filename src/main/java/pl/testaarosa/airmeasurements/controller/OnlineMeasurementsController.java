@@ -4,6 +4,8 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +16,12 @@ import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Api(description = "Online measurements directly from API")
 @RestController
@@ -23,14 +30,16 @@ import java.util.NoSuchElementException;
 public class OnlineMeasurementsController {
 
     private final OnlineMeasurementService measuringOnlineServices;
+    private final OnlineMeasurementsResourceAssembler assembler;
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineMeasurementsController.class);
 
     @Autowired
-    public OnlineMeasurementsController(OnlineMeasurementService measuringOnlineServices) {
+    public OnlineMeasurementsController(OnlineMeasurementService measuringOnlineServices, OnlineMeasurementsResourceAssembler assembler) {
         this.measuringOnlineServices = measuringOnlineServices;
+        this.assembler = assembler;
     }
 
-    @ApiOperation(value = "Get all measuring stations olocalizations, address etc.", response = OnlineMeasurementDto.class)
+    @ApiOperation(value = "Get all measuring stations localizations, address etc.", response = OnlineMeasurementDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Measuring stations found successful"),
             @ApiResponse(code = 400, message = "Can not find any online measuring stations!"),
@@ -39,7 +48,13 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/allSt", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllOnlineMeasuringStationsController() {
         try {
-            return ResponseEntity.ok().body(measuringOnlineServices.getAllMeasuringStations());
+            List<Resource<OnlineMeasurementDto>> allMeasuringStations = measuringOnlineServices.getAllMeasuringStations().stream()
+                    .map(assembler::toResource)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok().body(new Resources<>(allMeasuringStations,
+                    linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStationsController()).withSelfRel(),
+                    linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
+                    linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find any online measuring stations");
@@ -61,7 +76,14 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/citySt", method = RequestMethod.GET)
     public ResponseEntity<Object> getGivenCityMeasuringOnlineStationsController(String city) {
         try {
-            return ResponseEntity.status(200).body(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city));
+            List<Resource<OnlineMeasurementDto>> givenCityMeasuringStationsWithSynopticData = measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city).stream()
+                    .map(assembler::toResource)
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(200).body(new Resources<>(givenCityMeasuringStationsWithSynopticData,
+                    linkTo(methodOn(OnlineMeasurementsController.class).getGivenCityMeasuringOnlineStationsController(city)).withSelfRel(),
+                    linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStationsController()).withRel("allSt"),
+                    linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
+                    linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Measuring stations for city " + city + " NOT found because of error-> "
@@ -85,7 +107,9 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/hottest", method = RequestMethod.GET)
     public ResponseEntity<Object> getHottestOnlineMeasuringStation() {
         try {
-            return ResponseEntity.ok().body(measuringOnlineServices.getHottestOnlineStation());
+            OnlineMeasurementDto hottestOnlineStation = measuringOnlineServices.getHottestOnlineStation();
+            Resource rs = assembler.toResource(hottestOnlineStation,"HOT");
+            return ResponseEntity.ok().body(rs);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find hottest online measurement!");
@@ -103,7 +127,9 @@ public class OnlineMeasurementsController {
         @RequestMapping(value = "/coldest", method = RequestMethod.GET)
     public ResponseEntity<Object> getColdestOnlineMeasuringStation() {
         try {
-            return ResponseEntity.ok(measuringOnlineServices.getColdestOnlineStation());
+            OnlineMeasurementDto hottestOnlineStation = measuringOnlineServices.getColdestOnlineStation();
+            Resource rs = assembler.toResource(hottestOnlineStation,"COLD");
+            return ResponseEntity.ok(rs);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body("Can't find coldest online measurement!");
