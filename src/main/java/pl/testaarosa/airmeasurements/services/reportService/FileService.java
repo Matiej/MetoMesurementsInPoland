@@ -2,6 +2,8 @@ package pl.testaarosa.airmeasurements.services.reportService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -15,6 +17,8 @@ import java.time.ZoneId;
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+
 public class FileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);

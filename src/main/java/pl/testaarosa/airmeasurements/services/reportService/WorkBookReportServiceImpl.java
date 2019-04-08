@@ -5,12 +5,13 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.context.properties.ConfigurationBeanFactoryMetadata;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.City;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
@@ -24,14 +25,19 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
 @Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WorkBookReportServiceImpl implements WorkBookReportService {
 
     private static final String PATH = new File(System.getProperty("user.dir") + File.separator + "reports").getAbsolutePath();
@@ -47,6 +53,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
 
     private final SheetStyles sheetStyles;
     private final FileService fileService;
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Autowired
     public WorkBookReportServiceImpl(SheetStyles sheetStyles, FileService fileService) {
@@ -55,36 +62,36 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
     }
 
     @Override
-    public synchronized File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
-                                                               LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) throws Exception {
+    public  File createXMLAddAllMeasurementsReport(LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
+                                                  LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) throws Exception {
+            String reportFileName = LocalDateTime.now().withNano(0).toString().replaceAll(":", "-") + NAME_CONST;
+            File file = fileService.createFile(reportFileName, PATH);
 
-        String reportFileName = LocalDateTime.now().withNano(0).toString().replaceAll(":", "-") + NAME_CONST;
-        File file = fileService.createFile(reportFileName, PATH);
-        try (OutputStream out = new FileOutputStream(file)) {
-            workbook = new HSSFWorkbook();
-            HSSFCellStyle stationStyle = sheetStyles.cellStyle(workbook, "station");
-            HSSFCellStyle ordinaryStyle = sheetStyles.cellStyle(workbook, "ordinary");
-            HSSFCellStyle synopticStyle = sheetStyles.cellStyle(workbook, "synoptic");
-            HSSFCellStyle airStyle = sheetStyles.cellStyle(workbook, "air");
+            try (OutputStream out = new FileOutputStream(file)) {
+                workbook = new HSSFWorkbook();
+                HSSFCellStyle stationStyle = sheetStyles.cellStyle(workbook, "station");
+                HSSFCellStyle ordinaryStyle = sheetStyles.cellStyle(workbook, "ordinary");
+                HSSFCellStyle synopticStyle = sheetStyles.cellStyle(workbook, "synoptic");
+                HSSFCellStyle airStyle = sheetStyles.cellStyle(workbook, "air");
 
-            createCity_Station_AirMap(mStResponseMap, synopticMeasurementMap);
-            createSynoptic(synopticMeasurementMap);
+                createCity_Station_AirMap(mStResponseMap, synopticMeasurementMap);
+                createSynoptic(synopticMeasurementMap);
 
-            HSSFSheet citySheet = workbook.createSheet("City");
-            HSSFSheet statioonsSheet = workbook.createSheet("Stations");
-            HSSFSheet airMstSheet = workbook.createSheet("Air_Measurements");
-            HSSFSheet synMstSheet = workbook.createSheet("Synoptic_Measurement");
+                HSSFSheet citySheet = workbook.createSheet("City");
+                HSSFSheet statioonsSheet = workbook.createSheet("Stations");
+                HSSFSheet airMstSheet = workbook.createSheet("Air_Measurements");
+                HSSFSheet synMstSheet = workbook.createSheet("Synoptic_Measurement");
 
-            sheetCellFill(stationStyle, ordinaryStyle, citySheet, cityMap);
-            sheetCellFill(stationStyle, ordinaryStyle, statioonsSheet, stationMap);
-            sheetCellFill(airStyle, ordinaryStyle, airMstSheet, airMstMap);
-            sheetCellFill(synopticStyle, ordinaryStyle, synMstSheet, synoptcMstMap);
+                sheetCellFill(stationStyle, ordinaryStyle, citySheet, cityMap);
+                sheetCellFill(stationStyle, ordinaryStyle, statioonsSheet, stationMap);
+                sheetCellFill(airStyle, ordinaryStyle, airMstSheet, airMstMap);
+                sheetCellFill(synopticStyle, ordinaryStyle, synMstSheet, synoptcMstMap);
 
-            workbook.write(out);
-            LOGGER.info(ANSI_BLUE + "Report saved successful in => " + ANSI_PURPLE + file + ANSI_RESET);
-        } catch (IOException e) {
-            LOGGER.error("Can't generate XML report! " + e);
-            throw new Exception(e);
+                workbook.write(out);
+                LOGGER.info(ANSI_BLUE + "Report saved successful in => " + ANSI_PURPLE + file + ANSI_RESET);
+            } catch (IOException e) {
+                LOGGER.error("Can't generate XML report! " + e);
+                throw new Exception(e);
         }
         return file;
     }
@@ -114,7 +121,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
     }
 
     private void createCity_Station_AirMap(LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap,
-                                           LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap ) {
+                                           LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap) {
         cityMap = new LinkedHashMap<>();
         cityMap.put("0", new Object[]{"ID", "City name", "Air measurement", "Synoptic measurement"});
 
@@ -135,7 +142,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             if (cityMap.values().stream().noneMatch(v -> v[1].equals(city.getCityName()))) {
                 cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
                         true,
-                        synopticMeasurementMap.keySet().stream().anyMatch(t-> t.equalsIgnoreCase(city.getCityName()))});
+                        synopticMeasurementMap.keySet().stream().anyMatch(t -> t.equalsIgnoreCase(city.getCityName()))});
                 cityRow.getAndIncrement();
             }
             stationMap.put(String.valueOf(row.get()), new Object[]{row.get(), station.getStationId(),
@@ -155,7 +162,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
         while (iterator.hasNext()) {
             last = iterator.next().getKey();
         }
-        AtomicInteger cityRow = new AtomicInteger(Integer.valueOf(last)+1);
+        AtomicInteger cityRow = new AtomicInteger(Integer.valueOf(last) + 1);
         synoptcMstMap = new LinkedHashMap<>();
         synoptcMstMap.put("0", new Object[]{"ID", "ForeignID", "Measurement date", "Save date", "City",
                 "Temperature", "Wind speed", "Air Humidity", "Presure"});
@@ -170,7 +177,7 @@ public class WorkBookReportServiceImpl implements WorkBookReportService {
             if (cityMap.values().stream().noneMatch(c -> c[1].equals(key))) {
                 City city = synMst.getCity();
                 cityMap.put(String.valueOf(cityRow.get()), new Object[]{cityRow.get(), city.getCityName(),
-                        false,true});
+                        false, true});
                 cityRow.getAndIncrement();
             }
         });

@@ -15,7 +15,11 @@ import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.CityRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
+import pl.testaarosa.airmeasurements.services.emailService.EmailContentBuilder;
 import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierService;
+import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierServiceImpl;
+import pl.testaarosa.airmeasurements.services.reportService.FileService;
+import pl.testaarosa.airmeasurements.services.reportService.SheetStyles;
 import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportService;
 import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportServiceImpl;
 
@@ -25,6 +29,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 
@@ -32,6 +38,7 @@ import static pl.testaarosa.airmeasurements.services.ConsolerData.*;
 public class AddMeasurementsServiceImpl implements AddMeasurementsService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(AddMeasurementsServiceImpl.class);
+    private Lock lock = new ReentrantLock();
     private final ApiSupplierRetriever apiSupplierRetriever;
     private final MeasuringStationRepository measuringStationRepository;
     private final SynopticMeasurementRepository synopticRepository;
@@ -95,11 +102,10 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         String[] shortMess = {String.valueOf(synopticMeasurementMap.size()), String.valueOf(mSList.size()), timeer};
         auxAddService(shortMess, mSList, synopticMeasurementMap, mStResponseMap);
         LOGGER.info("SAVED AIR MEASUREMENTS ->" + mSList.size() +
-                " \nSYNOPTIC MEASUREMENTS-> " + synopticMeasurementMap.size() + " \n TOTAL TIME: " + timeer(System.currentTimeMillis()-startTime1));
+                " \nSYNOPTIC MEASUREMENTS-> " + synopticMeasurementMap.size() + " \n TOTAL TIME: " + timeer(System.currentTimeMillis() - startTime1));
         return mSList;
     }
 
-    @Transactional
     private Map<MeasuringStation, AirMeasurement> saveAirMeasurementSt(Map<MeasuringStation, AirMeasurement> mStMap) throws HibernateException {
         Map<MeasuringStation, AirMeasurement> measurementMap = new LinkedHashMap<>();
         mStMap.entrySet()
@@ -115,7 +121,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                             LOGGER.info(ANSI_WHITE + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                             measurementMap.put(measuringStationRepository.save(measuringStation), airMeasurement);
-                                 LOGGER.info(ANSI_WHITE + "SAVED NEW MEASURING STATION ID -> " +
+                            LOGGER.info(ANSI_WHITE + "SAVED NEW MEASURING STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                         } else {
                             MeasuringStation stationFromDb = measuringStationRepository.findByStationId(measuringStation.getStationId());
@@ -147,8 +153,6 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         return measurementMap;
     }
 
-
-    @Transactional
     private int saveSynMeasurement(Map<String, SynopticMeasurement> synMstMap,
                                    Map<MeasuringStation, AirMeasurement> mStMap, boolean forAllMeasurements) throws HibernateException {
         AtomicInteger counters = new AtomicInteger();
@@ -201,27 +205,38 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
         return counters.get();
     }
 
-    @Transactional
     private void auxAddService(String[] shortMsg, List<MeasuringStation> mStList,
                                LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap,
                                LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) {
         Thread reportServiceThread = new Thread(() -> {
             try {
-                LOGGER.info(ANSI_BOLD + "Preparing email with xml report after successful download all measurement data from external API" + ANSI_RESET);
-                File xmlAddAllMeasurementsReport = workBookReportService.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
-                String delOldReports = workBookReportService.delOldReports();
-                LOGGER.info(ANSI_BOLD + "XML REPORT AUXILIARY SERVICE JOB DONE" + ANSI_RESET);
-                emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport, shortMsg, delOldReports);
+                auxProc(shortMsg, synopticMeasurementMap, mStResponseMap);
             } catch (Exception e) {
                 e.printStackTrace();
-                LOGGER.error("REPORT GENERATOR PROBLEM, SEND NON HTML FILE WITHOUT REPORT FILE. ERROR LOG-> " +e.getMessage());
+                LOGGER.error("REPORT GENERATOR PROBLEM, SEND NON HTML E-Mail WITHOUT REPORT FILE. ERROR LOG-> " + e.getMessage());
                 emailNotifierService.sendEmailAfterDownloadMeasurementsN(mStList, shortMsg);
             } finally {
-                LOGGER.info(ANSI_WHITE+"EMAIL AUXILIARY SERVICE JOB DONE"+ANSI_RESET);
+                LOGGER.info(ANSI_WHITE + "EMAIL AUXILIARY SERVICE JOB DONE" + ANSI_RESET);
             }
-        });
+        }, "AUX_THREAD-> " + Thread.currentThread().getId());
         reportServiceThread.start();
     }
+
+    private void auxProc(String[] shortMsg, LinkedHashMap<String, SynopticMeasurement> synopticMeasurementMap, LinkedHashMap<MeasuringStation, AirMeasurement> mStResponseMap) throws Exception {
+        try {
+
+            WorkBookReportService wb = new WorkBookReportServiceImpl(new SheetStyles(), new FileService());
+            LOGGER.info(ANSI_BOLD + "Preparing email with xml report after successful download all measurement data from external API" + ANSI_RESET);
+            File xmlAddAllMeasurementsReport = wb.createXMLAddAllMeasurementsReport(synopticMeasurementMap, mStResponseMap);
+            String delOldReports = workBookReportService.delOldReports();
+            LOGGER.info(ANSI_BOLD + "XML REPORT AUXILIARY SERVICE JOB DONE" + ANSI_RESET);
+            lock.lock();
+            emailNotifierService.sendEmailAfterDownloadMeasurementsWithReport(xmlAddAllMeasurementsReport, shortMsg, delOldReports);
+        } finally {
+            lock.unlock();
+        }
+    }
+
 
     private String timeer(Long timeMiliseconds) {
         DecimalFormat df2 = new DecimalFormat("###.###");
