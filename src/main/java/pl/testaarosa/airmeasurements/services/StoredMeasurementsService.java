@@ -15,10 +15,10 @@ public interface StoredMeasurementsService {
 
 //    List<SynopticMeasurement> getSynopticMeasuremets(String date) throws NoSuchElementException, DateTimeException, DataIntegrityViolationException;
 
-    List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
-            NoSuchElementException, DataIntegrityViolationException;
+//    List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
+//            NoSuchElementException, DataIntegrityViolationException;
 
-    List<AirMeasurement> getAirMeasurementsByDate(String date) throws NoSuchElementException, DateTimeException, DataIntegrityViolationException;
+//    List<AirMeasurement> getAirMeasurementsByDate(String date) throws NoSuchElementException, DateTimeException, DataIntegrityViolationException;
 
 //    List<SynopticMeasurement> getHottestPlaces() throws NoSuchElementException, DataIntegrityViolationException;
 

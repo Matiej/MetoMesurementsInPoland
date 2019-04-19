@@ -1,23 +1,18 @@
 package pl.testaarosa.airmeasurements.services;
 
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
-import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
 import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
 import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
 
 import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class StoredMeasurementsServiceImpl implements StoredMeasurementsService {
@@ -26,13 +21,12 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
     private final static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final MeasuringStationRepository stationRepository;
-    private final AirMeasurementRepository airRepository;
     private final SynopticMeasurementRepository synopticRepository;
 
     @Autowired
-    public StoredMeasurementsServiceImpl(MeasuringStationRepository stationRepository, AirMeasurementRepository airRepository, SynopticMeasurementRepository synopticRepository) {
+    public StoredMeasurementsServiceImpl(MeasuringStationRepository stationRepository,
+                                         SynopticMeasurementRepository synopticRepository) {
         this.stationRepository = stationRepository;
-        this.airRepository = airRepository;
         this.synopticRepository = synopticRepository;
     }
 
@@ -75,47 +69,48 @@ public class StoredMeasurementsServiceImpl implements StoredMeasurementsService 
 //        return synopticMeasurementList;
 //    }
 
-    @Override
-    public List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
-            NoSuchElementException, DataIntegrityViolationException {
-        List<AirMeasurement> allByAirQuality;
-        if (isMeasurementLevelValid(airMeasurementLevel)) {
-            try {
-                allByAirQuality = airRepository.findAllByAirQuality(airMeasurementLevel);
-            } catch (DataIntegrityViolationException e) {
-                throw new RuntimeException("There is some db problem: " + e.getMessage());
-            }
-        } else {
-            throw new IllegalArgumentException("No enum constant " + airMeasurementLevel);
-        }
-        if (allByAirQuality.isEmpty()) {
-            throw new NoSuchElementException("There are no measurements for given air level: " + airMeasurementLevel);
-        }
-        return allByAirQuality;
-    }
+//    @Override
+//    public List<AirMeasurement> getAirMeasurementsByLevel(AirMeasurementLevel airMeasurementLevel) throws IllegalArgumentException,
+//            NoSuchElementException, DataIntegrityViolationException {
+//        List<AirMeasurement> allByAirQuality;
+//        if (isMeasurementLevelValid(airMeasurementLevel)) {
+//            try {
+////                allByAirQuality = airRepository.findAllByAirQuality(airMeasurementLevel);
+//                allByAirQuality = airRepository.findAllByAirQuality(airMeasurementLevel);
+//            } catch (DataIntegrityViolationException e) {
+//                throw new RuntimeException("There is some db problem: " + e.getMessage());
+//            }
+//        } else {
+//            throw new IllegalArgumentException("No enum constant " + airMeasurementLevel);
+//        }
+//        if (allByAirQuality.isEmpty()) {
+//            throw new NoSuchElementException("There are no measurements for given air level: " + airMeasurementLevel);
+//        }
+//        return allByAirQuality;
+//    }
 
-    @Override
-    public List<AirMeasurement> getAirMeasurementsByDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
-        List<AirMeasurement> airMeasurementList = new ArrayList<>();
-        if (isValidDate(date)) {
-            try {
-                LocalDate localDate = LocalDate.parse(date, formatter);
-                airMeasurementList = airRepository.findAll()
-                        .stream()
-                        .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
-                        .collect(Collectors.toList());
-            } catch (DataIntegrityViolationException e) {
-                e.printStackTrace();
-                throw new RuntimeException("There is some db connection problem: " + e.getMessage());
-            }
-        } else if (!isValidDate(date)) {
-            throw new DateTimeException("Wrong date format!");
-        }
-        if (airMeasurementList.isEmpty()) {
-            throw new NoSuchElementException("Cant't find any air measurements for date: " + date);
-        }
-        return airMeasurementList;
-    }
+//    @Override
+//    public List<AirMeasurement> getAirMeasurementsByDate(String date) throws DateTimeException, NoSuchElementException, DataIntegrityViolationException {
+//        List<AirMeasurement> airMeasurementList = new ArrayList<>();
+//        if (isValidDate(date)) {
+//            try {
+//                LocalDate localDate = LocalDate.parse(date, formatter);
+//                airMeasurementList = airRepository.findAll()
+//                        .stream()
+//                        .filter(a -> a.getSaveDate().toLocalDate().isEqual(localDate))
+//                        .collect(Collectors.toList());
+//            } catch (DataIntegrityViolationException e) {
+//                e.printStackTrace();
+//                throw new RuntimeException("There is some db connection problem: " + e.getMessage());
+//            }
+//        } else if (!isValidDate(date)) {
+//            throw new DateTimeException("Wrong date format!");
+//        }
+//        if (airMeasurementList.isEmpty()) {
+//            throw new NoSuchElementException("Cant't find any air measurements for date: " + date);
+//        }
+//        return airMeasurementList;
+//    }
 
 
 //    @Override

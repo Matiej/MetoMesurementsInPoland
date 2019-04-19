@@ -11,13 +11,8 @@ import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.City;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
-import pl.testaarosa.airmeasurements.repositories.AirMeasurementRepository;
-import pl.testaarosa.airmeasurements.repositories.CityRepository;
-import pl.testaarosa.airmeasurements.repositories.MeasuringStationRepository;
-import pl.testaarosa.airmeasurements.repositories.SynopticMeasurementRepository;
-import pl.testaarosa.airmeasurements.services.emailService.EmailContentBuilder;
+import pl.testaarosa.airmeasurements.repositories.*;
 import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierService;
-import pl.testaarosa.airmeasurements.services.emailService.EmailNotifierServiceImpl;
 import pl.testaarosa.airmeasurements.services.reportService.FileService;
 import pl.testaarosa.airmeasurements.services.reportService.SheetStyles;
 import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportService;
@@ -25,7 +20,6 @@ import pl.testaarosa.airmeasurements.services.reportService.WorkBookReportServic
 
 import javax.transaction.Transactional;
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,20 +36,20 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
     private final ApiSupplierRetriever apiSupplierRetriever;
     private final MeasuringStationRepository measuringStationRepository;
     private final SynopticMeasurementRepository synopticRepository;
-    private final AirMeasurementRepository airRepository;
+    private final AirMeasurementDao airMeasurementDao;
     private final EmailNotifierService emailNotifierService;
     private final CityRepository cityRepository;
     private final WorkBookReportService workBookReportService;
 
     @Autowired
     public AddMeasurementsServiceImpl(ApiSupplierRetriever apiSupplierRetriever, MeasuringStationRepository measuringStationRepository,
-                                      SynopticMeasurementRepository synopticRepository, AirMeasurementRepository airRepository,
-                                      EmailNotifierService emailNotifierService,
-                                      CityRepository cityRepository, WorkBookReportServiceImpl workBookReportService) {
+                                      SynopticMeasurementRepository synopticRepository, AirMeasurementDao airMeasurementDao,
+                                      EmailNotifierService emailNotifierService, CityRepository cityRepository,
+                                      WorkBookReportServiceImpl workBookReportService) {
         this.apiSupplierRetriever = apiSupplierRetriever;
         this.measuringStationRepository = measuringStationRepository;
         this.synopticRepository = synopticRepository;
-        this.airRepository = airRepository;
+        this.airMeasurementDao = airMeasurementDao;
         this.emailNotifierService = emailNotifierService;
         this.cityRepository = cityRepository;
         this.workBookReportService = workBookReportService;
@@ -117,7 +111,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                         if (!measuringStationRepository.existsAllByStationId(measuringStation.getStationId())) {
                             airMeasurement.setMeasuringStation(measuringStation);
                             measuringStation.getAirMeasurementList().add(airMeasurement);
-                            airRepository.save(airMeasurement);
+                            airMeasurementDao.save(airMeasurement);
                             LOGGER.info(ANSI_WHITE + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                             measurementMap.put(measuringStationRepository.save(measuringStation), airMeasurement);
@@ -127,7 +121,7 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                             MeasuringStation stationFromDb = measuringStationRepository.findByStationId(measuringStation.getStationId());
                             airMeasurement.setMeasuringStation(stationFromDb);
                             stationFromDb.getAirMeasurementList().add(airMeasurement);
-                            airRepository.save(airMeasurement);
+                            airMeasurementDao.save(airMeasurement);
                             LOGGER.info(ANSI_GREEN + "SAVED AIR MEASUREMENT FOR STATION ID -> " +
                                     measuringStation.getStationId() + " IN THE CITY -> " + measuringStation.getCity() + ANSI_RESET);
                             measurementMap.put(stationFromDb, airMeasurement);
@@ -136,14 +130,14 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
                             city.setCityName(measuringStation.getCity());
                             city.getAirMeasurementList().add(airMeasurement);
                             airMeasurement.setCity(city);
-//                            airRepository.save(airMeasurement);
+//                            airMeasurementDao.save(airMeasurement);
                             cityRepository.save(city);
                             LOGGER.info("SAVED NEW CITY: " + city.getCityName());
                         } else {
                             City oneByCityName = cityRepository.findOneByCityName(measuringStation.getCity());
                             oneByCityName.getAirMeasurementList().add(airMeasurement);
                             airMeasurement.setCity(oneByCityName);
-                            airRepository.save(airMeasurement);
+                            airMeasurementDao.save(airMeasurement);
 //                            cityRepository.save(oneByCityName);
                         }
                     } catch (HibernateException e) {
