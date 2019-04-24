@@ -96,6 +96,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
                     SynopticMeasurementDto[].class);
             HttpStatus statusCode = responseEntity.getStatusCode();
             if (!statusCode.is2xxSuccessful()) {
+                LOGGER.error("Can't find any synoptic measurement because of external API error. HTTP Status code => ");
                 throw new RestClientException("Can't find any synoptic measurement because of external API error. HTTP Status code => " + statusCode.toString());
             }
             SynopticMeasurementDto[] measurementDtos = responseEntity.getBody();

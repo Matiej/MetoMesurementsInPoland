@@ -31,11 +31,12 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
     }
 
     @Override
-    @Cacheable(value = "measuringStCash")
+//    @Cacheable(value = "measuringStCash")
     public List<OnlineMeasurementDto> getAllMeasuringStations() throws RestClientException, NoSuchElementException {
         long start = System.currentTimeMillis();
         List<OnlineMeasurementDto> onlineMeasurementDtos = msProc.fillMeasuringStationListStructure();
         if (onlineMeasurementDtos.isEmpty()) {
+            LOGGER.error("Can't find any online measuring stations");
             throw new NoSuchElementException("Can't find any online measuring stations");
         }
         LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
@@ -57,6 +58,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
                         .filter(c -> c.getStationCity().toLowerCase().contains(stationCity.toLowerCase()))
                         .collect(toList());
                 if (onlineMeasurementDtoList.isEmpty()) {
+                    LOGGER.error("Cant't find any stations for city: " + stationCity);
                     throw new NoSuchElementException("Cant't find any stations for city: " + stationCity);
                 }
             } catch (RestClientResponseException e) {
