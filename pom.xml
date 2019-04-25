@@ -180,6 +180,16 @@
             <version>${hibernate-jpa.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <!--			<version>2.1.4.RELEASE</version>-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-rest-hal-browser</artifactId>
+            <!--			<version>3.1.6.RELEASE</version>-->
+        </dependency>
     </dependencies>
 
     <build>

@@ -41,22 +41,7 @@ public class AddMeasurementsController {
     @ApiImplicitParam(required = true, name = "stationId", value = "Measuring station Id", dataType = "int", paramType = "query",
             defaultValue = "114")
     public ResponseEntity<Object> addOneMeasurement(Integer stationId) {
-        try {
-            return ResponseEntity.status(201).body(measurementsService.addOneStationMeasurement(stationId));
-        } catch (NoSuchElementException e) {
-            LOGGER.error(e.getMessage(),e);
-            return ResponseEntity.status(400).body("Can't find measuring station ID: " + stationId);
-        } catch (NumberFormatException | MethodArgumentTypeMismatchException e) {
-            LOGGER.error(e.getMessage(),e);
-            return ResponseEntity.status(406).body("Not Acceptable! Givens Station ID -> " + stationId +
-                    " must be an INTEGER and can not be empty!");
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(),e);
-            return ResponseEntity.status(500).body("External REST API server error. Can't add measurement for: " + stationId +" stationId!");
-        } catch (HibernateException e) {
-            LOGGER.error(e.getMessage(),e);
-            return ResponseEntity.status(503).body("Data base server error. Can't add measurement to data base for station:  " + stationId);
-        }
+        return ResponseEntity.status(201).body(measurementsService.addOneStationMeasurement(stationId));
     }
 
     @ApiOperation(value = "Add all measurements from API for all stations.", response = MeasuringStation.class)
@@ -67,14 +52,6 @@ public class AddMeasurementsController {
             @ApiResponse(code = 503, message = "Data base server error. Can't add measurements.")})
     @RequestMapping(value = "/allSt", method = RequestMethod.POST)
     public ResponseEntity<Object> allMeasurements() {
-        try {
-            return ResponseEntity.status(201).body(measurementsService.addMeasurementsAllStations());
-        } catch (RestClientException e) {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(500).body("External REST API server error. Can't add measurements");
-        } catch (HibernateException e) {
-            LOGGER.error(e.getMessage(), e);
-            return ResponseEntity.status(503).body("Data base server error. Can't add measurement to data base!");
-        }
+        return ResponseEntity.status(201).body(measurementsService.addMeasurementsAllStations());
     }
 }

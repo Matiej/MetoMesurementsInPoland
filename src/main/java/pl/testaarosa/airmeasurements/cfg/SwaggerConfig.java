@@ -32,10 +32,10 @@ public class SwaggerConfig {
                     public int compare(ApiDescription tl, ApiDescription tr) {
                         int left = tl.getOperations().size() == 1 ? tl.getOperations().get(0).getPosition() : 0;
                         int right = tr.getOperations().size() == 1 ? tr.getOperations().get(0).getPosition() : 0;
-                       int pos = Integer.compare(right,left);
-                       if(pos == 0) {
-                           pos = tl.getPath().compareTo(tr.getPath())*-1;
-                       }
+                        int pos = Integer.compare(right, left);
+                        if (pos == 0) {
+                            pos = tl.getPath().compareTo(tr.getPath()) * -1;
+                        }
                         return pos;
                     }
                 });

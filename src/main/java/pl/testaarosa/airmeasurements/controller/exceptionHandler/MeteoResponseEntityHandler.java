@@ -2,6 +2,7 @@ package pl.testaarosa.airmeasurements.controller.exceptionHandler;
 
 
 import javassist.NotFoundException;
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -54,15 +56,20 @@ public class MeteoResponseEntityHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(404).body(exceptionResponse);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public final ResponseEntity<Object> handleIllegalArgumentException(Exception ex, WebRequest request) {
+    @ExceptionHandler({IllegalArgumentException.class,NumberFormatException.class, MethodArgumentTypeMismatchException.class})
+    public final ResponseEntity<Object> handleArgumentExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
         LOGGER.error("error message ->", ex);
         return ResponseEntity.status(406).body(exceptionResponse);
     }
 
-
-
+    @ExceptionHandler(HibernateException.class)
+    public final ResponseEntity<Object> handleHibernateException(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(),
+                request.getDescription(false));
+        LOGGER.error("error message ->", ex);
+        return ResponseEntity.status(503).body(exceptionResponse);
+    }
 
 }

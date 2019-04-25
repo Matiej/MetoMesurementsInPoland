@@ -1,12 +1,14 @@
 package pl.testaarosa.airmeasurements.services;
 
 import org.hibernate.HibernateException;
+import org.hibernate.TypeMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.City;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
@@ -61,10 +63,15 @@ public class AddMeasurementsServiceImpl implements AddMeasurementsService {
             HibernateException, NoSuchElementException {
         long startTime1 = System.currentTimeMillis();
 
-        if (!Optional.ofNullable(stationId).isPresent() || !stationId.toString().matches("^[0-9]*$")) {
+        if (!Optional.ofNullable(stationId).isPresent()) {
             LOGGER.error("StationID -> " + stationId + " is empty or format is incorrect!");
             throw new NumberFormatException("StationID -> " + stationId + " is empty or format is incorrect!");
         }
+        if (!stationId.toString().matches("^[0-9]*$")) {
+            LOGGER.error("StationID -> " + stationId + " format is incorrect!");
+            throw new TypeMismatchException("StationID -> " + stationId + " format is incorrect!");
+        }
+
         Map<String, SynopticMeasurement> synopticMeasurementMap = new HashMap<>();
         Map<MeasuringStation, AirMeasurement> mStResponseMap = new HashMap<>();
         try {

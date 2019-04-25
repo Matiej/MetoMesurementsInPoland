@@ -70,7 +70,7 @@ public class ApiSupplierRetrieverImpl implements ApiSupplierRetriever {
 //                        CompletableFuture<AirMeasurement> airMeasurementCompletableFuture = airMeasurementProcessorById(stationID);
                         measurementMap.put(st, apiAirAsyncRetriever.airMeasurementProcessorById(stationID));
                     } else if (!mStList.stream().anyMatch(s -> s.getStationId() == stationID)) {
-                        throw new NoSuchElementException(ANSI_RED + "Can't find station id: " + stationID + " in data base!" + ANSI_RESET);
+                        throw new NoSuchElementException("Can't find station id: " + stationID + " in data base!");
                     }
                 } else {
 //                    CompletableFuture<AirMeasurement> airMeasurementCompletableFuture = airMeasurementProcessorById(st.getStationId());

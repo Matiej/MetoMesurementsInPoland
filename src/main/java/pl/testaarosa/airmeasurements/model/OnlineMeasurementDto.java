@@ -1,12 +1,17 @@
 package pl.testaarosa.airmeasurements.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.SynopticMeasurement;
 
 import java.util.Objects;
 
+@ApiModel(description = "Online measurement get directly from external API. Included air and synoptic measurements." +
+        " Based on air measurement station that have air measurement only, synoptic measurement is added based on the station city")
 public class OnlineMeasurementDto {
 
+    @ApiModelProperty(notes = "Measurement station id. Not database!")
     private int id;
     private final double gegrLatitude;
     private final double gegrLongitude;
@@ -16,6 +21,7 @@ public class OnlineMeasurementDto {
     private final String stationDistrict;
     private final String stationVoivodeship;
     private final AirMeasurement airMs;
+    @ApiModelProperty(notes = "synoptic measurement added from other API. Connected to station by city")
     private final SynopticMeasurement synopticMs;
 
     private OnlineMeasurementDto(OnlineMeasurementBuilder builder) {
