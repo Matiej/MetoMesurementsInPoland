@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @RestController
-@ControllerAdvice
+@RestControllerAdvice
 public class MeteoResponseEntityHandler extends ResponseEntityExceptionHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());

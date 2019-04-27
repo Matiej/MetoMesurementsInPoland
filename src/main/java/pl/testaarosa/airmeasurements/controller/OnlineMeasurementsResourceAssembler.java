@@ -19,7 +19,7 @@ public class OnlineMeasurementsResourceAssembler implements ResourceAssembler<On
         } else {
             rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withSelfRel());
         }
-        rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStationsController()).withRel("allSt"));
+        rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withRel("allSt"));
         rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getGivenCityMeasuringOnlineStationsController(onlineMeasurementDto.getStationCity())).withRel("citySt"));
         return rs;
 }

@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientException;
 import pl.testaarosa.airmeasurements.model.CityFeDto;
 import pl.testaarosa.airmeasurements.model.OnlineMeasurementDto;
 import pl.testaarosa.airmeasurements.services.OnlineMeasurementService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -46,14 +44,14 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No measurements found!"),
             @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for all stations")})
     @RequestMapping(value = "/allSt", method = RequestMethod.GET)
-    public ResponseEntity<Object> getAllOnlineMeasuringStationsController() {
+    public ResponseEntity<Object> getAllOnlineMeasuringStations() {
         List<Resource<OnlineMeasurementDto>> allMeasuringStations = measuringOnlineServices.getAllMeasuringStations().stream()
                 .map(assembler::toResource)
                 .collect(Collectors.toList());
         return ResponseEntity.ok().body(new Resources<>(allMeasuringStations,
-                linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStationsController()).withSelfRel(),
-                linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
-                linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
+                linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withSelfRel(),
+        linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
+        linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
     }
 
     @ApiOperation(value = "Get all online measurements for given city name", response = OnlineMeasurementDto.class)
@@ -71,7 +69,7 @@ public class OnlineMeasurementsController {
                 .collect(Collectors.toList());
         return ResponseEntity.status(200).body(new Resources<>(givenCityMeasuringStationsWithSynopticData,
                 linkTo(methodOn(OnlineMeasurementsController.class).getGivenCityMeasuringOnlineStationsController(city)).withSelfRel(),
-                linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStationsController()).withRel("allSt"),
+                linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withRel("allSt"),
                 linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
                 linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
     }
@@ -83,10 +81,11 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 400, message = "Can't find hottest online measurement!"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! Can't get hottest measuring stations.")})
     @RequestMapping(value = "/hottest", method = RequestMethod.GET)
-    public ResponseEntity<Object> getHottestOnlineMeasuringStation() {
+    public ResponseEntity<?> getHottestOnlineMeasuringStation() {
         OnlineMeasurementDto hottestOnlineStation = measuringOnlineServices.getHottestOnlineStation();
-        Resource rs = assembler.toResource(hottestOnlineStation, "HOT");
-        return ResponseEntity.ok().body(rs);
+        Resource<OnlineMeasurementDto> rs = assembler.toResource(hottestOnlineStation, "HOT");
+        return ResponseEntity.ok(rs);
+//        return ResponseEntity.ok().body(hottestOnlineStation);
     }
 
     @ApiOperation(value = "Get coldest current station", response = OnlineMeasurementDto.class)

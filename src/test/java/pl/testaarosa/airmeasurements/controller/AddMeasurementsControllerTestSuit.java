@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestClientException;
+import pl.testaarosa.airmeasurements.controller.exceptionHandler.MeteoResponseEntityHandler;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
 import pl.testaarosa.airmeasurements.repositories.Converter;
 import pl.testaarosa.airmeasurements.repositories.MockMeasuringStationRepository;
@@ -44,7 +45,9 @@ public class AddMeasurementsControllerTestSuit {
         converter = new Converter();
         mockMeasuringStationRepository = new MockMeasuringStationRepository();
         measuringStationList = mockMeasuringStationRepository.stations();
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new MeteoResponseEntityHandler())
+                .build();
     }
 
     @Test
@@ -98,8 +101,7 @@ public class AddMeasurementsControllerTestSuit {
                 .thenThrow(new RestClientException("Add measurements to given station, throws RestClientException, return status 500"));
         mockMvc.perform(post(MAPPING+"/oneSt")
                 .param("stationId",String.valueOf(2)))
-                .andExpect(status().is(500))
-                .andReturn();
+                .andExpect(status().is(500));
         //then
         verify(measurementsService, times(1)).addOneStationMeasurement(2);
         verifyNoMoreInteractions(measurementsService);

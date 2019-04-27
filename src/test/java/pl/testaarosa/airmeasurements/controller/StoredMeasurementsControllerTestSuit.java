@@ -8,9 +8,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import pl.testaarosa.airmeasurements.controller.exceptionHandler.MeteoResponseEntityHandler;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.domain.MeasuringStation;
@@ -48,7 +50,9 @@ public class StoredMeasurementsControllerTestSuit {
 
     @Before
     public void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new MeteoResponseEntityHandler())
+                .build();
     }
 
     @Test
@@ -58,7 +62,7 @@ public class StoredMeasurementsControllerTestSuit {
         //when
         Mockito.when(service.findAll()).thenReturn(stations);
         String jsonContent = converter.jsonInString(stations);
-        mockMvc.perform(get(MAPPING + "/allMeasurements"))
+        mockMvc.perform(get(MAPPING + "/allMeasurements").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200))
                 .andExpect(content().json(jsonContent));
         //then

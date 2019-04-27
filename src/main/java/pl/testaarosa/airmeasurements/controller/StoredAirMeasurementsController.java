@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.testaarosa.airmeasurements.domain.AirMeasurement;
 import pl.testaarosa.airmeasurements.domain.AirMeasurementLevel;
 import pl.testaarosa.airmeasurements.services.StoredAirMeasurementsService;
-import pl.testaarosa.airmeasurements.services.StoredMeasurementsService;
 
 import java.time.DateTimeException;
 import java.util.NoSuchElementException;
 
-@Api("Get measurements from database")
+@Api(description = "Get measurements from database")
 @RestController
 @RequestMapping("/stored/air")
 public class StoredAirMeasurementsController {

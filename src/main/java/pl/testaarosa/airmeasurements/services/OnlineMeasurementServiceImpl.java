@@ -91,7 +91,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
     }
 
     @Override
-    public OnlineMeasurementDto getColdestOnlineStation() throws RestClientException, NoSuchElementException {
+    public OnlineMeasurementDto getColdestOnlineStation() throws NoSuchElementException,RestClientException {
         long start = System.currentTimeMillis();
         try {
             OnlineMeasurementDto onlineMeasurementDto = msProc.fillMeasuringStationListStructure()
@@ -105,7 +105,7 @@ public class OnlineMeasurementServiceImpl implements OnlineMeasurementService {
             LOGGER.info(ANSI_RED + "Total time-> " + (System.currentTimeMillis() - start) + ANSI_RESET);
             return onlineMeasurementDto;
         } catch (RestClientResponseException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             throw new RestClientException("External REST API server error! Can't get coldest measurement online for station"
                     + " -> " + e.getMessage());
         }
