@@ -73,13 +73,13 @@ public class OnlineMeasurementsControllerTestSuit {
                 .map(t -> new Resource<>(t))
                 .collect(Collectors.toList());
         Resources<Resource<OnlineMeasurementDto>> rsList = new Resources<>(resourceList,
-                new Link(MAPPING+ALLMEASUREMENTS_PATH,"self"),
-                new Link(MAPPING+"/hottest","hottest"),
-                new Link(MAPPING+"/coldest", "coldest"));
+                new Link(MAPPING + ALLMEASUREMENTS_PATH, "self"),
+                new Link(MAPPING + "/hottest", "hottest"),
+                new Link(MAPPING + "/coldest", "coldest"));
         //when
-        stationOnLineList.forEach(s-> {
+        stationOnLineList.forEach(s -> {
             Resource<OnlineMeasurementDto> rs = new Resource<>(s);
-            when(assembler.toResource(s)).thenReturn(rs);
+            when(assembler.toResource(s, "OTHER")).thenReturn(rs);
         });
 
         when(measuringOnlineServices.getAllMeasuringStations()).thenReturn(stationOnLineList);
@@ -136,15 +136,29 @@ public class OnlineMeasurementsControllerTestSuit {
     @Test
     public void shouldGetGivenCityMeasuringStations() throws Exception {
         //given
-        List<OnlineMeasurementDto> stationOnLines = mockOnlineMeasurementRepository.measuringStationOnLineList();
+        final String CITY_PATH = "/citySt";
+        List<OnlineMeasurementDto> stationOnLineList = mockOnlineMeasurementRepository.measuringStationOnLineList();
+        List<Resource<OnlineMeasurementDto>> resourceList = stationOnLineList.stream()
+                .map(t -> new Resource<>(t))
+                .collect(Collectors.toList());
+        Resources<Resource<OnlineMeasurementDto>> rsList = new Resources<>(resourceList,
+                new Link(MAPPING + CITY_PATH, "self"),
+                new Link(MAPPING + "/allSt", "allSt"),
+                new Link(MAPPING + "/hottest", "hottest"),
+                new Link(MAPPING + "/coldest", "coldest"));
         //when
+        stationOnLineList.forEach(s -> {
+            Resource<OnlineMeasurementDto> rs = new Resource<>(s);
+            when(assembler.toResource(s, "OTHER")).thenReturn(rs);
+        });
         when(measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData("wawa"))
-                .thenReturn(stationOnLines);
-        mockMvc.perform(get(MAPPING + "/citySt")
+                .thenReturn(stationOnLineList);
+        //then
+        mockMvc.perform(get(MAPPING + CITY_PATH)
+                .accept(MediaType.APPLICATION_JSON)
                 .param("city", "wawa"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLines)));
-        //then
+                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(rsList)));
         verify(measuringOnlineServices, times(1)).getGivenCityMeasuringStationsWithSynopticData("wawa");
         verifyNoMoreInteractions(measuringOnlineServices);
     }
@@ -266,12 +280,17 @@ public class OnlineMeasurementsControllerTestSuit {
     @Test
     public void shouldGetColdestOnlineMeasurement() throws Exception {
         //given
-        OnlineMeasurementDto stationOnLine = mockOnlineMeasurementRepository.measuringStationOnLineList().get(0);
+        OnlineMeasurementDto stationOnLine = mockOnlineMeasurementRepository.measuringStationOnLineList().get(1);
+        Resource<OnlineMeasurementDto> rs = new Resource<>(stationOnLine);
+        rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withSelfRel());
         //when
+        when(assembler.toResource(stationOnLine, "COLD")).thenReturn(rs);
         when(measuringOnlineServices.getColdestOnlineStation()).thenReturn(stationOnLine);
-        mockMvc.perform(get(MAPPING + "/coldest"))
+        String rsJsonContent = converter.jsonInString(rs);
+        mockMvc.perform(get(MAPPING + "/coldest")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200))
-                .andExpect(MockMvcResultMatchers.content().json(converter.jsonInString(stationOnLine)));
+                .andExpect(MockMvcResultMatchers.content().json(rsJsonContent));
         //then
         verify(measuringOnlineServices, times(1)).getColdestOnlineStation();
         verifyNoMoreInteractions(measuringOnlineServices);

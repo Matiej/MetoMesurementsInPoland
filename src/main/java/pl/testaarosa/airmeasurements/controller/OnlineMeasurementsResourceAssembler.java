@@ -14,15 +14,21 @@ public class OnlineMeasurementsResourceAssembler implements ResourceAssembler<On
 
     public Resource<OnlineMeasurementDto> toResource(OnlineMeasurementDto onlineMeasurementDto, String value) {
         Resource rs = toResource(onlineMeasurementDto);
-        if (value.equals("HOT")) {
-            rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withSelfRel());
-        } else {
-            rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withSelfRel());
+        switch (value) {
+            case ("HOT"):
+                rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withSelfRel());
+                break;
+            case ("COLD"):
+                rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withSelfRel());
+                break;
+            default:
+                System.out.println("need to add default. It will be something for just one measuerement by station ID");
         }
         rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withRel("allSt"));
         rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getGivenCityMeasuringOnlineStationsController(onlineMeasurementDto.getStationCity())).withRel("citySt"));
+        rs.add(linkTo(methodOn(OnlineMeasurementsController.class).getAllCites()).withRel("allCities"));
         return rs;
-}
+    }
 
     @Override
     public Resource<OnlineMeasurementDto> toResource(OnlineMeasurementDto onlineMeasurementDto) {

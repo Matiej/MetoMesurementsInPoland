@@ -46,7 +46,7 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/allSt", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllOnlineMeasuringStations() {
         List<Resource<OnlineMeasurementDto>> allMeasuringStations = measuringOnlineServices.getAllMeasuringStations().stream()
-                .map(assembler::toResource)
+                .map(o-> assembler.toResource(o,"OTHER"))
                 .collect(Collectors.toList());
         return ResponseEntity.ok().body(new Resources<>(allMeasuringStations,
                 linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withSelfRel(),
@@ -65,7 +65,7 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/citySt", method = RequestMethod.GET)
     public ResponseEntity<Object> getGivenCityMeasuringOnlineStationsController(String city) {
         List<Resource<OnlineMeasurementDto>> givenCityMeasuringStationsWithSynopticData = measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city).stream()
-                .map(assembler::toResource)
+                .map(o-> assembler.toResource(o,"OTHER"))
                 .collect(Collectors.toList());
         return ResponseEntity.status(200).body(new Resources<>(givenCityMeasuringStationsWithSynopticData,
                 linkTo(methodOn(OnlineMeasurementsController.class).getGivenCityMeasuringOnlineStationsController(city)).withSelfRel(),
@@ -109,7 +109,8 @@ public class OnlineMeasurementsController {
             @ApiResponse(code = 500, message = "External REST API server error! Can't get online measurements for all cities")})
     @RequestMapping(value = "/allCities", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllCites() {
-        return ResponseEntity.ok().body(measuringOnlineServices.onlineMeasurementsForCities());
+        List<CityFeDto> cityFeDtoList = measuringOnlineServices.onlineMeasurementsForCities();
+        return ResponseEntity.ok().body(cityFeDtoList);
     }
 }
 
