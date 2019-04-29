@@ -11,7 +11,7 @@ import java.util.Objects;
         " Based on air measurement station that have air measurement only, synoptic measurement is added based on the station city")
 public class OnlineMeasurementDto {
 
-    @ApiModelProperty(notes = "Measurement station id. Not database!")
+    @ApiModelProperty(notes = "Measurement station id. Not database ID!")
     private int id;
     private final double gegrLatitude;
     private final double gegrLongitude;

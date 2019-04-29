@@ -46,15 +46,15 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/allSt", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllOnlineMeasuringStations() {
         List<Resource<OnlineMeasurementDto>> allMeasuringStations = measuringOnlineServices.getAllMeasuringStations().stream()
-                .map(o-> assembler.toResource(o,"OTHER"))
+                .map(o -> assembler.toResource(o, "OTHER"))
                 .collect(Collectors.toList());
         return ResponseEntity.ok().body(new Resources<>(allMeasuringStations,
                 linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withSelfRel(),
-        linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
-        linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
+                linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
+                linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
     }
 
-    @ApiOperation(value = "Get all online measurements for given city name", response = OnlineMeasurementDto.class)
+    @ApiOperation(value = "Get all online measurement stations for given city name", response = OnlineMeasurementDto.class)
     @ApiImplicitParam(required = true, name = "city", value = "City name", dataType = "string", paramType = "query")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Measuring stations for given city found successful"),
@@ -65,7 +65,7 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/citySt", method = RequestMethod.GET)
     public ResponseEntity<Object> getGivenCityMeasuringOnlineStationsController(String city) {
         List<Resource<OnlineMeasurementDto>> givenCityMeasuringStationsWithSynopticData = measuringOnlineServices.getGivenCityMeasuringStationsWithSynopticData(city).stream()
-                .map(o-> assembler.toResource(o,"OTHER"))
+                .map(o -> assembler.toResource(o, "OTHER"))
                 .collect(Collectors.toList());
         return ResponseEntity.status(200).body(new Resources<>(givenCityMeasuringStationsWithSynopticData,
                 linkTo(methodOn(OnlineMeasurementsController.class).getGivenCityMeasuringOnlineStationsController(city)).withSelfRel(),
@@ -101,7 +101,7 @@ public class OnlineMeasurementsController {
         return ResponseEntity.ok(rs);
     }
 
-    @ApiOperation(value = "Get measurements for all cities.", response = CityFeDto.class)
+    @ApiOperation(value = "Get measurements for all cities. Include Synoptic and Air measurements", response = CityFeDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Online measurements for cities found successful"),
             @ApiResponse(code = 400, message = "Can not find any online measurements"),
@@ -110,7 +110,14 @@ public class OnlineMeasurementsController {
     @RequestMapping(value = "/allCities", method = RequestMethod.GET)
     public ResponseEntity<Object> getAllCites() {
         List<CityFeDto> cityFeDtoList = measuringOnlineServices.onlineMeasurementsForCities();
-        return ResponseEntity.ok().body(cityFeDtoList);
+        List<Resource<CityFeDto>> resourceList = cityFeDtoList.stream()
+                .map(c -> new Resource<>(c))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(new Resources<>(resourceList,
+                linkTo(methodOn(OnlineMeasurementsController.class).getAllCites()).withSelfRel(),
+                linkTo(methodOn(OnlineMeasurementsController.class).getAllOnlineMeasuringStations()).withRel("allSt"),
+                linkTo(methodOn(OnlineMeasurementsController.class).getHottestOnlineMeasuringStation()).withRel("hottest"),
+                linkTo(methodOn(OnlineMeasurementsController.class).getColdestOnlineMeasuringStation()).withRel("coldest")));
     }
 }
 
