@@ -1,4 +1,4 @@
-# Meteo Measurements in Poland
+# Meteo Measurements in Poland by Matiej
 
 A Spring Boot service to obtain data from air and synoptic weather stations in Poland. 
 The application utilizes an external RESTful API providing data to government institutions.
@@ -10,11 +10,14 @@ Thank to conjunction of data of the two APIs, the user has access to synoptic me
 air condition measurements simultaneously. Additionally, all the measurement data are being saved to an external MySQL database. 
 This allows for review of archived measurements and filtering by date, air condition and temperature.
 Used technologies:
+
 -	JDK 8 SE,
 -	Spring Boot,
 -	MySQL DB,
 -	Maven,
--	JPA,
+-	Spring JPA,
+-   QuerryDSL
+-   Apache POIgit
 -	JUnit,
 -	Mockito.
 -	Swagger
@@ -61,10 +64,4 @@ Import the Maven project straight to your Java IDE,
 
 ## TO DO
 
-- [x] Add Readme
-- [x] Add variable in classes for null messages
-- [x] Add description for methods to Swagger
-- [x] Split the domain into more classes
-- [x] Split the database into more tables
-- [ ] Fix Response 200 to Response 3XX/5XX with message
 - [ ] Add frontend

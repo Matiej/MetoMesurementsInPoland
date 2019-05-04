@@ -37,18 +37,8 @@ public class StoredAirMeasurementsController {
             @ApiResponse(code = 406, message = "Not Acceptable! Incorrect air level type or wrong enum!")})
     @RequestMapping(value = "/airMeasurementsQy", method = RequestMethod.GET)
     public ResponseEntity<Object> findPlaceByAirQuality(AirMeasurementLevel airLevel) {
-        try {
 //            return ResponseEntity.ok(storedMeasurementsService.getAirMeasurementsByLevel(airLevel));
-            return ResponseEntity.ok(storedAirMeasurementsService.getAirMeasurementsByLevel(airLevel));
-        } catch (NoSuchElementException | ConversionFailedException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(400).body("No air measurements found for given air level: " + airLevel);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(406).body("Not Acceptable! Incorrect air level type or wrong enum like: " + airLevel);
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(503).body("Data base server error. Can't get air measurements information.");
-        }
+        return ResponseEntity.ok(storedAirMeasurementsService.getAirMeasurementsByLevel(airLevel));
     }
 
     @ApiOperation(value = "Get air measurements for given date", response = AirMeasurement.class, position = 3)
